@@ -4,7 +4,10 @@ namespace AiDietPlanData.Data.Models;
 
 public class Person : Entity
 {
-    public required string Name { get; set; }
+    public required string FirstName { get; set; }
+    public required string LastName { get; set; }
+    public required string Username { get; set; }
+    public required string Email { get; set; }
     public required float Age { get; set; }
     public required DateTime Birthday { get; set; }
     public double StartingWeight { get; set; }

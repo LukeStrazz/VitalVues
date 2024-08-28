@@ -27,7 +27,10 @@ public class UserService : IUserService
         {
             var person = new Person
             {
-                Name = info.Name,
+                FirstName = info.FirstName,
+                LastName = info.LastName,
+                Username = info.Username,
+                Email = info.Email,
                 Age = info.Age,
                 Birthday = info.Birthday,
                 StartingWeight = info.StartingWeight,
