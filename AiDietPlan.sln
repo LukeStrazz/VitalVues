@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 25.0.1706.3
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35222.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "AiDietPlanServices\Services.csproj", "{15755059-5D1A-4B65-8BA5-FFA18EE03A99}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services", "AiDietPlanServices\Services.csproj", "{15755059-5D1A-4B65-8BA5-FFA18EE03A99}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data", "AiDietPlanData\Data.csproj", "{29A14C80-87A4-4D4B-925E-B58B0B2B84B8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data", "AiDietPlanData\Data.csproj", "{29A14C80-87A4-4D4B-925E-B58B0B2B84B8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AiDietPlan", "AiDietPlan\AiDietPlan.csproj", "{BDABE363-7D88-4DCF-B4B7-3AF187C13DCF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AiDietPlan", "AiDietPlan\AiDietPlan.csproj", "{BDABE363-7D88-4DCF-B4B7-3AF187C13DCF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

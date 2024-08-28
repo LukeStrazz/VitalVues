@@ -17,6 +17,11 @@ public class HomeController : Controller
     {
         return View();
     }
+    
+    public IActionResult UserCreate()
+    {
+        return View();
+    }
 
     public IActionResult Privacy()
     {

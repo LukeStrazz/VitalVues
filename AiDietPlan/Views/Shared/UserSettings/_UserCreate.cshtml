@@ -1,0 +1,101 @@
+﻿@page
+@model Services.ViewModels.UserInfoViewModel
+@{
+}
+
+<form class="row g-3 needs-validation" novalidate>
+    <div class="col-md-4">
+        <label for="firstName" class="form-label">First name</label>
+        <input type="text" class="form-control" id="firstName" required>
+        <div class="valid-feedback">
+            Looks good!
+        </div>
+    </div>
+    <div class="col-md-4">
+        <label for="lastName" class="form-label">Last name</label>
+        <input type="text" class="form-control" id="lastName" required>
+        <div class="valid-feedback">
+            Looks good!
+        </div>
+    </div>
+    <div class="col-md-4">
+        <label for="validationCustomUsername" class="form-label">Username</label>
+        <div class="input-group has-validation">
+            <span class="input-group-text" id="inputGroupUsername">@@</span>
+            <input type="text" class="form-control" id="validationCustomUsername" aria-describedby="inputGroupUsername" required>
+            <div class="invalid-feedback">
+                Please choose a username.
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <label for="Birthday" class="form-label">Birthday</label>
+        <div class="input-group has-validation">
+            <span class="input-group-text" id="inputGroupBirthday">@@</span>
+            <input type="text" class="form-control" id="Birthday" aria-describedby="inputGroupBirthday" required>
+            <div class="invalid-feedback">
+                Please enter a Birthday.
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <label for="Weight" class="form-label">Weight</label>
+        <div class="input-group has-validation">
+            <span class="input-group-text" id="inputGroupWeight">@@</span>
+            <input type="text" class="form-control" id="Weight" aria-describedby="inputGroupWeight" required>
+            <div class="invalid-feedback">
+                Please enter your current Weight.
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <label for="Allergies" class="form-label">Allergies (comma separated)</label>
+        <input type="text" class="form-control" id="Allergies" name="Allergies" placeholder="e.g., Peanuts, Shellfish, Pollen">
+        <div class="invalid-feedback">
+            Please enter any known allergies.
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
+            <label class="form-check-label" for="invalidCheck">
+                Agree to terms and conditions
+            </label>
+            <div class="invalid-feedback">
+                You must agree before submitting.
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <button class="btn btn-primary" type="submit">Submit form</button>
+    </div>
+</form>
+
+<script>
+    $(document).ready(function () {
+        $("#userCreateForm").on("submit", function (e) {
+            e.preventDefault();
+
+            var userInfo = {
+                Name: $("#Name").val(),
+                Age: $("#Age").val(),
+                Birthday: $("#Birthday").val(),
+                StartingWeight: $("#Weight").val(),
+                Allergies: $("#Allergies").val()
+            };
+
+            $.ajax({
+                url: '/api/UserCreate/CreateUser',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(userInfo),
+                success: function (response) {
+                    alert(response.message);
+                },
+                error: function (xhr, status, error) {
+                    alert('Error: ' + error);
+                }
+            });
+        });
+    });
+</script>

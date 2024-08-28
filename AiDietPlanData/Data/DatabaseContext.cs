@@ -1,11 +1,16 @@
-﻿using System;
-namespace AiDietPlanData.Data
+﻿using AiDietPlanData.Data.Models;
+using Microsoft.EntityFrameworkCore;
+using System;
+namespace AiDietPlanData.Data;
+
+public class DatabaseContext : DbContext
 {
-	public class DatabaseContext
-	{
-		public DatabaseContext()
-		{
-		}
-	}
+	public DatabaseContext(DbContextOptions<DatabaseContext> options)
+            : base(options)
+    {
+    }
+
+    public DbSet<Person> People { get; set; }
+    public DbSet<Goal> Goals { get; set; }
 }
 

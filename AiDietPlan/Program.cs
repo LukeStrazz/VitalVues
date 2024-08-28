@@ -1,7 +1,18 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using AiDietPlanData.Data;
+using Microsoft.EntityFrameworkCore;
+using Services.Interfaces;
+using Services.Services;
+
+var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<IUserService, UserService>();
+
+builder.Services.AddDbContext<DatabaseContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 
 var app = builder.Build();
 
