@@ -11,6 +11,6 @@ public interface ITrack
     int Id { get; set; }
     string CreatedBy { get; set; }
     DateTime CreatedDate { get; set; }
-    string? ModifiedBy { get; set; } // int? because at first add, there is no modification
+    string? ModifiedBy { get; set; } 
     DateTime? ModifiedDate { get; set; }
 }
