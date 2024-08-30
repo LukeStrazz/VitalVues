@@ -25,13 +25,21 @@ public class UserService : IUserService
     {
         if (info != null)
         {
+            var today = DateTime.Today;
+            var age = today.Year - info.Birthday.Year;
+
+            if (info.Birthday.Date > today.AddYears(-age))
+            {
+                age--;
+            }
+
             var person = new Person
             {
                 FirstName = info.FirstName,
                 LastName = info.LastName,
                 Username = info.Username,
                 Email = info.Email,
-                Age = info.Age,
+                Age = age,
                 Birthday = info.Birthday,
                 StartingWeight = info.StartingWeight,
                 CurrentWeight = info.StartingWeight,

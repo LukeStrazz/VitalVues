@@ -29,13 +29,23 @@ public class UserCreateController : Controller
     [HttpPost("CreateUser")]
     public IActionResult CreateUser([FromBody] UserInfoViewModel userInfo)
     {
-        if (userInfo == null)
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        if (userInfo.FirstName == null)
         {
             return BadRequest("User information is null.");
         }
 
         _userService.createUser(userInfo);
-        return Ok(new { message = "User created successfully!" });
+
+        return Ok(new
+        {
+            message = "User created successfully!"
+            // TODO: Redirect to "Goals"
+        });
     }
 }
 

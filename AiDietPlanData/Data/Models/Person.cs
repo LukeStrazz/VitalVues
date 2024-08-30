@@ -1,8 +1,8 @@
-﻿using Data;
+﻿using Data.Data;
 using System;
 namespace AiDietPlanData.Data.Models;
 
-public class Person : Entity
+public class Person : TrackableEntry
 {
     public required string FirstName { get; set; }
     public required string LastName { get; set; }

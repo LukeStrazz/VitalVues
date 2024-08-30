@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,15 +9,26 @@ namespace Services.ViewModels;
 
 public class UserInfoViewModel
 {
-    public int? Id { get; set; }
-    public required string FirstName { get; set; }
-    public required string LastName { get; set; }
-    public required string Username { get; set; }
-    public required string Email { get; set; }
-    public required float Age { get; set; }
-    public required DateTime Birthday { get; set; }
+    public int Id { get; set; }
+
+    [Required]
+    public string FirstName { get; set; }
+
+    [Required]
+    public string LastName { get; set; }
+
+    [Required]
+    public string Username { get; set; }
+
+    [Required]
+    [EmailAddress]
+    public string Email { get; set; }
+
+    public float Age { get; set; }
+    public DateTime Birthday { get; set; }
     public double StartingWeight { get; set; }
     public double CurrentWeight { get; set; }
     public List<string>? Allergies { get; set; }
     public List<GoalViewModel>? Goals { get; set; }
 }
+
