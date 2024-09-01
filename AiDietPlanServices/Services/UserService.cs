@@ -45,8 +45,15 @@ public class UserService : IUserService
                 CurrentWeight = info.StartingWeight,
                 Allergies = info.Allergies
             };
-            _context.People.Add(person);
-            _context.SaveChanges();
+
+            try
+            {
+                _context.People.Add(person);
+                _context.SaveChanges();
+            }
+            catch(Exception ex) {
+                _logger.LogError("Unable to save person to db: ex", ex);
+            }
         }
     }
 
