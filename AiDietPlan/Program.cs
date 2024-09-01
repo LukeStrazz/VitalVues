@@ -13,12 +13,19 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
 
-builder.Services.AddControllersWithViews(options =>
+builder.Services.AddAuthorization(options =>
 {
-    var policy = new AuthorizationPolicyBuilder()
+    options.FallbackPolicy = new AuthorizationPolicyBuilder()
         .RequireAuthenticatedUser()
         .Build();
-    options.Filters.Add(new AuthorizeFilter(policy));
+
+    options.AddPolicy("AllowAnonymous", policy => policy.RequireAssertion(context => true));
+});
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/SignIn";
+    options.AccessDeniedPath = "/Account/AccessDenied";
 });
 
 builder.Services.AddRazorPages()
@@ -51,11 +58,15 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Account}/{action=SignIn}/{id?}");
+});
 
 app.Run();
 

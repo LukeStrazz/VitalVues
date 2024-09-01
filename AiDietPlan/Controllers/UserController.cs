@@ -8,26 +8,26 @@ using Services.ViewModels;
 namespace AiDietPlan.Controllers;
 
 [ApiController]
-[Route("api/UserCreateController")]
-public class UserCreateController : Controller
+[Route("api/UserController")]
+public class UserController : Controller
 {
-    private readonly ILogger<UserCreateController> _logger;
+    private readonly ILogger<UserController> _logger;
     private readonly IUserService _userService;
 
-    public UserCreateController(ILogger<UserCreateController> logger, IUserService userService)
+    public UserController(ILogger<UserController> logger, IUserService userService)
     {
         _logger = logger;
         _userService = userService;
     }
 
-    [HttpGet("CreateUser")]
-    public IActionResult UserCreate()
+    [HttpGet("UserUpdate")]
+    public IActionResult UserUpdate()
     {
         return View();
     }
 
-    [HttpPost("CreateUser")]
-    public IActionResult CreateUser([FromBody] UserInfoViewModel userInfo)
+    [HttpPost("UpdateUser")]
+    public IActionResult UpdateUser([FromBody] UserInfoViewModel userInfo)
     {
         if (!ModelState.IsValid)
         {
@@ -39,7 +39,7 @@ public class UserCreateController : Controller
             return BadRequest("User information is null.");
         }
 
-        _userService.createUser(userInfo);
+        _userService.UpdateUser(userInfo);
 
         return Ok(new
         {

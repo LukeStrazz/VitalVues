@@ -1,5 +1,7 @@
 ﻿using AiDietPlanData.Data;
 using AiDietPlanData.Data.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Services.Interfaces;
 using Services.ViewModels;
@@ -21,7 +23,22 @@ public class UserService : IUserService
         _context = context;
     }
 
-    public void createUser(UserInfoViewModel info)
+    public async Task<UserInfoViewModel> UserExists(string email)
+    {
+        var person = await _context.People.FirstOrDefaultAsync(p => p.Email == email);
+
+        var viewModelPerson = new UserInfoViewModel
+        {
+            FirstName = person.FirstName, 
+            LastName = person.LastName, 
+            Email = email,
+
+        };
+
+        return viewModelPerson;
+    }
+
+    public async Task CreateUser(UserInfoViewModel info)
     {
         if (info != null)
         {
@@ -51,8 +68,48 @@ public class UserService : IUserService
                 _context.People.Add(person);
                 _context.SaveChanges();
             }
-            catch(Exception ex) {
-                _logger.LogError("Unable to save person to db: ex", ex);
+            catch (Exception ex)
+            {
+                _logger.LogError("Unable to save person to db: : {ex}", ex);
+            }
+        }
+    }
+
+    public async void UpdateUser(UserInfoViewModel info)
+    {
+        if (info != null)
+        {
+            var user = await _context.People.FirstOrDefaultAsync(p => p.Email == info.Email);
+
+            var today = DateTime.Today;
+            var age = today.Year - info.Birthday.Year;
+
+            if (info.Birthday.Date > today.AddYears(-age))
+            {
+                age--;
+            }
+
+            var userToUpdate = new Person
+            {
+                FirstName = info.FirstName,
+                LastName = info.LastName,
+                Username = info.Username,
+                Email = info.Email,
+                Age = age,
+                Birthday = info.Birthday,
+                StartingWeight = info.StartingWeight,
+                CurrentWeight = info.StartingWeight,
+                Allergies = info.Allergies
+            };
+
+            try
+            {
+                _context.People.Update(userToUpdate);
+                _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Unable to save person to db: : {ex}", ex);
             }
         }
     }

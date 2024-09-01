@@ -1,4 +1,6 @@
-﻿using Services.ViewModels;
+﻿using AiDietPlanData.Data.Models;
+using Microsoft.AspNetCore.Mvc;
+using Services.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,5 +11,7 @@ namespace Services.Interfaces;
 
 public interface IUserService
 {
-    public void createUser(UserInfoViewModel info);
+    public Task<UserInfoViewModel> UserExists(string email);
+    public Task CreateUser(UserInfoViewModel info);
+    public void UpdateUser(UserInfoViewModel info);
 }
