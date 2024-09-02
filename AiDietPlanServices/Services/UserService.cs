@@ -32,7 +32,6 @@ public class UserService : IUserService
             FirstName = person.FirstName, 
             LastName = person.LastName, 
             Email = email,
-
         };
 
         return viewModelPerson;

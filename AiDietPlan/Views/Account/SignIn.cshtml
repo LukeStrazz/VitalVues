@@ -25,6 +25,9 @@
 									<div class="center-wrap">
 										<div class="section text-center">
 											<h4 class="mb-4 pb-3">Log In</h4>
+												<form asp-controller="Account" asp-action="ExternalLogin">
+													<button class="btn mt-4">Sign in with Azure AD</button>
+												</form>
 											<div class="form-group">
 												<input type="email" name="logemail" class="form-style" placeholder="Your Email" id="logemail" autocomplete="off">
 												<i class="input-icon uil uil-at"></i>

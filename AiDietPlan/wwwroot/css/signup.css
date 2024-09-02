@@ -268,7 +268,7 @@ h6 span {
         height: 36px;
         border-radius: 50%;
         color: #ffeba7;
-        background-color: #102770;
+        background-color: white;
         font-family: 'unicons';
         content: '\eb4f';
         z-index: 20;
@@ -470,7 +470,7 @@ h6 span {
     text-align: center;
     border: none;
     background-color: #252a26;
-    color: #102770;
+    color: white;
     box-shadow: 0 8px 24px 0 rgba(255,235,167,.2);
 }
 

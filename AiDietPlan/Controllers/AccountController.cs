@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Services.Interfaces;
 using Services.ViewModels;
+using System.ComponentModel;
 using System.Security.Claims;
 
 namespace AiDietPlan.Controllers;
@@ -15,13 +16,13 @@ namespace AiDietPlan.Controllers;
 public class AccountController : Controller
 {
     private readonly ILogger<AccountController> _logger;
-    private readonly IAuthenticationService _authenticationService;
-    private readonly IUserService _userService;
+	private readonly IHttpContextAccessor _httpContextAccessor;
+	private readonly IUserService _userService;
 
-    public AccountController(ILogger<AccountController> logger, IAuthenticationService authenticationService, IUserService userService)
+    public AccountController(ILogger<AccountController> logger, IHttpContextAccessor httpContextAccessor, IUserService userService)
     {
         _logger = logger;
-        _authenticationService = authenticationService;
+		_httpContextAccessor = httpContextAccessor;
         _userService = userService;
     }
 
@@ -60,25 +61,28 @@ public class AccountController : Controller
             return RedirectToAction(nameof(SignIn));
         }
 
-        var email = result.Principal.FindFirstValue(ClaimTypes.Email) ?? "";
-        var firstName = result.Principal.FindFirstValue(ClaimTypes.GivenName);
-        var lastName = result.Principal.FindFirstValue(ClaimTypes.Surname);
+		var email = _httpContextAccessor.HttpContext.User.Identity.Name ?? "N/A";
 
         // Check if the user exists
-        var person = await _userService.UserExists(email);
+        try {
 
-        if (person == null)
+			var person = await _userService.UserExists(email);
+
+            if(person != null)
+            {
+				return RedirectToLocal(returnUrl);
+			}
+		}
+        catch (Exception ex)
         {
-            await _userService.CreateUser(person);
+			return RedirectToAction("SignIn", "Account");
+		}
 
-            return RedirectToAction("CreateUser", "UserCreate");
-        }
-
-        return RedirectToLocal(returnUrl);
-    }
+		return RedirectToAction("SignIn", "Account");
+	}
 
 
-    private IActionResult RedirectToLocal(string returnUrl)
+	private IActionResult RedirectToLocal(string returnUrl)
     {
         if (Url.IsLocalUrl(returnUrl))
         {
