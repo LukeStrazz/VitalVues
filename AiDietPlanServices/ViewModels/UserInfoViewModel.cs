@@ -13,7 +13,7 @@ public class UserInfoViewModel
 
 	public string Sid { get; set; }
 
-	[Required]
+    [Required]
     public string FirstName { get; set; }
 
     [Required]

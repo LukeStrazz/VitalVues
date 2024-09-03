@@ -28,6 +28,30 @@ public class UserService : IUserService
 		return await _context.People.AnyAsync(p => p.Sid == uniqueToken);
 	}
 
+    public UserInfoViewModel FindUser(string uniqueToken)
+    {
+
+        var user = _context.People.FirstOrDefault(p => p.Sid == uniqueToken);
+
+        var userViewModel = new UserInfoViewModel
+        {
+            Id = user.Id,
+            Sid = user.Sid,
+            Email = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Username = user.Username,
+            CurrentWeight = user.CurrentWeight,  
+            StartingWeight = user.StartingWeight,
+            Allergies = user.Allergies,
+            Age = user.Age,
+            Birthday = user.Birthday,
+            ProfileImage = user.ProfileImage
+        };
+
+        return userViewModel;
+    }
+
 	public async Task CreateUser(UserInfoViewModel info)
     {
         if (info != null)
@@ -43,6 +67,7 @@ public class UserService : IUserService
             var person = new Person
             {
                 Sid = info.Sid,
+                ProfileImage = info.ProfileImage,
                 FirstName = info.FirstName,
                 LastName = info.LastName,
                 Username = info.Username,
@@ -54,23 +79,19 @@ public class UserService : IUserService
                 Allergies = info.Allergies
             };
 
-            try
-            {
-                _context.People.Add(person);
-                _context.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Unable to save person to db: : {ex}", ex);
-            }
+
+            _context.People.Add(person);
+            _context.SaveChanges();
+
+        
         }
     }
 
-    public async void UpdateUser(UserInfoViewModel info)
+    public void UpdateUser(UserInfoViewModel info)
     {
         if (info != null)
         {
-            var user = await _context.People.FirstOrDefaultAsync(p => p.Email == info.Email);
+            var user = _context.People.FirstOrDefault(p => p.Sid == info.Sid);
 
             var today = DateTime.Today;
             var age = today.Year - info.Birthday.Year;
@@ -89,16 +110,8 @@ public class UserService : IUserService
             user.StartingWeight = info.StartingWeight;
             user.CurrentWeight = info.StartingWeight;
             user.Allergies = info.Allergies;
-
-            try
-            {
-                _context.People.Update(user);
-                _context.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Unable to save person to db: : {ex}", ex);
-            }
+            user.ProfileImage = info.ProfileImage;
+            _context.SaveChanges();
         }
     }
 

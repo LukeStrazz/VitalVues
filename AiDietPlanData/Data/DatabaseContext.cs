@@ -3,6 +3,7 @@ using Data.Data.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Security.Claims;
 namespace AiDietPlanData.Data;
 
 public class DatabaseContext : DbContext
@@ -19,7 +20,7 @@ public class DatabaseContext : DbContext
 
     public override int SaveChanges()
     {
-        var username = _httpContextAccessor.HttpContext.User.Identity.Name ?? "N/A";
+        var username = "N/A";
 
         this.ChangeTracker.DetectChanges();
         var added = this.ChangeTracker.Entries()

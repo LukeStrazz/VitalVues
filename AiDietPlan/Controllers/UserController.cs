@@ -24,7 +24,9 @@ public class UserController : Controller
     [HttpGet("UserUpdate")]
     public IActionResult UserUpdate()
     {
-        return View();
+		var userUniqueIdentifier = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+        var user = _userService.FindUser(userUniqueIdentifier);
+		return View(user);
     }
 
     [HttpPost("UpdateUser")]
@@ -44,7 +46,7 @@ public class UserController : Controller
 
         return Ok(new
         {
-            message = "User created successfully!"
+            message = "User updated successfully!"
             // TODO: Redirect to "Goals"
         });
     }

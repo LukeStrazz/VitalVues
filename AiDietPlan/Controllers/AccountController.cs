@@ -62,12 +62,17 @@ public class AccountController : Controller
 			return RedirectToAction("Error", "Home");
 		}
 
+        foreach(Claim c in User.Claims)
+        {
+            Console.WriteLine(c.Value); 
+        }
+
 		try
 		{
 
-            var person = await _userService.UserExists(userUniqueIdentifier);
+            var personExists = await _userService.UserExists(userUniqueIdentifier);
 
-            if (person == false)
+            if (personExists == false)
             {
                 var info = new UserInfoViewModel
                 {
@@ -82,10 +87,19 @@ public class AccountController : Controller
                     StartingWeight = 0,
                     CurrentWeight = 0,
                     Allergies = null,
-                    Goals = null
+                    Goals = null,
                 };
 
                 await _userService.CreateUser(info);
+            }
+            else
+            {
+                var person = _userService.FindUser(userUniqueIdentifier);
+                var profImage = User.Claims.FirstOrDefault(c => c.Type == "picture")?.Value;
+
+                person.ProfileImage = profImage;
+
+                _userService.UpdateUser(person);
             }
 
             return LocalRedirect(returnUrl);
@@ -109,18 +123,6 @@ public class AccountController : Controller
         await HttpContext.SignOutAsync(Auth0Constants.AuthenticationScheme, authenticationProperties);
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
     }
-
-    [Authorize]
-    public IActionResult Profile()
-    {
-        return View(new UserInfoViewModel()
-        {
-            FirstName = User.Identity.Name,
-            Email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value,
-            ProfileImage = User.Claims.FirstOrDefault(c => c.Type == "picture")?.Value
-        });
-    }
-
 
     /// <summary>
     /// This is just a helper action to enable you to easily see all claims related to a user. It helps when debugging your
