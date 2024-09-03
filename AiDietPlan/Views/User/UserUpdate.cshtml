@@ -1,15 +1,23 @@
-﻿@{
-    ViewData["Title"] = "Create User";
+﻿@model Services.ViewModels.UserInfoViewModel
+@{
+    ViewData["Title"] = "User Profile";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Create your User</h1>
+<div class="row">
+    <div class="col-md-12">
+        <div class="row">
+            <h2>@ViewData["Title"].</h2>
 
-    @* Inject User Create Form *@
-    <partial>
-        @Html.Partial("~/Views/Shared/UserSettings/_UserUpdate.cshtml")
-    </partial>
-
-
+            <div class="col-md-2">
+                <img src="@Model.ProfileImage"
+                     alt="" class="img-rounded img-responsive" />
+            </div>
+            <div class="col-md-4">
+                <h3>@Model.FirstName</h3>
+                <p>
+                    <i class="glyphicon glyphicon-envelope"></i> @Model.Email
+                </p>
+            </div>
+        </div>
+    </div>
 </div>
-

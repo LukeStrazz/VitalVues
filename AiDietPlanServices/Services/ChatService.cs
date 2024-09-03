@@ -1,7 +1,7 @@
 ﻿using System;
-using AiDietPlanServices.Interfaces;
+using Services.Interfaces;
 
-namespace AiDietPlanServices.Services;
+namespace Services.Services;
 
 public class ChatService : IChatService
 {

@@ -1,5 +1,5 @@
 ﻿using System;
-namespace AiDietPlanServices.Interfaces;
+namespace Services.Interfaces;
 
 public interface IChatService
 {

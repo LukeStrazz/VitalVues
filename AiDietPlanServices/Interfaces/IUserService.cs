@@ -11,7 +11,7 @@ namespace Services.Interfaces;
 
 public interface IUserService
 {
-    public Task<UserInfoViewModel> UserExists(string email);
+    public Task<bool> UserExists(string email);
     public Task CreateUser(UserInfoViewModel info);
     public void UpdateUser(UserInfoViewModel info);
 }

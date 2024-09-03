@@ -34,6 +34,10 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="UserUpdate">Profile</a>
                             </li>
                         </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="nav-item"><a asp-controller="Account" asp-action="Profile">Hello @User.Identity.Name!</a></li>
+                            <li class="nav-item"><a id="qsLogoutBtn" asp-controller="Account" asp-action="Logout">Logout</a></li>
+                        </ul>
                     </div>
                 </div>
             </nav>
@@ -44,6 +48,17 @@
                 <div class="container-fluid">
                     <a class="navbar-brand">AiDietPlan</a>
                 </div>
+                <ul class="nav navbar-nav navbar-right">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li><a asp-controller="Account" asp-action="Profile">Hello @User.Identity.Name!</a></li>
+                        <li><a id="qsLogoutBtn" asp-controller="Account" asp-action="Logout">Logout</a></li>
+                    }
+                    else
+                    {
+                        <li><a id="qsLoginBtn" asp-controller="Account" asp-action="Login">Login</a></li>
+                    }
+                </ul>
             </nav>
         }
     </header>

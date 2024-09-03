@@ -1,97 +1,140 @@
-﻿using AiDietPlanData.Data.Models;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Services.Interfaces;
+using System.Threading.Tasks;
 using Services.ViewModels;
-using System.ComponentModel;
+using System.Linq;
 using System.Security.Claims;
+using Auth0.AspNetCore.Authentication;
+using Services.Interfaces;
 
 namespace AiDietPlan.Controllers;
 
-[AllowAnonymous]
 public class AccountController : Controller
 {
     private readonly ILogger<AccountController> _logger;
-	private readonly IHttpContextAccessor _httpContextAccessor;
-	private readonly IUserService _userService;
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IUserService _userService;
 
     public AccountController(ILogger<AccountController> logger, IHttpContextAccessor httpContextAccessor, IUserService userService)
     {
         _logger = logger;
-		_httpContextAccessor = httpContextAccessor;
+        _httpContextAccessor = httpContextAccessor;
         _userService = userService;
     }
 
-    public IActionResult SignIn()
+	public IActionResult SignIn()
+	{
+		if (User.Identity.IsAuthenticated)
+		{
+			return RedirectToAction("Index", "Home");
+		}
+
+		return View();
+	}
+
+	public IActionResult Login(string returnUrl = "/")
     {
+        // If the user is already authenticated, no need to challenge
         if (User.Identity.IsAuthenticated)
         {
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("LoginCallback", new { returnUrl });
         }
 
+        var authenticationProperties = new LoginAuthenticationPropertiesBuilder()
+            .WithRedirectUri(Url.Action("LoginCallback", new { returnUrl }))
+            .Build();
+
+        // This will redirect to Auth0 for login
+        return Challenge(authenticationProperties, Auth0Constants.AuthenticationScheme);
+    }
+
+
+	[Authorize]
+    public async Task<IActionResult> LoginCallback(string returnUrl = "/")
+    {
+
+        var userUniqueIdentifier = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+
+		if (string.IsNullOrEmpty(userUniqueIdentifier))
+		{
+			return RedirectToAction("Error", "Home");
+		}
+
+		try
+		{
+
+            var person = await _userService.UserExists(userUniqueIdentifier);
+
+            if (person == false)
+            {
+                var info = new UserInfoViewModel
+                {
+                    Sid = userUniqueIdentifier,
+                    FirstName = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.GivenName)?.Value,
+                    LastName = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Surname)?.Value,
+                    Username = User.Identity.Name,
+                    Email = "user@example.com",
+                    ProfileImage = User.Claims.FirstOrDefault(c => c.Type == "picture")?.Value,
+                    Age = 0,
+                    Birthday = DateTime.MinValue,
+                    StartingWeight = 0,
+                    CurrentWeight = 0,
+                    Allergies = null,
+                    Goals = null
+                };
+
+                await _userService.CreateUser(info);
+            }
+
+            return LocalRedirect(returnUrl);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Something went wrong during login or creation of user: {ex}", ex);
+            return RedirectToAction("Error", "Home");
+        }
+    }
+
+    [Authorize]
+    public async Task Logout()
+    {
+        var authenticationProperties = new LogoutAuthenticationPropertiesBuilder()
+            // Indicate here where Auth0 should redirect the user after a logout.
+            // Note that the resulting absolute Uri must be whitelisted in 
+            .WithRedirectUri(Url.Action("Index", "Home"))
+            .Build();
+
+        await HttpContext.SignOutAsync(Auth0Constants.AuthenticationScheme, authenticationProperties);
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+    }
+
+    [Authorize]
+    public IActionResult Profile()
+    {
+        return View(new UserInfoViewModel()
+        {
+            FirstName = User.Identity.Name,
+            Email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value,
+            ProfileImage = User.Claims.FirstOrDefault(c => c.Type == "picture")?.Value
+        });
+    }
+
+
+    /// <summary>
+    /// This is just a helper action to enable you to easily see all claims related to a user. It helps when debugging your
+    /// application to see the in claims populated from the Auth0 ID Token
+    /// </summary>
+    /// <returns></returns>
+    [Authorize]
+    public IActionResult Claims()
+    {
         return View();
     }
 
-    [HttpPost]
-    [AllowAnonymous]
-    public IActionResult ExternalLogin(string returnUrl = null)
+    public IActionResult AccessDenied()
     {
-        var redirectUrl = Url.Action(nameof(ExternalLoginCallback), "Account", new { ReturnUrl = returnUrl });
-        var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
-        return Challenge(properties, OpenIdConnectDefaults.AuthenticationScheme);
+        return View();
     }
-
-    [AllowAnonymous]
-    public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
-    {
-        if (remoteError != null)
-        {
-            ModelState.AddModelError(string.Empty, $"Error from external provider: {remoteError}");
-            return RedirectToAction(nameof(SignIn));
-        }
-
-        var result = await HttpContext.AuthenticateAsync(OpenIdConnectDefaults.AuthenticationScheme);
-
-        if (result?.Principal == null)
-        {
-            return RedirectToAction(nameof(SignIn));
-        }
-
-		var email = _httpContextAccessor.HttpContext.User.Identity.Name ?? "N/A";
-
-        // Check if the user exists
-        try {
-
-			var person = await _userService.UserExists(email);
-
-            if(person != null)
-            {
-				return RedirectToLocal(returnUrl);
-			}
-		}
-        catch (Exception ex)
-        {
-			return RedirectToAction("SignIn", "Account");
-		}
-
-		return RedirectToAction("SignIn", "Account");
-	}
-
-
-	private IActionResult RedirectToLocal(string returnUrl)
-    {
-        if (Url.IsLocalUrl(returnUrl))
-        {
-            return Redirect(returnUrl);
-        }
-        else
-        {
-            return RedirectToAction("Index", "Home");
-        }
-    }
-
 }

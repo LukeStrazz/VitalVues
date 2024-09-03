@@ -4,6 +4,7 @@ using AiDietPlan.Models;
 using Microsoft.AspNetCore.Identity;
 using Services.Interfaces;
 using Services.ViewModels;
+using System.Security.Claims;
 
 namespace AiDietPlan.Controllers;
 

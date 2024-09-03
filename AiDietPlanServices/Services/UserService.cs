@@ -23,21 +23,12 @@ public class UserService : IUserService
         _context = context;
     }
 
-    public async Task<UserInfoViewModel> UserExists(string email)
+    public async Task<bool> UserExists(string uniqueToken)
     {
-        var person = await _context.People.FirstOrDefaultAsync(p => p.Email == email);
+		return await _context.People.AnyAsync(p => p.Sid == uniqueToken);
+	}
 
-        var viewModelPerson = new UserInfoViewModel
-        {
-            FirstName = person.FirstName, 
-            LastName = person.LastName, 
-            Email = email,
-        };
-
-        return viewModelPerson;
-    }
-
-    public async Task CreateUser(UserInfoViewModel info)
+	public async Task CreateUser(UserInfoViewModel info)
     {
         if (info != null)
         {
@@ -51,6 +42,7 @@ public class UserService : IUserService
 
             var person = new Person
             {
+                Sid = info.Sid,
                 FirstName = info.FirstName,
                 LastName = info.LastName,
                 Username = info.Username,
@@ -88,22 +80,19 @@ public class UserService : IUserService
                 age--;
             }
 
-            var userToUpdate = new Person
-            {
-                FirstName = info.FirstName,
-                LastName = info.LastName,
-                Username = info.Username,
-                Email = info.Email,
-                Age = age,
-                Birthday = info.Birthday,
-                StartingWeight = info.StartingWeight,
-                CurrentWeight = info.StartingWeight,
-                Allergies = info.Allergies
-            };
+            user.FirstName = info.FirstName;
+            user.LastName = info.LastName;
+            user.Username = info.Username;
+            user.Email = info.Email;
+            user.Age = age;
+            user.Birthday = info.Birthday;
+            user.StartingWeight = info.StartingWeight;
+            user.CurrentWeight = info.StartingWeight;
+            user.Allergies = info.Allergies;
 
             try
             {
-                _context.People.Update(userToUpdate);
+                _context.People.Update(user);
                 _context.SaveChanges();
             }
             catch (Exception ex)

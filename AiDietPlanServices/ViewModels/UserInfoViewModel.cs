@@ -11,7 +11,9 @@ public class UserInfoViewModel
 {
     public int Id { get; set; }
 
-    [Required]
+	public string Sid { get; set; }
+
+	[Required]
     public string FirstName { get; set; }
 
     [Required]
@@ -23,6 +25,8 @@ public class UserInfoViewModel
     [Required]
     [EmailAddress]
     public string Email { get; set; }
+
+    public string ProfileImage { get; set; }
 
     public float Age { get; set; }
     public DateTime Birthday { get; set; }
