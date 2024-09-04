@@ -10,26 +10,26 @@ using Services.Interfaces;
 using Services.Services;
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
+// builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+//     .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
 
-builder.Services.AddAuthorization(options =>
-{
-    options.FallbackPolicy = new AuthorizationPolicyBuilder()
-        .RequireAuthenticatedUser()
-        .Build();
+// builder.Services.AddAuthorization(options =>
+// {
+//     options.FallbackPolicy = new AuthorizationPolicyBuilder()
+//         .RequireAuthenticatedUser()
+//         .Build();
 
-    options.AddPolicy("AllowAnonymous", policy => policy.RequireAssertion(context => true));
-});
+//     options.AddPolicy("AllowAnonymous", policy => policy.RequireAssertion(context => true));
+// });
 
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    options.LoginPath = "/Account/SignIn";
-    options.AccessDeniedPath = "/Account/AccessDenied";
-});
+// builder.Services.ConfigureApplicationCookie(options =>
+// {
+//     options.LoginPath = "/Account/SignIn";
+//     options.AccessDeniedPath = "/Account/AccessDenied";
+// });
 
-builder.Services.AddRazorPages()
-    .AddMicrosoftIdentityUI();
+// builder.Services.AddRazorPages()
+//     .AddMicrosoftIdentityUI();
 
 
 // Add services to the container.
@@ -38,9 +38,9 @@ builder.Services.AddHttpContextAccessor();
 
 
 builder.Services.AddScoped<IUserService, UserService>();
-
-builder.Services.AddDbContext<DatabaseContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddScoped<IGoalService, GoalService>();
+// builder.Services.AddDbContext<DatabaseContext>(options =>
+//     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
 var app = builder.Build();
@@ -58,8 +58,8 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication();
-app.UseAuthorization();
+// app.UseAuthentication();
+// app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
 {
