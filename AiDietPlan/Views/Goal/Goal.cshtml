@@ -1,11 +1,11 @@
+@model IEnumerable<Services.ViewModels.GoalViewModel>
+
 @{
-  ViewData["Title"] = "Sign In";
+  ViewData["Title"] = "Goals";
 }
-<head>
-  
-</head>
 
 <section>
+    <h2>Create Goal</h2>
   <form class="row gx-3 gy-2 align-items-center">
     <div>
       <h1 style="font-family:'Courier New', Courier, monospace "width: 30; height: 30;" >GOALS</h1>
@@ -48,25 +48,38 @@
         />
       </div>
     </div>
-    
-    
-    <div class="col-auto">
-      <div class="form-check">
-        <input class="form-check-input" type="checkbox" id="autoSizingCheck2" />
-        <label class="form-check-label" for="autoSizingCheck2">
-          Add to Home
-        </label>
-      </div>
-      <div class="form-check">
-        <input class="form-check-input" type="checkbox" id="autoSizingCheck2" />
-        <label class="form-check-label" for="autoSizingCheck2">
-          Send Text
-        </label>
-      </div>
-    </div>
 
     <div class="col-auto">
       <button type="submit" class="btn btn-primary">Submit</button>
     </div>
   </form>
 </section>
+@if (Model.Any())
+{
+
+    <section>
+        <h2>Your Goals</h2>
+        <div class="row">
+            @foreach (var goal in Model)
+            {
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Goal Description</h5>
+                            <p class="card-text">@goal.Description</p>
+                            <p class="card-text"><strong>Start Date:</strong> @goal.startingGoalDate.ToShortDateString()</p>
+                            <p class="card-text"><strong>End Date:</strong> @goal.endGoalDate.ToShortDateString()</p>
+                            <p class="card-text"><strong>Status:</strong> @(goal.resolved ? "Resolved" : "In Progress")</p>
+                            <form method="post" action="/Goal/ResolveGoal">
+                                <input type="hidden" name="goalId" value="@goal.userSecretId" />
+                                <button type="submit" class="btn btn-success" @(goal.resolved ? "disabled" : "")>
+                                    Resolve Goal
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+}
