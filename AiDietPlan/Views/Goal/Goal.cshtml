@@ -1,0 +1,72 @@
+@{
+  ViewData["Title"] = "Sign In";
+}
+<head>
+  
+</head>
+
+<section>
+  <form class="row gx-3 gy-2 align-items-center">
+    <div>
+      <h1 style="font-family:'Courier New', Courier, monospace "width: 30; height: 30;" >GOALS</h1>
+    </div>
+    <hr class="rounded">
+    <div class="col-sm-3">
+      <label class="visually-hidden" for="specificSizeInputName">Weight</label>
+      <input
+        type="number"
+        class="form-control"
+        id="targetWeight"
+        placeholder="Target Weight"
+        min="50"
+        max="700"/>
+    </div>
+
+    <div class="col-sm-3">
+      <label class="visually-hidden" for="specificSizeInputGroupUsername">Username</label>
+      <div class="input-group">
+        <div class="input-group-text"></div>
+        <input
+          type="date"
+          class="form-control"
+          id="startDate"
+          placeholder="Start Date"
+        />
+      </div>
+    </div>
+
+
+    <div class="col-sm-3">
+      <label class="visually-hidden" for="specificSizeInputGroupUsername">endDate</label>
+      <div class="input-group">
+        <div class="input-group-text"></div>
+        <input
+          type="date"
+          class="form-control"
+          id="endDate"
+          placeholder="End Date"
+        />
+      </div>
+    </div>
+    
+    
+    <div class="col-auto">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="autoSizingCheck2" />
+        <label class="form-check-label" for="autoSizingCheck2">
+          Add to Home
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="autoSizingCheck2" />
+        <label class="form-check-label" for="autoSizingCheck2">
+          Send Text
+        </label>
+      </div>
+    </div>
+
+    <div class="col-auto">
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+  </form>
+</section>
