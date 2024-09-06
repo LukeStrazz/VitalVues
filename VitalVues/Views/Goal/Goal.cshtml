@@ -1,58 +1,53 @@
 @model IEnumerable<Services.ViewModels.GoalViewModel>
 
 @{
-  ViewData["Title"] = "Goals";
+    ViewData["Title"] = "Goals";
 }
 
 <section>
     <h2>Create Goal</h2>
-  <form class="row gx-3 gy-2 align-items-center">
-    <div>
-      <h1 style="font-family:'Courier New', Courier, monospace "width: 30; height: 30;" >GOALS</h1>
-    </div>
-    <hr class="rounded">
-    <div class="col-sm-3">
-      <label class="visually-hidden" for="specificSizeInputName">Weight</label>
-      <input
-        type="number"
-        class="form-control"
-        id="targetWeight"
-        placeholder="Target Weight"
-        min="50"
-        max="700"/>
-    </div>
+    <form class="row gx-3 gy-2 align-items-center">
+        <div>
+            <h1 style="font-family:'Courier New', Courier, monospace " width: 30; height: 30;">GOALS</h1>
+        </div>
+        <hr class="rounded">
+        <div class="col-sm-3">
+            <label class="visually-hidden" for="specificSizeInputName">Weight</label>
+            <input type="number"
+                   class="form-control"
+                   id="targetWeight"
+                   placeholder="Target Weight"
+                   min="50"
+                   max="700" />
+        </div>
 
-    <div class="col-sm-3">
-      <label class="visually-hidden" for="specificSizeInputGroupUsername">Username</label>
-      <div class="input-group">
-        <div class="input-group-text"></div>
-        <input
-          type="date"
-          class="form-control"
-          id="startDate"
-          placeholder="Start Date"
-        />
-      </div>
-    </div>
+        <div class="col-sm-3">
+            <label class="visually-hidden" for="specificSizeInputGroupUsername">Username</label>
+            <div class="input-group">
+                <div class="input-group-text"></div>
+                <input type="date"
+                       class="form-control"
+                       id="startDate"
+                       placeholder="Start Date" />
+            </div>
+        </div>
 
 
-    <div class="col-sm-3">
-      <label class="visually-hidden" for="specificSizeInputGroupUsername">endDate</label>
-      <div class="input-group">
-        <div class="input-group-text"></div>
-        <input
-          type="date"
-          class="form-control"
-          id="endDate"
-          placeholder="End Date"
-        />
-      </div>
-    </div>
+        <div class="col-sm-3">
+            <label class="visually-hidden" for="specificSizeInputGroupUsername">endDate</label>
+            <div class="input-group">
+                <div class="input-group-text"></div>
+                <input type="date"
+                       class="form-control"
+                       id="endDate"
+                       placeholder="End Date" />
+            </div>
+        </div>
 
-    <div class="col-auto">
-      <button type="submit" class="btn btn-primary">Submit</button>
-    </div>
-  </form>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
 </section>
 @if (Model.Any())
 {
@@ -83,3 +78,13 @@
         </div>
     </section>
 }
+
+<script>
+    /* TODO: Ajax calls for: 
+    api/GoalController/CrateGoal to make a goal,<-- Connect to "Submit" button IF all fields are not null
+    api/GoalController/UpdateGoal/id to update a goal, <-- Connect to "Update" button IF description is updated (HTML is not made for this yet) USE view model of goal
+    api/GoalController/ResolveGoal/id to resolve a goal,  <-- Connect to "Status" button IF clicked, mark goal as resolved/ complete USING ID of goal
+
+    Ajax call done in "User.cshtml" for referance!
+    */
+</script>
