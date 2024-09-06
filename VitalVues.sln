@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35222.181
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VitalVues", "VitalVues\VitalVues.csproj", "{1080C33B-42DF-4CFE-B448-EE0E2585725A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data", "VVData\Data.csproj", "{2A91A0E2-2DB8-4364-BDF5-E84FB383D0EF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services", "VVServices\Services.csproj", "{264CCD14-F796-41E2-B6D7-99D33F3D641E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1080C33B-42DF-4CFE-B448-EE0E2585725A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1080C33B-42DF-4CFE-B448-EE0E2585725A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1080C33B-42DF-4CFE-B448-EE0E2585725A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1080C33B-42DF-4CFE-B448-EE0E2585725A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A91A0E2-2DB8-4364-BDF5-E84FB383D0EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A91A0E2-2DB8-4364-BDF5-E84FB383D0EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A91A0E2-2DB8-4364-BDF5-E84FB383D0EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A91A0E2-2DB8-4364-BDF5-E84FB383D0EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{264CCD14-F796-41E2-B6D7-99D33F3D641E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{264CCD14-F796-41E2-B6D7-99D33F3D641E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{264CCD14-F796-41E2-B6D7-99D33F3D641E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{264CCD14-F796-41E2-B6D7-99D33F3D641E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {738E26D3-9778-4EFF-B605-381E055D6410}
+	EndGlobalSection
+EndGlobal
