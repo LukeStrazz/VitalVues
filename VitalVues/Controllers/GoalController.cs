@@ -18,7 +18,6 @@ public class GoalController : Controller
     }
 
     [HttpGet("Goal")]
-
     public IActionResult Goal()
     {
         var userUniqueIdentifier = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
@@ -27,31 +26,6 @@ public class GoalController : Controller
 
         return View(goals);
     }
-
-
-    [HttpPost("UpdateGoal")]
-    public IActionResult UpdateGoal([FromBody] GoalViewModel goalInfo)
-    {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-
-        if (goalInfo.Description == null)
-        {
-            return BadRequest("Goal information is null.");
-        }
-
-        _goalService.UpdateGoal(goalInfo);
-
-        return Ok(new
-        {
-            message = "Goal updated successfully!"
-            // TODO: Redirect to "Goals"
-        });
-    }
-
-
 
     [HttpPost("CreateGoal")]
     public IActionResult CreateGoal([FromBody] GoalViewModel goalInfo)
@@ -75,21 +49,42 @@ public class GoalController : Controller
         });
     }
 
-
-    [HttpPost("ResolveGoal/{id}")]
-    public IActionResult ResolveGoal([FromBody] int id)
+    [HttpPost("UpdateGoal")]
+    public IActionResult UpdateGoal([FromBody] GoalViewModel goalInfo)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
 
-        if (id == null)
+        if (goalInfo.Description == null)
         {
             return BadRequest("Goal information is null.");
         }
 
-        _goalService.ResolveGoal(id);
+        _goalService.UpdateGoal(goalInfo);
+
+        return Ok(new
+        {
+            message = "Goal updated successfully!"
+            // TODO: Redirect to "Goals"
+        });
+    }
+
+    [HttpPost("ResolveGoal")]
+    public IActionResult ResolveGoal([FromBody] GoalViewModel goalInfo)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        if (goalInfo.GoalId == null)
+        {
+            return BadRequest("Goal information is null.");
+        }
+
+        _goalService.ResolveGoal(goalInfo.GoalId);
 
         return Ok(new
         {
