@@ -49,7 +49,12 @@
     </div>
     <div class="col-md-4">
         <label for="Birthday" class="form-label">Birthday</label>
-        <input type="text" class="form-control" id="Birthday" placeholder="1/1/2001" value="@Model.Birthday" required>
+        <div class="input-group">
+            <div class="input-group-text">
+                <i class="fa fa-calendar"></i>
+            </div>
+            <input type="date" class="form-control" id="Birthday" value="@Model.Birthday.ToString("yyyy-MM-dd")" required />
+        </div>
     </div>
     <div class="col-md-4">
         <label for="Weight" class="form-label">Weight (lbs)</label>
@@ -57,7 +62,7 @@
     </div>
     <div class="col-md-4">
         <label for="Allergies" class="form-label">Allergies (comma separated)</label>
-        <input type="text" class="form-control" id="Allergies" value="@Model.Allergies" placeholder="e.g., Peanuts, Shellfish, Pollen">
+        <input type="text" class="form-control" id="Allergies" value="@string.Join(", ", Model.Allergies)" placeholder="e.g., Peanuts, Shellfish, Pollen">
     </div>
     <div class="col-12">
         <div class="form-check">
@@ -94,6 +99,18 @@
             var allergies = $("#Allergies").val().trim();
             var sid = $("#sidValue").val().trim();
             var profileImage = $("#profImageValue").data("profile-image").trim();
+
+            if (email === "user@example.com") {
+                alert("Please update your email address.");
+                return;
+            }
+
+            const minDate = new Date("1900-01-01");
+
+            if (birthday < minDate) {
+                alert("Birthday must be after January 1, 1900.");
+                return;
+            }
 
             if (!firstName || !lastName || !username || !birthday || !weight || !email) {
                 alert("Please fill out all required fields.");
