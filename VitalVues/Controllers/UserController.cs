@@ -47,7 +47,6 @@ public class UserController : Controller
         return Ok(new
         {
             message = "User updated successfully!"
-            // TODO: Redirect to "Goals"
         });
     }
 }
