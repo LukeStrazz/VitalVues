@@ -6,7 +6,7 @@
 
 <section>
     <h2>You can create a goal</h2>
-    <form id="goalF" class="row gx-3 gy-2 align-items-center">
+    <form id="goalForm" class="row gx-3 gy-2 align-items-center">
         <hr class="rounded">
         <div class="col-sm-3">
             <label class="visually-hidden" for="specificSizeInputName">Weight</label>
@@ -91,31 +91,31 @@
 
 <script>
 
-    const formGoal = document.getElementById("goalF");
-    const formID = document.getElementById("idF");
-
-    formGoal.addEventListener("submit", function(event){
+    const goalForm = document.getElementById("goalForm");
+    
+    goalForm.addEventListener("submit", function(event){
     event.preventDefault();
 
-
-    const weight = document.getElementById("targetWeight").value;
+    const goalId = 999; //Replace hardcoded value with goalID
+    const userSecretId = "192"; //get userSecretId to replace hardcoded value
+    const resolved = false; //initial resolved value is false
     const startDate = document.getElementById("startDate").value;
     const endDate = document.getElementById("endDate").value;
     const description = document.getElementById("description").value;
-    @* const userSecretId = "@Model.Id" *@
+    const targetWeight = document.getElementById("targetWeight").value; //add targetWeight to db
 
-    if(!weight || !startDate || !endDate || !description){
+
+    if(!targetWeight || !startDate || !endDate || !description){
         alert("Please fill out all required fields.");
         return;
     }
 
     const goalInfo = {
-        @* userSecretId: userSecretId,
-        goalId: userSecretId, *@
-        resolved: false,
-        weight: weight,
-        startDate: startDate,
-        endDate: endDate,
+        goalId: parseInt(goalId),
+        userSecretId: userSecretId, 
+        resolved: resolved,
+        startDate: new Date(startDate),
+        endDate: new Date(endDate),
         description: description
     };
 
