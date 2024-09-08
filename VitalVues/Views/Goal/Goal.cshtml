@@ -5,11 +5,8 @@
 }
 
 <section>
-    <h2>Create Goal</h2>
-    <form class="row gx-3 gy-2 align-items-center">
-        <div>
-            <h1 style="font-family:'Courier New', Courier, monospace " width: 30; height: 30;">GOALS</h1>
-        </div>
+    <h2>You can create a goal</h2>
+    <form id="goalF" class="row gx-3 gy-2 align-items-center">
         <hr class="rounded">
         <div class="col-sm-3">
             <label class="visually-hidden" for="specificSizeInputName">Weight</label>
@@ -22,7 +19,7 @@
         </div>
 
         <div class="col-sm-3">
-            <label class="visually-hidden" for="specificSizeInputGroupUsername">Username</label>
+            <label class="visually-hidden" for="specificSizeInputGroupUsername">Start Date</label>
             <div class="input-group">
                 <div class="input-group-text"></div>
                 <input type="date"
@@ -34,7 +31,7 @@
 
 
         <div class="col-sm-3">
-            <label class="visually-hidden" for="specificSizeInputGroupUsername">endDate</label>
+            <label class="visually-hidden" for="specificSizeInputGroupUsername">End Date</label>
             <div class="input-group">
                 <div class="input-group-text"></div>
                 <input type="date"
@@ -45,9 +42,22 @@
         </div>
 
         <div class="col-auto">
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button id="submit" type="submit" class="btn btn-primary">Submit</button>
         </div>
+
+        <div class="mb-3">
+        <textarea 
+                class="form-control"
+                id="description"
+                placeholder="Please enter description for your goal"
+                ></textarea>
+        </div>
+       
+
+
     </form>
+
+
 </section>
 @if (Model.Any())
 {
@@ -65,8 +75,8 @@
                             <p class="card-text"><strong>Start Date:</strong> @goal.startingGoalDate.ToShortDateString()</p>
                             <p class="card-text"><strong>End Date:</strong> @goal.endGoalDate.ToShortDateString()</p>
                             <p class="card-text"><strong>Status:</strong> @(goal.resolved ? "Resolved" : "In Progress")</p>
-                            <form method="post" action="/Goal/ResolveGoal">
-                                <input type="hidden" name="goalId" value="@goal.userSecretId" />
+                            <form id="idF" method="post" action="/Goal/ResolveGoal">
+                                <input id="goalId" type="hidden" name="goalId" value="@goal.userSecretId" />
                                 <button type="submit" class="btn btn-success" @(goal.resolved ? "disabled" : "")>
                                     Resolve Goal
                                 </button>
@@ -80,6 +90,58 @@
 }
 
 <script>
+
+    const formGoal = document.getElementById("goalF");
+    const formID = document.getElementById("idF");
+
+    formGoal.addEventListener("submit", function(event){
+    event.preventDefault();
+
+
+    const weight = document.getElementById("targetWeight").value;
+    const startDate = document.getElementById("startDate").value;
+    const endDate = document.getElementById("endDate").value;
+    const description = document.getElementById("description").value;
+    @* const userSecretId = "@Model.Id" *@
+
+    if(!weight || !startDate || !endDate || !description){
+        alert("Please fill out all required fields.");
+        return;
+    }
+
+    const goalInfo = {
+        @* userSecretId: userSecretId,
+        goalId: userSecretId, *@
+        resolved: false,
+        weight: weight,
+        startDate: startDate,
+        endDate: endDate,
+        description: description
+    };
+
+    const goalData = JSON.stringify(goalInfo);
+
+    const url = "/api/GoalController/CreateGoal";
+
+    
+    
+
+    fetch(url, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: goalData
+    })
+    .then(response => response.json()).then(data => alert("succes " + data)).catch(error => alert("error " + error)); 
+
+
+
+
+    });
+        
+         
+    
     /* TODO: Ajax calls for: 
     api/GoalController/CrateGoal to make a goal,<-- Connect to "Submit" button IF all fields are not null
     api/GoalController/UpdateGoal/id to update a goal, <-- Connect to "Update" button IF description is updated (HTML is not made for this yet) USE view model of goal
