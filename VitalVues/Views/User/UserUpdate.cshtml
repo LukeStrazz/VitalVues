@@ -106,9 +106,14 @@
             }
 
             const minDate = new Date("1900-01-01");
-
+            
             if (birthday < minDate) {
                 alert("Birthday must be after January 1, 1900.");
+                return;
+            }
+
+            if (weight < 1) {
+                alert("Weight must be filled out.");
                 return;
             }
 
