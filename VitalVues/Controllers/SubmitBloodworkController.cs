@@ -17,12 +17,15 @@ public class SubmitBloodworkController : Controller
 {
     private readonly ILogger<SubmitBloodworkController> _logger;
     private readonly IHttpClientFactory _clientFactory;
+    private readonly IConfiguration _configuration;
+    private readonly IChatService _chatService;
 
-
-    public SubmitBloodworkController(ILogger<SubmitBloodworkController> logger, IHttpClientFactory clientFactory)
+    public SubmitBloodworkController(ILogger<SubmitBloodworkController> logger, IHttpClientFactory clientFactory, IConfiguration configuration, IChatService chatService)
     {
         _logger = logger;
         _clientFactory = clientFactory;
+        _configuration = configuration;
+        _chatService = chatService;
     }
 
     [HttpGet("PDF")]
@@ -64,57 +67,19 @@ public class SubmitBloodworkController : Controller
 
         string combinedPdfContent = string.Join("\n", pdfContentList);
 
-        var response = await GetChatResponse(combinedPdfContent);
+        var apiKey = _configuration["API_KEY"];
+
+        if(apiKey != null)
+        {
+            return Json(new { success = false, message = "Could not connect to services right now." });
+        }
+
+        var response = await _chatService.GetChatResponse(apiKey, combinedPdfContent);
 
         return Json(new { success = true, message = "File uploaded successfully", content = response });
 
     }
 
-    public async Task<IActionResult> GetChatResponse([FromBody] string request)
-    {
-        var client = _clientFactory.CreateClient();
-        var apiKey = Environment.GetEnvironmentVariable("API_KEY");
-
-        if (string.IsNullOrEmpty(apiKey))
-        {
-            return StatusCode(500, "API key is missing or not configured.");
-        }
-
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
-
-        var requestBody = new
-        {
-            model = "gpt-4",
-            messages = new[]
-            {
-                new { role = "user", content = request }
-            }
-        };
-
-        var requestMessage = new HttpRequestMessage(HttpMethod.Post, "https://api.openai.com/v1/chat/completions")
-        {
-            Content = new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, "application/json")
-        };
-
-        var response = await client.SendAsync(requestMessage);
-        if (response.IsSuccessStatusCode)
-        {
-            var responseContent = await response.Content.ReadAsStringAsync();
-            var jsonResponse = JObject.Parse(responseContent);
-
-            // Ensure the response structure is correct
-            var reply = jsonResponse["choices"]?[0]?["message"]?["content"]?.ToString();
-            if (reply != null)
-            {
-                return Json(new { message = reply });
-            }
-            return StatusCode(500, "Unexpected response format.");
-        }
-        else
-        {
-            var errorContent = await response.Content.ReadAsStringAsync();
-            return StatusCode((int)response.StatusCode, "Error from API: " + errorContent);
-        }
-    }
+ 
 
 }
