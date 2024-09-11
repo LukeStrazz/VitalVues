@@ -66,7 +66,7 @@ public class SubmitBloodworkController : Controller
 
         var response = await GetChatResponse(combinedPdfContent);
 
-        return Json(new { success = true, message = "File uploaded successfully", content = response });
+        return Json(new { success = true, message = "File uploaded successfully", content = combinedPdfContent });
 
     }
 
