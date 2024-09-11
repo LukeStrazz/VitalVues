@@ -19,19 +19,25 @@ public class GoalController : Controller
 
     [HttpGet("Goal")]
     public IActionResult Goal()
-    {  
+    {
 
         var userUniqueIdentifier = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
 
-        var goals = _goalService.GetGoals(userUniqueIdentifier);
+        var goals = _goalService.GetGoals(userUniqueIdentifier).ToList();
 
-        return View(goals);
+        var userInfo = new UserInfoViewModel
+        {
+            Sid = userUniqueIdentifier,
+            Goals = goals
+        };
+
+        return View(userInfo);
     }
 
     [HttpPost("CreateGoal")]
     public IActionResult CreateGoal([FromBody] GoalViewModel goalInfo)
-    {   
-        
+    {
+
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);

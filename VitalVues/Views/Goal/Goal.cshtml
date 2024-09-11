@@ -1,12 +1,10 @@
-@model IEnumerable<Services.ViewModels.GoalViewModel>
+@model Services.ViewModels.UserInfoViewModel
 
-@{
-    ViewData["Title"] = "Goals";
-}
 
 <section>
-    <h2>You can create a goal</h2>
+    <h2>Create a New Goal</h2>
     <form id="goalForm" class="row gx-3 gy-2 align-items-center">
+        <input type="hidden" id="userSecretId" value="@Model.Sid" />
         <hr class="rounded">
         <div class="col-sm-3">
             <label class="visually-hidden" for="specificSizeInputName">Weight</label>
@@ -15,7 +13,7 @@
                    id="targetWeight"
                    placeholder="Target Weight"
                    min="50"
-                   max="700" />
+                   max="700"/>
         </div>
 
         <div class="col-sm-3">
@@ -52,42 +50,31 @@
                 placeholder="Please enter description for your goal"
                 ></textarea>
         </div>
-       
-
-
     </form>
-
-
 </section>
-@if (Model.Any())
-{
 
-    <section>
-        <h2>Your Goals</h2>
-        <div class="row">
-            @foreach (var goal in Model)
-            {
-                <div class="col-md-4 mb-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Goal Description</h5>
-                            <p class="card-text">@goal.Description</p>
-                            <p class="card-text"><strong>Start Date:</strong> @goal.startingGoalDate.ToShortDateString()</p>
-                            <p class="card-text"><strong>End Date:</strong> @goal.endGoalDate.ToShortDateString()</p>
-                            <p class="card-text"><strong>Status:</strong> @(goal.resolved ? "Resolved" : "In Progress")</p>
-                            <form id="idF" method="post" action="/Goal/ResolveGoal">
-                                <input id="goalId" type="hidden" name="goalId" value="@goal.userSecretId" />
-                                <button type="submit" class="btn btn-success" @(goal.resolved ? "disabled" : "")>
-                                    Resolve Goal
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            }
-        </div>
-    </section>
+
+<h2>Your Current Goals</h2>
+@if (Model.Goals != null && Model.Goals.Any())
+{
+    <ul>
+        @foreach (var goal in Model.Goals)
+        {
+            <li>
+                <strong>Description:</strong> @goal.Description <br />
+                <strong>Start Date:</strong> @goal.startingGoalDate.ToShortDateString() <br />
+                <strong>End Date:</strong> @goal.endGoalDate.ToShortDateString() <br />
+                <strong>Status:</strong> @(goal.resolved ? "Resolved" : "In Progress")
+                <hr class="solid">
+            </li>
+        }
+    </ul>
 }
+else
+{
+    <p>You don't have any goals yet. Create one below!</p>
+}
+
 
 <script>
 
@@ -96,22 +83,20 @@
     goalForm.addEventListener("submit", function(event){
     event.preventDefault();
 
-    const goalId = 999; //Replace hardcoded value with goalID
-    const userSecretId = "192"; //get userSecretId to replace hardcoded value
-    const resolved = false; //initial resolved value is false
+    const userSecretId = document.getElementById("userSecretId").value;
+    const resolved = false;
     const startDate = document.getElementById("startDate").value;
     const endDate = document.getElementById("endDate").value;
     const description = document.getElementById("description").value;
-    const targetWeight = document.getElementById("targetWeight").value; //add targetWeight to db
+    
 
 
-    if(!targetWeight || !startDate || !endDate || !description){
+    if(!startDate || !endDate || !description){
         alert("Please fill out all required fields.");
         return;
     }
 
     const goalInfo = {
-        goalId: parseInt(goalId),
         userSecretId: userSecretId, 
         resolved: resolved,
         startDate: new Date(startDate),
@@ -120,33 +105,25 @@
     };
 
     const goalData = JSON.stringify(goalInfo);
-
     const url = "/api/GoalController/CreateGoal";
 
     
     
 
     fetch(url, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: goalData
-    })
-    .then(response => response.json()).then(data => alert("succes " + data)).catch(error => alert("error " + error)); 
-
-
-
-
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: goalData
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => { throw new Error(text); });
+            }
+            return response.json();
+        })
+        .then(data => alert("Success: " + data))
+        .catch(error => alert("Error: " + error.message));
     });
-        
-         
-    
-    /* TODO: Ajax calls for: 
-    api/GoalController/CrateGoal to make a goal,<-- Connect to "Submit" button IF all fields are not null
-    api/GoalController/UpdateGoal/id to update a goal, <-- Connect to "Update" button IF description is updated (HTML is not made for this yet) USE view model of goal
-    api/GoalController/ResolveGoal/id to resolve a goal,  <-- Connect to "Status" button IF clicked, mark goal as resolved/ complete USING ID of goal
-
-    Ajax call done in "User.cshtml" for referance!
-    */
 </script>
