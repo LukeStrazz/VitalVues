@@ -66,7 +66,7 @@ public class SubmitBloodworkController : Controller
 
         var response = await GetChatResponse(combinedPdfContent);
 
-        return Json(new { success = true, message = "File uploaded successfully", content = combinedPdfContent });
+        return Json(new { success = true, message = "File uploaded successfully", content = response });
 
     }
 
@@ -74,11 +74,26 @@ public class SubmitBloodworkController : Controller
     {
         var client = _clientFactory.CreateClient();
         var apiKey = Environment.GetEnvironmentVariable("API_KEY");
+
+        if (string.IsNullOrEmpty(apiKey))
+        {
+            return StatusCode(500, "API key is missing or not configured.");
+        }
+
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+
+        var requestBody = new
+        {
+            model = "gpt-4",
+            messages = new[]
+            {
+                new { role = "user", content = request }
+            }
+        };
 
         var requestMessage = new HttpRequestMessage(HttpMethod.Post, "https://api.openai.com/v1/chat/completions")
         {
-            Content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json")
+            Content = new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, "application/json")
         };
 
         var response = await client.SendAsync(requestMessage);
@@ -86,8 +101,14 @@ public class SubmitBloodworkController : Controller
         {
             var responseContent = await response.Content.ReadAsStringAsync();
             var jsonResponse = JObject.Parse(responseContent);
-            var reply = jsonResponse["choices"][0]["message"]["content"].ToString();
-            return Json(new { message = reply });
+
+            // Ensure the response structure is correct
+            var reply = jsonResponse["choices"]?[0]?["message"]?["content"]?.ToString();
+            if (reply != null)
+            {
+                return Json(new { message = reply });
+            }
+            return StatusCode(500, "Unexpected response format.");
         }
         else
         {
@@ -95,4 +116,5 @@ public class SubmitBloodworkController : Controller
             return StatusCode((int)response.StatusCode, "Error from API: " + errorContent);
         }
     }
+
 }
