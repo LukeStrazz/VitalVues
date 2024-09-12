@@ -13,5 +13,6 @@ public class GoalViewModel
     public bool resolved { get; set; }
     public DateTime startingGoalDate { get; set; }
     public DateTime endGoalDate { get; set; }
+    public double? targetWeight { get; set; }
     public required string Description { get; set; }
 }

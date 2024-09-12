@@ -1,90 +1,102 @@
-@model IEnumerable<Services.ViewModels.GoalViewModel>
-
-@{
-    ViewData["Title"] = "Goals";
-}
+@model Services.ViewModels.UserInfoViewModel
 
 <section>
-    <h2>Create Goal</h2>
-    <form class="row gx-3 gy-2 align-items-center">
-        <div>
-            <h1 style="font-family:'Courier New', Courier, monospace " width: 30; height: 30;">GOALS</h1>
-        </div>
+    <h2>Create a New Goal</h2>
+    <form id="goalForm" class="row gx-2 gy-1 align-items-center">
+        <input type="hidden" id="userSecretId" value="@Model.Sid" />
         <hr class="rounded">
+
         <div class="col-sm-3">
-            <label class="visually-hidden" for="specificSizeInputName">Weight</label>
+            <label for="targetWeight">Target Weight</label>
             <input type="number"
                    class="form-control"
                    id="targetWeight"
                    placeholder="Target Weight"
                    min="50"
-                   max="700" />
+                   max="700"/>
         </div>
 
         <div class="col-sm-3">
-            <label class="visually-hidden" for="specificSizeInputGroupUsername">Username</label>
-            <div class="input-group">
-                <div class="input-group-text"></div>
-                <input type="date"
-                       class="form-control"
-                       id="startDate"
-                       placeholder="Start Date" />
-            </div>
+            <label for="startDate">Start Date</label>
+            <input type="date"
+                   class="form-control"
+                   id="startDate"
+                   placeholder="Start Date" />
         </div>
 
-
         <div class="col-sm-3">
-            <label class="visually-hidden" for="specificSizeInputGroupUsername">endDate</label>
-            <div class="input-group">
-                <div class="input-group-text"></div>
-                <input type="date"
-                       class="form-control"
-                       id="endDate"
-                       placeholder="End Date" />
-            </div>
+            <label for="endDate">End Date</label>
+            <input type="date"
+                   class="form-control"
+                   id="endDate"
+                   placeholder="End Date" />
+        </div>
+
+        <div class="col-sm-12 mb-2">
+            <label for="description">Description</label>
+            <textarea class="form-control" id="description" placeholder="Goal description"></textarea>
         </div>
 
         <div class="col-auto">
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button id="submit" type="submit" class="btn btn-primary">Submit</button>
         </div>
     </form>
 </section>
-@if (Model.Any())
-{
 
-    <section>
-        <h2>Your Goals</h2>
-        <div class="row">
-            @foreach (var goal in Model)
-            {
-                <div class="col-md-4 mb-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Goal Description</h5>
-                            <p class="card-text">@goal.Description</p>
-                            <p class="card-text"><strong>Start Date:</strong> @goal.startingGoalDate.ToShortDateString()</p>
-                            <p class="card-text"><strong>End Date:</strong> @goal.endGoalDate.ToShortDateString()</p>
-                            <p class="card-text"><strong>Status:</strong> @(goal.resolved ? "Resolved" : "In Progress")</p>
-                            <form method="post" action="/Goal/ResolveGoal">
-                                <input type="hidden" name="goalId" value="@goal.userSecretId" />
-                                <button type="submit" class="btn btn-success" @(goal.resolved ? "disabled" : "")>
-                                    Resolve Goal
-                                </button>
-                            </form>
-                        </div>
-                    </div>
+<h2>Your Current Goals</h2>
+@if (Model.Goals?.Any() == true)
+{
+    <ul>
+        @foreach (var goal in Model.Goals)
+        {
+            <div class="card w-50 mb-2">
+                <div class="card-body">
+                    <h5 class="card-title">Goal</h5>
+                    <p><strong>Description:</strong> @goal.Description</p>
+                    <p><strong>Start Date:</strong> @goal.startingGoalDate.ToShortDateString()</p>
+                    <p><strong>End Date:</strong> @goal.endGoalDate.ToShortDateString()</p>
+                    <p><strong>Status:</strong> @(goal.resolved ? "Resolved" : "In Progress")</p>
+                    <a href="#" class="btn btn-primary">Resolve the Goal</a>
                 </div>
-            }
-        </div>
-    </section>
+            </div>
+            <div class="progress mb-2">
+                <div class="progress-bar bg-success" style="width: 25%">25%</div>
+            </div>
+            <hr class="solid">
+        }
+    </ul>
+}
+else
+{
+    <p>You don't have any goals yet. Create one above!</p>
 }
 
 <script>
-    /* TODO: Ajax calls for: 
-    api/GoalController/CrateGoal to make a goal,<-- Connect to "Submit" button IF all fields are not null
-    api/GoalController/UpdateGoal/id to update a goal, <-- Connect to "Update" button IF description is updated (HTML is not made for this yet) USE view model of goal
-    api/GoalController/ResolveGoal/id to resolve a goal,  <-- Connect to "Status" button IF clicked, mark goal as resolved/ complete USING ID of goal
+    document.getElementById("goalForm").addEventListener("submit", function(event){
+        event.preventDefault();
 
-    Ajax call done in "User.cshtml" for referance!
-    */
+        const goalData = {
+            userSecretId: document.getElementById("userSecretId").value,
+            resolved: false,
+            startDate: document.getElementById("startDate").value,
+            endDate: document.getElementById("endDate").value,
+            description: document.getElementById("description").value
+        };
+
+        if (!goalData.startDate || !goalData.endDate || !goalData.description) {
+            alert("Please fill out all required fields.");
+            return;
+        }
+
+        fetch("/api/GoalController/CreateGoal", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(goalData)
+        })
+        .then(response => response.ok ? response.json() : Promise.reject(response.text()))
+        .then(data => alert("Success: " + data))
+        .catch(error => alert("Error: " + error.message));
+    });
 </script>
