@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 namespace Services.Interfaces;
 
 public interface IChatService
 {
-	public void SendChat();
+	public Task<string> GetChatResponse(string apiKey, string request);
 }
 
