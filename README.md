@@ -11,3 +11,9 @@ After Visual Studio and MSSQL are installed and ready,
 4) Copy secrets from Drive, put them in appsettings.Development.json. Ensure location matches.
 5) Migration will be made on run.
 6) Authorization will take you to Auth0, and your user will be given a secret Id that will be used for the program.
+
+For Mac users, use Ubuntu VM, follow: https://github.com/seed-labs/seed-labs/blob/master/lab-setup/apple-arm/seedvm-fusion.md
+
+Follow: https://www.youtube.com/watch?v=co6TkSzc0s8 for MSSQL.
+
+Authorization will not work unless IIS Express is configured. 
