@@ -15,8 +15,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient();
 
-//To use MVC we have to explicitly declare we are using it. Doing so will prevent a System.InvalidOperationException.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = null;
+    });
 
 var secretsPath = builder.Configuration["Secrets"];
 builder.Configuration.AddJsonFile(secretsPath, optional: false, reloadOnChange: true);
@@ -27,7 +30,6 @@ builder.Services.AddAuth0WebAppAuthentication(options =>
     options.ClientId = builder.Configuration["Auth0:ClientId"];
 });
 
-// Configure the HTTP request pipeline.
 builder.Services.ConfigureSameSiteNoneCookies();
 
 builder.Services.AddScoped<IUserService, UserService>();

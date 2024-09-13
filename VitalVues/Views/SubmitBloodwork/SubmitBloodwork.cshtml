@@ -1,0 +1,47 @@
+﻿@{
+    ViewData["Title"] = "Upload PDF";
+}
+
+<h2>Upload PDF</h2>
+
+<form id="uploadForm" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="pdfFile">Select PDF file:</label>
+        <input type="file" id="pdfFile" name="pdfFile" accept="application/pdf" class="form-control">
+    </div>
+    <button type="submit" class="btn btn-primary">Upload</button>
+</form>
+
+<div id="result"></div>
+
+<script>
+    $(document).ready(function () {
+        $('#uploadForm').submit(function (e) {
+            e.preventDefault();
+
+            var formData = new FormData();
+            var fileInput = $('#pdfFile')[0].files[0];
+            formData.append('pdfFile', fileInput);
+
+            $.ajax({
+                url: '@Url.Action("UploadPdf", "SubmitBloodwork")',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    if (response.success) {
+                        $('#result').html('<p>File uploaded successfully!</p>');
+                        $('#result').append('<pre>' + response.content + '</pre>');
+                    } else {
+                        $('#result').html('<p>Error: ' + response.message + '</p>');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    $('#result').html('<p>Error uploading file: ' + error + '</p>');
+                }
+            });
+        });
+    });
+</script>
+
