@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VVData.Data;
 
@@ -11,9 +12,11 @@ using VVData.Data;
 namespace Data.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240913222318_FastingTable")]
+    partial class FastingTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -98,9 +101,6 @@ namespace Data.Migrations
 
                     b.Property<DateTime>("startingGoalDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<double?>("targetWeight")
-                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
