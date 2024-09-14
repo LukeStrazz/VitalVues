@@ -8,28 +8,17 @@
 
         <div class="col-sm-3 mb-2">
             <label for="targetWeight">Target Weight</label>
-            <input type="number"
-                   class="form-control"
-                   id="targetWeight"
-                   placeholder="Please enter your target weight"
-                   min="50"
-                   max="700"/>
+            <input type="number" class="form-control" id="targetWeight" placeholder="Please enter your target weight" min="50" max="700" />
         </div>
 
         <div class="col-sm-3 mb-2">
             <label for="startDate">Start Date</label>
-            <input type="date"
-                   class="form-control"
-                   id="startDate"
-                   placeholder="Start Date" />
+            <input type="date" class="form-control" id="startDate" placeholder="Start Date" />
         </div>
 
         <div class="col-sm-3 mb-2">
             <label for="endDate">End Date</label>
-            <input type="date"
-                   class="form-control"
-                   id="endDate"
-                   placeholder="End Date" />
+            <input type="date" class="form-control" id="endDate" placeholder="End Date" />
         </div>
 
         <div class="col-sm-10 mb-2">
@@ -37,10 +26,10 @@
             <textarea class="form-control" id="description" placeholder="Please enter description for your goal."></textarea>
         </div>
 
-        <div class="col-sm-2 ">
+        <div class="col-sm-2">
             <button id="submit" type="submit" class="btn btn-primary mb-3 ml-3">Submit</button>
         </div>
-         <hr class="rounded">
+        <hr class="rounded">
     </form>
 </section>
 
@@ -61,6 +50,7 @@
                     <p><strong>End Date:</strong> @goal.endGoalDate.ToShortDateString()</p>
                     <p><strong>Status:</strong> @(goal.resolved ? "Resolved" : "In Progress")</p>
                     <p><strong>Description:</strong> @goal.Description</p>
+                    
                     <input type="hidden" id="userSecretID-@goal.GoalId" value="@Model.Sid" />
                     <input type="hidden" id="resolved-@goal.GoalId" value="@goal.resolved" />
                     <input type="hidden" id="startDate-@goal.GoalId" value="@goal.startingGoalDate" />
@@ -73,15 +63,21 @@
                 </div>
             </div>
             
-                var targetWeight = goal.targetWeight.HasValue ? goal.targetWeight.Value : 0;
-                var currentWeight = Model.CurrentWeight;
-                var progressPercentage = targetWeight > 0 ? ((currentWeight / targetWeight)*100): 0;
-            
+                var startDate = goal.startingGoalDate;
+                var endDate = goal.endGoalDate;
+                var currentDate = DateTime.Now;
+
+                var totalDays = (endDate - startDate).TotalDays;
+                var pastDays = (currentDate - startDate).TotalDays;
+
+                var progressPercentage = totalDays > 0 ? pastDays/totalDays * 100 : 31;
+
+
             <div class="progress mb-2">
-                <div class="progress-bar bg-success" style="width: @progressPercentage%">@progressPercentage%</div>
+                <div class="progress-bar bg-success" style="width: @progressPercentage%">@progressPercentage</div>
+                <hr class="rounded">
             </div>
             }
-             <hr class="rounded">
         }
     </ul>
 }
@@ -121,46 +117,41 @@ else
         .catch(response => response.text().then(errorMessage => alert("Error: " + errorMessage)));
     });
 
-
-
     document.querySelectorAll('.resolve-goal-btn').forEach(button => {
         button.addEventListener('click', function(event) {
             event.preventDefault();
 
+            const goalId = this.getAttribute('data-goalid');
+            const userSecretId = document.getElementById(`userSecretID-${goalId}`).value;
+            const startDate = document.getElementById(`startDate-${goalId}`).value;
+            const endDate = document.getElementById(`endDate-${goalId}`).value;
+            const description = document.getElementById(`description-${goalId}`).value;
+            const targetWeight = document.getElementById(`targetWeight-${goalId}`).value;
 
-        const goalId = this.getAttribute('data-goalid');
-        const userSecretId = document.getElementById(`userSecretID-${goalId}`).value;
-        const startDate = document.getElementById(`startDate-${goalId}`).value;
-        const endDate = document.getElementById(`endDate-${goalId}`).value;
-        const description = document.getElementById(`description-${goalId}`).value;
-        const targetWeight = document.getElementById(`targetWeight-${goalId}`).value;
+            const goalDataResolve = {
+                goalId: goalId,
+                userSecretId: userSecretId,
+                startDate: startDate,
+                endDate: endDate,
+                description: description,
+                targetWeight: targetWeight
+            };
 
-        const goalDataResolve = {
-            goalId: goalId,
-            userSecretId: userSecretId,
-            startDate: startDate,
-            endDate: endDate,
-            description: description,
-            targetWeight: targetWeight
-        };
-            
             fetch("/api/GoalController/ResolveGoal", {
                 method: "POST",
                 headers: {
-                 "Content-Type": "application/json"
-                 },
+                    "Content-Type": "application/json"
+                },
                 body: JSON.stringify(goalDataResolve)
-})
-.then(response => {
-    if (!response.ok) {
-        return response.text().then(text => { throw new Error(text); });
-    }
-    return response.json();
-})
-.then(data => alert(data.message))
-.catch(error => alert("Error: " + error.message));
-
-            
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => { throw new Error(text); });
+                }
+                return response.json();
+            })
+            .then(data => alert(data.message))
+            .catch(error => alert("Error: " + error.message));
         });
     });
 </script>
