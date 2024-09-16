@@ -1,0 +1,126 @@
+﻿.chat-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    margin: 10px;
+    margin-right: 20px;
+    bottom: 5rem;
+    position: absolute;
+    min-width: -webkit-fill-available;
+}
+
+.output {
+    flex-grow: 1;
+    overflow-y: scroll;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    border-top: 1px groove;
+    border: solid aqua 2px;
+    border-radius: 12px;
+    padding: 1rem;
+}
+
+.output-text{
+
+
+}
+
+.message {
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 10px;
+    max-width: 70%;
+}
+
+    .message button {
+        padding: 5px 10px;
+        margin-top: 5px;
+        cursor: pointer;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+    }
+
+        .message button:hover {
+            background-color: #45a049;
+        }
+
+.user-message {
+    background-color: #e0e0e0;
+    align-self: flex-start;
+}
+
+.bot-message {
+    background-color: #007bff;
+    color: white;
+    align-self: flex-end;
+    margin-right: 10px;
+}
+
+.input-form {
+    display: flex;
+    margin-top: 10px;
+}
+
+    .input-form textarea {
+        flex-grow: 1;
+        border: 1px solid gold;
+        border-radius: 5px;
+        padding: 10px;
+        margin-right: 10px;
+        background-color: #333;
+        color: gold;
+        resize: none; /* Prevents manual resizing */
+        overflow-x: hidden; /* Hide horizontal overflow */
+        overflow-y: auto; /* Automatically add vertical scrollbar when needed */
+        line-height: 1.5; /* Improves readability */
+        min-height: 50px; /* Minimum height */
+        max-height: 150px; /* Maximum height before scrolling */
+        white-space: pre-wrap; /* Ensures that text wraps and whitespace is preserved */
+        word-wrap: break-word; /* Breaks long words if necessary to fit within the width */
+    }
+
+
+    .input-form button {
+        padding: 10px 20px;
+        border-radius: 5px;
+        border: none;
+        background-color: gold;
+        color: #333;
+        cursor: pointer;
+    }
+
+        .input-form button:hover {
+            background-color: goldenrod;
+        }
+
+.output::-webkit-scrollbar {
+    width: 12px;
+}
+
+.output::-webkit-scrollbar-track {
+    background: #222;
+    border-radius: 10px;
+}
+
+.output::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 10px;
+}
+
+    .output::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+
+.output::-webkit-scrollbar-button {
+    display: none;
+}
+
+/* Styling for Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #333 #222;
+}
