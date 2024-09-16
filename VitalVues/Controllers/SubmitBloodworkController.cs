@@ -69,7 +69,7 @@ public class SubmitBloodworkController : Controller
 
         var apiKey = _configuration["API_KEY"];
 
-        if(apiKey != null)
+        if(apiKey == null)
         {
             return Json(new { success = false, message = "Could not connect to services right now." });
         }
