@@ -45,21 +45,21 @@
                     <h5 class="card-title">GOAL</h5>
                     <hr class="rounded">
                     @if(goal.targetWeight.HasValue && goal.targetWeight.Value != 0){
-                    <p><strong>Target Weight:</strong> @goal.targetWeight</p> }
-                    <p><strong>Start Date:</strong> @goal.startingGoalDate.ToShortDateString()</p>
-                    <p><strong>End Date:</strong> @goal.endGoalDate.ToShortDateString()</p>
-                    <p><strong>Status:</strong> @(goal.resolved ? "Resolved" : "In Progress")</p>
-                    <p><strong>Description:</strong> @goal.Description</p>
-                    
+                    <label for="targetWeight">Target Weight:</label>
+                    <input type="number" id="targetWeight-@goal.GoalId" value="@goal.targetWeight" /> }<br><br>
+                    <label for="startDate">   Start Date    : </label>
+                    <input type="date" id="startDate-@goal.GoalId" value="@goal.startingGoalDate" /><br><br>
+                    <label for="endDate">End Date    : </label>
+                    <input type="date" id="endDate-@goal.GoalId" value="@goal.endGoalDate" /><br><br>
+                    <label for="description">Description:</label>
+                    <input type="text" id="description-@goal.GoalId" value="@goal.Description" /><br><br>
                     <input type="hidden" id="userSecretID-@goal.GoalId" value="@Model.Sid" />
                     <input type="hidden" id="resolved-@goal.GoalId" value="@goal.resolved" />
-                    <input type="hidden" id="startDate-@goal.GoalId" value="@goal.startingGoalDate" />
-                    <input type="hidden" id="endDate-@goal.GoalId" value="@goal.endGoalDate" />
-                    <input type="hidden" id="description-@goal.GoalId" value="@goal.Description" />
-                    <input type="hidden" id="targetWeight-@goal.GoalId" value="@goal.targetWeight" />
                     <input type="hidden" id="goalId-@goal.GoalId" value="@goal.GoalId" />
                     <input type="hidden" id="currentWight-@goal.GoalId" value="@Model.CurrentWeight" />
-                    <a href="#" class="btn btn-primary resolve-goal-btn" data-goalid="@goal.GoalId">Resolve the Goal</a>
+                    <a href="#" class="btn btn-primary resolve-goal-btn" data-goalid="@goal.GoalId">Resolve</a>
+                    <a href="#" class="btn btn-primary edit-goal-btn" data-goalid="@goal.GoalId">Update</a>
+                    <br>
                 </div>
             </div>
             
@@ -74,8 +74,9 @@
 
 
             <div class="progress mb-2">
-                <div class="progress-bar bg-success" style="width: @progressPercentage%">@progressPercentage</div>
+                <div class="progress-bar bg-success" style="width: @progressPercentage%">@progressPercentage</div><br><br><br><br>
                 <hr class="rounded">
+                
             </div>
             }
         }
@@ -143,6 +144,44 @@ else
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify(goalDataResolve)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => { throw new Error(text); });
+                }
+                return response.json();
+            })
+            .then(data => alert(data.message))
+            .catch(error => alert("Error: " + error.message));
+        });
+    });
+
+    document.querySelectorAll('.edit-goal-btn').forEach(button => {
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
+
+            const goalId = this.getAttribute('data-goalid');
+            const userSecretId = document.getElementById(`userSecretID-${goalId}`).value;
+            const startDate = document.getElementById(`startDate-${goalId}`).value;
+            const endDate = document.getElementById(`endDate-${goalId}`).value;
+            const description = document.getElementById(`description-${goalId}`).value;
+            const targetWeight = document.getElementById(`targetWeight-${goalId}`).value;
+
+            const goalDataEdit = {
+                goalId: goalId,
+                userSecretId: userSecretId,
+                startDate: startDate,
+                endDate: endDate,
+                description: description,
+                targetWeight: targetWeight
+            };
+
+            fetch("/api/GoalController/UpdateGoal", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(goalDataEdit)
             })
             .then(response => {
                 if (!response.ok) {
