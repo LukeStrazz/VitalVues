@@ -12,13 +12,13 @@
         </div>
 
         <div class="col-sm-3 mb-2">
-            <label for="startDate">Start Date</label>
-            <input type="date" class="form-control" id="startDate" placeholder="Start Date" />
+            <label for="startingGoalDate">Start Date</label>
+            <input type="date" class="form-control" id="startingGoalDate" placeholder="Start Date" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
         </div>
 
         <div class="col-sm-3 mb-2">
-            <label for="endDate">End Date</label>
-            <input type="date" class="form-control" id="endDate" placeholder="End Date" />
+            <label for="endGoalDate">End Date</label>
+            <input type="date" class="form-control" id="endGoalDate" placeholder="End Date" value="@DateTime.Now.AddDays(30).ToString("yyyy-MM-dd")" />
         </div>
 
         <div class="col-sm-10 mb-2">
@@ -33,49 +33,76 @@
     </form>
 </section>
 
-<h4>Goals in progress</h4>
+<h4>Goals in Progress</h4>
 @if (Model.Goals?.Any() == true)
 {
     <ul>
         @foreach (var goal in Model.Goals)
         {
-            @if(@goal.resolved == false){
-            <div class="card w-50 mb-2">
-                <div class="card-body">
-                    <h5 class="card-title">GOAL</h5>
-                    <hr class="rounded">
-                    @if(goal.targetWeight.HasValue && goal.targetWeight.Value != 0){
-                    <p><strong>Target Weight:</strong> @goal.targetWeight</p> }
-                    <p><strong>Start Date:</strong> @goal.startingGoalDate.ToShortDateString()</p>
-                    <p><strong>End Date:</strong> @goal.endGoalDate.ToShortDateString()</p>
-                    <p><strong>Status:</strong> @(goal.resolved ? "Resolved" : "In Progress")</p>
-                    <p><strong>Description:</strong> @goal.Description</p>
-                    
-                    <input type="hidden" id="userSecretID-@goal.GoalId" value="@Model.Sid" />
-                    <input type="hidden" id="resolved-@goal.GoalId" value="@goal.resolved" />
-                    <input type="hidden" id="startDate-@goal.GoalId" value="@goal.startingGoalDate" />
-                    <input type="hidden" id="endDate-@goal.GoalId" value="@goal.endGoalDate" />
-                    <input type="hidden" id="description-@goal.GoalId" value="@goal.Description" />
-                    <input type="hidden" id="targetWeight-@goal.GoalId" value="@goal.targetWeight" />
-                    <input type="hidden" id="goalId-@goal.GoalId" value="@goal.GoalId" />
-                    <input type="hidden" id="currentWight-@goal.GoalId" value="@Model.CurrentWeight" />
-                    <a href="#" class="btn btn-primary resolve-goal-btn" data-goalid="@goal.GoalId">Resolve the Goal</a>
+            if (!goal.resolved)
+            {
+                <div class="card w-75 mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">GOAL</h5>
+                        <hr class="rounded">
+
+                        @if (goal.targetWeight.HasValue && goal.targetWeight.Value != 0)
+                        {
+                            <div class="form-group row">
+                                <label for="targetWeight-@goal.GoalId" class="col-sm-2 col-form-label">Target Weight:</label>
+                                <div class="col-sm-10">
+                                    <input type="number" id="targetWeight-@goal.GoalId" class="form-control" value="@goal.targetWeight" />
+                                </div>
+                            </div>
+                        }
+
+                        <div class="form-group row">
+                            <label for="startingGoalDate-@goal.GoalId" class="col-sm-2 col-form-label">Start Date:</label>
+                            <div class="col-sm-10">
+                                <input type="date" id="startingGoalDate-@goal.GoalId" class="form-control" value="@goal.startingGoalDate.ToString("yyyy-MM-dd")" />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="endGoalDate-@goal.GoalId" class="col-sm-2 col-form-label">End Date:</label>
+                            <div class="col-sm-10">
+                                <input type="date" id="endGoalDate-@goal.GoalId" class="form-control" value="@goal.endGoalDate.ToString("yyyy-MM-dd")" />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="description-@goal.GoalId" class="col-sm-2 col-form-label">Description:</label>
+                            <div class="col-sm-10">
+                                <input type="text" id="description-@goal.GoalId" class="form-control" value="@goal.Description" />
+                            </div>
+                        </div>
+
+                        <input type="hidden" id="userSecretID-@goal.GoalId" value="@Model.Sid" />
+                        <input type="hidden" id="resolved-@goal.GoalId" value="@goal.resolved" />
+                        <input type="hidden" id="goalId-@goal.GoalId" value="@goal.GoalId" />
+                        <input type="hidden" id="currentWeight-@goal.GoalId" value="@Model.CurrentWeight" />
+
+                        <div class="mt-3">
+                            <a href="#" class="btn btn-primary resolve-goal-btn" data-goalid="@goal.GoalId">Resolve</a>
+                            <a href="#" class="btn btn-secondary edit-goal-btn" data-goalid="@goal.GoalId">Update</a>
+                        </div>
+
+                         @{
+                        var startingGoalDate = goal.startingGoalDate;
+                        var endGoalDate = goal.endGoalDate;
+                        var currentDate = DateTime.Now;
+                        var totalDays = (endGoalDate - startingGoalDate).TotalDays;
+                        var pastDays = (currentDate - startingGoalDate).TotalDays;
+                        var progressPercentage = totalDays > 0 ? (pastDays / totalDays) * 100 : 0;
+                        progressPercentage = Math.Clamp(progressPercentage, 0, 100);
+                        }
+                        
+                    <div class="progress mb-2">
+                       <div class="progress-bar bg-success" role="progressbar" style="width: @progressPercentage%;" aria-valuenow="@progressPercentage.ToString("0")" aria-valuemin="0" aria-valuemax="100">
+                            @progressPercentage.ToString("0.##")%
+                        <hr class="rounded"></div>
+                    </div>
                 </div>
-            </div>
-            
-                var startDate = goal.startingGoalDate;
-                var endDate = goal.endGoalDate;
-                var currentDate = DateTime.Now;
-
-                var totalDays = (endDate - startDate).TotalDays;
-                var pastDays = (currentDate - startDate).TotalDays;
-
-                var progressPercentage = totalDays > 0 ? pastDays/totalDays * 100 : 31;
-
-
-            <div class="progress mb-2">
-                <div class="progress-bar bg-success" style="width: @progressPercentage%">@progressPercentage</div>
-                <hr class="rounded">
             </div>
             }
         }
@@ -86,7 +113,6 @@ else
     <p>You don't have any goals yet. Create one above!</p>
 }
 
-
 <script>
     document.getElementById("goalForm").addEventListener("submit", function(event) {
         event.preventDefault();
@@ -94,13 +120,15 @@ else
         const goalData = {
             userSecretId: document.getElementById("userSecretId").value,
             resolved: false,
-            startDate: document.getElementById("startDate").value,
-            endDate: document.getElementById("endDate").value,
+            startingGoalDate: document.getElementById("startingGoalDate").value,
+            endGoalDate: document.getElementById("endGoalDate").value,
             description: document.getElementById("description").value,
             targetWeight: document.getElementById("targetWeight").value
         };
 
-        if (!goalData.startDate || !goalData.endDate || !goalData.description) {
+        console.log(goalData);
+
+        if (!goalData.startingGoalDate || !goalData.endGoalDate || !goalData.description) {
             alert("Please fill out all required fields.");
             return;
         }
@@ -114,7 +142,7 @@ else
         })
         .then(response => response.ok ? response.json() : Promise.reject(response.text()))
         .then(data => alert("Success: " + data))
-        .catch(response => response.text().then(errorMessage => alert("Error: " + errorMessage)));
+        .catch(response => response.then(errorMessage => alert("Error: " + errorMessage)));
     });
 
     document.querySelectorAll('.resolve-goal-btn').forEach(button => {
@@ -123,16 +151,16 @@ else
 
             const goalId = this.getAttribute('data-goalid');
             const userSecretId = document.getElementById(`userSecretID-${goalId}`).value;
-            const startDate = document.getElementById(`startDate-${goalId}`).value;
-            const endDate = document.getElementById(`endDate-${goalId}`).value;
+            const startingGoalDate = document.getElementById(`startingGoalDate-${goalId}`).value;
+            const endGoalDate = document.getElementById(`endGoalDate-${goalId}`).value;
             const description = document.getElementById(`description-${goalId}`).value;
             const targetWeight = document.getElementById(`targetWeight-${goalId}`).value;
 
             const goalDataResolve = {
                 goalId: goalId,
                 userSecretId: userSecretId,
-                startDate: startDate,
-                endDate: endDate,
+                startingGoalDate: startingGoalDate,
+                endGoalDate: endGoalDate,
                 description: description,
                 targetWeight: targetWeight
             };
@@ -144,14 +172,42 @@ else
                 },
                 body: JSON.stringify(goalDataResolve)
             })
-            .then(response => {
-                if (!response.ok) {
-                    return response.text().then(text => { throw new Error(text); });
-                }
-                return response.json();
-            })
+            .then(response => response.ok ? response.json() : Promise.reject(response.text()))
             .then(data => alert(data.message))
-            .catch(error => alert("Error: " + error.message));
+            .catch(error => alert("Error: " + error));
+        });
+    });
+
+    document.querySelectorAll('.edit-goal-btn').forEach(button => {
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
+
+            const goalId = this.getAttribute('data-goalid');
+            const userSecretId = document.getElementById(`userSecretID-${goalId}`).value;
+            const startingGoalDate = document.getElementById(`startingGoalDate-${goalId}`).value;
+            const endGoalDate = document.getElementById(`endGoalDate-${goalId}`).value;
+            const description = document.getElementById(`description-${goalId}`).value;
+            const targetWeight = document.getElementById(`targetWeight-${goalId}`).value;
+
+            const goalDataEdit = {
+                goalId: goalId,
+                userSecretId: userSecretId,
+                startingGoalDate: startingGoalDate,
+                endGoalDate: endGoalDate,
+                description: description,
+                targetWeight: targetWeight
+            };
+
+            fetch("/api/GoalController/UpdateGoal", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(goalDataEdit)
+            })
+            .then(response => response.ok ? response.json() : Promise.reject(response.text()))
+            .then(data => alert(data.message))
+            .catch(error => alert("Error: " + error));
         });
     });
 </script>
