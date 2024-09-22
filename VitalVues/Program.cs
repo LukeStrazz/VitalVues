@@ -10,6 +10,7 @@ using Services.Services;
 using Auth0.AspNetCore.Authentication;
 using VitalVues.Support;
 using VVData.Data;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpContextAccessor();
@@ -36,6 +37,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IGoalService, GoalService>();
 builder.Services.AddScoped<IBloodworkService, BloodworkService>();
+builder.Services.AddScoped<IFastingService, FastService>();
 
 builder.Services.AddDbContext<DatabaseContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

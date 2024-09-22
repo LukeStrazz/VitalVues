@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Mvc;
+using Services.ViewModels;
+using VVData.Data.Models;
 
 namespace Services.Interfaces
 {
-    internal class IFastingService
+    public interface IFastingService
     {
+        public void SaveFast(FastingViewModel fastingViewModel);
+        public Fast GetLatestFastingSession(string userID); 
+        public void ResetFastingSession(string userID);
+
     }
 }
