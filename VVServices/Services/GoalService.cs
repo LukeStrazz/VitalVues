@@ -23,21 +23,23 @@ public class GoalService : IGoalService
 
         var goals = _context.Goals.Where(g => g.UserID == userSecretId);
 
-        if(goals == null)
+        if (goals == null)
         {
             return Enumerable.Empty<GoalViewModel>();
         }
 
         var viewModelGoals = new List<GoalViewModel>();
-        foreach( var goal in goals)
+        foreach (var goal in goals)
         {
-            var goalToAdd = new GoalViewModel { 
+            var goalToAdd = new GoalViewModel
+            {
                 Description = goal.Description,
                 startingGoalDate = goal.startingGoalDate,
                 endGoalDate = goal.endGoalDate,
                 resolved = goal.resolved,
                 userSecretId = goal.UserID,
-                GoalId = goal.Id
+                GoalId = goal.Id,
+                targetWeight = goal.targetWeight
             };
 
             viewModelGoals.Add(goalToAdd);
@@ -54,7 +56,8 @@ public class GoalService : IGoalService
             startingGoalDate = goalViewModel.startingGoalDate,
             endGoalDate = goalViewModel.endGoalDate,
             resolved = goalViewModel.resolved,
-            UserID = goalViewModel.userSecretId
+            UserID = goalViewModel.userSecretId,
+            targetWeight = goalViewModel.targetWeight
         };
 
         _context.Goals.Add(newGoal);
@@ -72,6 +75,7 @@ public class GoalService : IGoalService
             goalToUpdate.startingGoalDate = goalViewModel.startingGoalDate;
             goalToUpdate.endGoalDate = goalViewModel.endGoalDate;
             goalToUpdate.resolved = goalViewModel.resolved;
+            goalToUpdate.targetWeight = goalViewModel.targetWeight;
 
             _context.SaveChanges();
         }

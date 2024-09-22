@@ -1,0 +1,116 @@
+﻿@{
+    ViewData["Title"] = "Upload PDF";
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/SubmitBloodwork.css" asp-append-version="true" />
+</head>
+
+<h2>Upload PDF</h2>
+
+<form id="uploadForm" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="pdfFile">Select PDF file:</label>
+        <input type="file" id="pdfFile" name="pdfFile" accept="application/pdf" class="form-control">
+    </div>
+    <button type="submit" id="sendButton" class="btn btn-primary">
+        <span class="spinner-border spinner-border-sm" aria-hidden="true" style="display: none;" id="spinner"></span>
+        <span id="buttonText">Submit</span>
+    </button>
+</form>
+
+<div class="chat-container">
+    <div id="chatOutput" class="output"></div>
+    <form id="promptForm" class="input-form">
+        <textarea id="promptInput" placeholder="Ask a Question..." required></textarea>
+        <button type="submit" id="sendButton" class="btn btn-primary">
+            <span class="spinner-border spinner-border-sm" aria-hidden="true" style="display: none;" id="spinner"></span>
+            <span id="buttonText">Send</span>
+        </button>
+    </form>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        const pdfForm = document.getElementById('uploadForm');
+
+        const userChatForm = document.getElementById('promptForm');
+        userChatForm.style.display = 'none';
+
+        const outputField = document.getElementById('chatOutput');
+        outputField.style.display = 'none';
+
+        $('#uploadForm').submit(function (e) {
+            e.preventDefault();
+
+            outputField.style.display = 'block';
+            var formData = new FormData();
+            var fileInput = $('#pdfFile')[0].files[0];
+
+            if (fileInput === undefined) {
+                $('#chatOutput').html('<p>No File Provided. Please try again.</p>');
+                return;
+            }
+
+            $('#chatOutput').html('<p>Reading file...</p>');
+
+            formData.append('pdfFile', fileInput);
+
+            const inputField = document.getElementById('uploadForm');
+            const prompt = inputField.value;
+            const spinner = document.getElementById('spinner');
+            const buttonText = document.getElementById('buttonText');
+            const sendButton = document.getElementById('sendButton');
+
+            spinner.style.display = 'inline-block'; // Show spinner
+            spinner.style.color = 'darkgoldenrod';
+
+            sendButton.style.backgroundColor = 'goldenrod';
+            buttonText.textContent = 'Loading...'; // Change button text
+            sendButton.disabled = true; // Disable the button to prevent multiple submissions
+
+
+            $.ajax({
+                url: '@Url.Action("UploadPdf", "SubmitBloodwork")',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    if (response.success) {
+                        $('#chatOutput').html('<p>File uploaded successfully!</p>');
+                        $('#chatOutput').append('<div class="output-text">' + response.content + '</div>');
+
+                        displayUserChat();
+                    } else {
+                        $('#chatOutput').html('<p>Error: ' + response.message + '</p>');
+                    }
+                    // resetUI();
+                },
+                error: function (xhr, status, error) {
+                    $('#chatOutput').html('<p>Error uploading file: ' + error + '</p>');
+                }
+            });
+        });
+    });
+
+    function resetUI() {
+        const inputField = document.getElementById('promptInput');
+        spinner.style.display = 'none';
+        buttonText.textContent = 'Submit';
+        sendButton.disabled = false;
+        sendButton.style.backgroundColor = 'gold';
+    }
+
+    function displayUserChat() {
+        const userChatForm = document.getElementById('promptForm');
+        userChatForm.style.display = 'flex';
+
+        const pdfForm = document.getElementById('uploadForm');
+        pdfForm.style.display = 'none';
+
+        // TODO: Continue chat
+    }
+</script>
+
