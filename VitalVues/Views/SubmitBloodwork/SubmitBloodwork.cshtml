@@ -1,45 +1,134 @@
 ﻿@{
-    ViewData["Title"] = "Upload PDF";
+    ViewData["Title"] = "Submit Bloodwork";
 }
 
 <head>
     <link rel="stylesheet" href="~/css/SubmitBloodwork.css" asp-append-version="true" />
 </head>
 
-<h2>Upload PDF</h2>
+<div>
+    <div class="container">
 
-<form id="uploadForm" enctype="multipart/form-data">
-    <div class="form-group">
-        <label for="pdfFile">Select PDF file:</label>
-        <input type="file" id="pdfFile" name="pdfFile" accept="application/pdf" class="form-control">
+        <h2>Happy @DateTime.Today.DayOfWeek</h2>
+        <h3>Bloodwork for @DateTime.Today</h3>
+
+        <div id="InputSelection" class="upload-or-manual-container">
+            <h4>Will you be manually inputting test, or uploading a PDF today?</h4>
+            <div>
+                <button id="input-bloodwork-btn" onclick="displayInput()" class="btn btn-primary">
+                    Manually inputting
+                </button>
+                <button id="upload-bloodwork-btn" onclick="displayUploadPDF()" class="btn btn-primary">
+                    Submitting PDF
+                </button>
+            </div>
+        </div>
+
+
+
+        <form id="uploadForm" enctype="multipart/form-data">
+            <h2>Upload Bloodwork</h2>
+            <div class="form-group">
+                <label for="pdfFile">Select PDF file:</label>
+                <input type="file" id="pdfFile" name="pdfFile" accept="application/pdf" class="form-control">
+            </div>
+            <button type="submit" id="sendButton" class="btn btn-primary">
+                <span class="spinner-border spinner-border-sm" aria-hidden="true" style="display: none;" id="spinner"></span>
+                <span id="buttonText">Submit</span>
+            </button>
+        </form>
+
+        <div id="inputForm">
+            <div class="col-sm-3">
+                <label>Date of Bloodwork Test</label>
+                <div class="input-group">
+                    <div class="input-group-text"></div>
+                    <input type="date"
+                           class="form-control"
+                           id="submissionDate"
+                           placeholder="Date of Test" />
+                </div>
+            </div>
+            <div id="testCount"></div>
+            <form id="listOfTestResults" onsubmit="SubmitResults(); return false;">
+                <table id="results-table" class="table">
+                    <thead>
+                        <tr>
+                            <th>TestName</th>
+                            <th>Result</th>
+                            <th>Grade</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @* Test results go here *@
+                    </tbody>
+                </table>
+
+                <button type="button" id="add-row" class="btn btn-primary">Add Test</button>
+                <br /><br />
+                <button type="submit" class="btn btn-success">Submit Results</button>
+            </form>
+        </div>
+
+
+        <div class="chat-container">
+            <div id="chatOutput" class="output"></div>
+            <form id="promptForm" class="input-form">
+                <textarea id="promptInput" placeholder="Ask a Question..." required></textarea>
+                <button type="submit" id="sendButton" class="btn btn-primary">
+                    <span class="spinner-border spinner-border-sm" aria-hidden="true" style="display: none;" id="spinner"></span>
+                    <span id="buttonText">Send</span>
+                </button>
+            </form>
+        </div>
+
     </div>
-    <button type="submit" id="sendButton" class="btn btn-primary">
-        <span class="spinner-border spinner-border-sm" aria-hidden="true" style="display: none;" id="spinner"></span>
-        <span id="buttonText">Submit</span>
-    </button>
-</form>
-
-<div class="chat-container">
-    <div id="chatOutput" class="output"></div>
-    <form id="promptForm" class="input-form">
-        <textarea id="promptInput" placeholder="Ask a Question..." required></textarea>
-        <button type="submit" id="sendButton" class="btn btn-primary">
-            <span class="spinner-border spinner-border-sm" aria-hidden="true" style="display: none;" id="spinner"></span>
-            <span id="buttonText">Send</span>
-        </button>
-    </form>
 </div>
-
-
 <script>
+    function SubmitResults(){
+
+    }
+
+    function displayUploadPDF() {
+        const pdfForm = document.getElementById('uploadForm');
+        hideInputSelection();
+        pdfForm.style.display = 'block';
+    }
+
+    function hideInputSelection() {
+        const inputSelection = document.getElementById('InputSelection');
+        inputSelection.style.display = 'none';
+    }
+
+    function hideUploadPDF() {
+        const pdfForm = document.getElementById('uploadForm');
+        pdfForm.style.display = 'none';
+    }
+
+    function displayInput() {
+        const inputForm = document.getElementById('inputForm');
+        hideInputSelection();
+        inputForm.style.display = 'block';
+    }
+
     $(document).ready(function () {
         const pdfForm = document.getElementById('uploadForm');
+        pdfForm.style.display = 'none';
+
+        const inputForm = document.getElementById('inputForm');
+        inputForm.style.display = 'none';
 
         const userChatForm = document.getElementById('promptForm');
         userChatForm.style.display = 'none';
 
         const outputField = document.getElementById('chatOutput');
         outputField.style.display = 'none';
+
+        const inputBtn = document.getElementById('input-bloodwork-btn');
+        const uploadBtn = document.getElementById('upload-bloodwork-btn');
+
+      
 
         $('#uploadForm').submit(function (e) {
             e.preventDefault();
@@ -63,14 +152,15 @@
             const buttonText = document.getElementById('buttonText');
             const sendButton = document.getElementById('sendButton');
 
-            spinner.style.display = 'inline-block'; // Show spinner
+            spinner.style.display = 'inline-block';
             spinner.style.color = 'darkgoldenrod';
 
             sendButton.style.backgroundColor = 'goldenrod';
-            buttonText.textContent = 'Loading...'; // Change button text
-            sendButton.disabled = true; // Disable the button to prevent multiple submissions
+            buttonText.textContent = 'Loading...';
+            sendButton.disabled = true;
 
-
+            const inputForm = document.getElementById('inputForm');
+            inputForm.style.display = 'block';
             $.ajax({
                 url: '@Url.Action("UploadPdf", "SubmitBloodwork")',
                 type: 'POST',
@@ -80,14 +170,27 @@
                 success: function (response) {
                     if (response.success) {
                         $('#chatOutput').html('<p>File uploaded successfully!</p>');
-                        $('#chatOutput').append('<div class="output-text">' + response.content + '</div>');
+                        hideUploadPDF();
+                        $('#results-table tbody').empty();
 
-                        displayUserChat();
+                        var testCount = 0;
+                        response.content.forEach(function (testResult, index) {
+                            var newRow = `<tr>
+                                    <td><input type="text" name="TestResults[${index}].TestName" value="${testResult.TestName}" class="form-control test-name" placeholder="Test Name" /></td>
+                                    <td><input type="text" name="TestResults[${index}].Result" value="${testResult.Result}" class="form-control test-result" placeholder="Test Result" /></td>
+                                    <td><input type="text" name="TestResults[${index}].Grade" value="${testResult.Grade}" class="form-control test-grade" placeholder="Test Grade (L, M, H)" /></td>
+                                <td><button type="button" class="btn btn-danger remove-row">X</button></td>
+                              </tr>`;
+                            $('#results-table tbody').append(newRow);
+                            testCount++;
+                        });
+                        $('#testCount').html(`<p>Number of results: ${testCount}</p>`);
+                        $('#add-row').click();
                     } else {
                         $('#chatOutput').html('<p>Error: ' + response.message + '</p>');
                     }
-                    // resetUI();
-                },
+                }
+                ,
                 error: function (xhr, status, error) {
                     $('#chatOutput').html('<p>Error uploading file: ' + error + '</p>');
                 }
@@ -111,6 +214,63 @@
         pdfForm.style.display = 'none';
 
         // TODO: Continue chat
+    }
+
+    $(document).ready(function () {
+        $('#add-row').click(function () {
+            var rowCount = $('#results-table tbody tr').length;
+
+            var rowCount = $('#results-table tbody tr').length;
+            var newRow = `<tr>
+                                <td><input type="text" name="TestResults[${rowCount}].TestName" class="form-control" /></td>
+                                <td><input type="text" name="TestResults[${rowCount}].Result" class="form-control" /></td>
+                                <td><input type="text" name="TestResults[${rowCount}].Grade" class="form-control" /></td>
+                                <td><button type="button" class="btn btn-danger remove-row">X</button></td>
+                                </tr>`;
+            $('#results-table tbody').append(newRow);
+            $('#testCount').html(`<p>Number of results: ${rowCount + 1}</p>`);
+        });
+
+        $(document).on('click', '.remove-row', function () {
+            $(this).closest('tr').remove();
+        });
+    });
+
+    function SubmitResults() {
+        var testResults = [];
+        $('#results-table tbody tr').each(function () {
+            var testName = $(this).find('.test-name').val();
+            var testResult = $(this).find('.test-result').val();
+            var testGrade = $(this).find('.test-grade').val() || "M";
+
+            if (testName && testResult && testGrade) {
+                testResults.push({
+                    TestName: testName,
+                    Result: testResult,
+                    Grade: testGrade
+                });
+            }
+        });
+
+        var submissionDate = $('#submissionDate').val();
+
+        var data = {
+            submissionDate: submissionDate,
+            tests: testResults
+        };
+
+        $.ajax({
+            url: '@Url.Action("SubmitResults", "SubmitBloodwork")',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function (response) {
+                alert('Results submitted successfully!');
+            },
+            error: function (xhr, status, error) {
+                console.error('Error submitting results:', error);
+            }
+        });
     }
 </script>
 

@@ -35,6 +35,7 @@ builder.Services.ConfigureSameSiteNoneCookies();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IGoalService, GoalService>();
+builder.Services.AddScoped<IBloodworkService, BloodworkService>();
 
 builder.Services.AddDbContext<DatabaseContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
