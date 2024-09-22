@@ -1,10 +1,13 @@
 ﻿@{
     ViewData["Title"] = "Fasting Timer";
+    var userID = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
 }
 
 <section>
     <h2>Fasting Timer</h2>
     <form id="timerForm" class="row gx-3 gy-2 align-items-center">
+        <input type="hidden" id="userID" value="@userID" />
+
         <div class="col-sm-3">
             <label for="hours" class="visually-hidden">Hours:</label>
             <input type="number"
@@ -42,9 +45,7 @@
     </div>
 
     <div class="col-auto mt-3">
-        <button type="button" class="btn btn-primary" id="stopTimer">Stop Timer</button>
         <button type="button" class="btn btn-primary" id="resetTimer">Reset Timer</button>
-        <button type="button" class="btn btn-primary" id="saveTimer">Save Time</button>
     </div>
 </section>
 
@@ -55,60 +56,154 @@
     }
 </style>
 
+<script>
+    var hours = 0;
+    var minutes = 0;
+    var seconds = 0;
+    var interval = null; // To store the interval for the countdown timer
+    var endTime = null;   // Stores the end time of the fasting session
 
-    <script>
-        var hours = 0;
-        var minutes = 0;
-        var seconds = 0;
-        var interval = null;
+    // Event listeners to update the 'hours', 'minutes', and 'seconds' variables based on user input
+    document.getElementById('hours').addEventListener('change', e => {
+        hours = +e.target.value;
+    });
 
-        document.getElementById('hours').addEventListener('change', e => {
-            hours = +e.target.value;
-        });
+    document.getElementById('minutes').addEventListener('change', e => {
+        minutes = +e.target.value;
+    });
 
-        document.getElementById('minutes').addEventListener('change', e => {
-            minutes = +e.target.value;
-        });
+    document.getElementById('seconds').addEventListener('change', e => {
+        seconds = +e.target.value;
+    });
 
-        document.getElementById('seconds').addEventListener('change', e => {
-            seconds = +e.target.value;
-        });
+    // Event listener for the 'Start Timer' button
+    document.getElementById('startTimer').addEventListener('click', () => {
+    
 
-        document.getElementById('startTimer').addEventListener('click', () => {
-            var timeInSeconds = (hours * 60 * 60) + (minutes * 60) + seconds;
+        var timeInSeconds = (hours * 60 * 60) + (minutes * 60) + seconds;
+        var userID = document.getElementById('userID').value; // Get the user ID from the input field
+        var now = new Date().toISOString(); // Get the current time in ISO format
+        var end = new Date(Date.now() + timeInSeconds * 1000).toISOString(); // Calculate the end time
 
-            var displayTime = () => {
-                var displayHours = Math.floor(timeInSeconds / (60 * 60));
-                var remainder = timeInSeconds - (displayHours * 60 * 60);
-                var displayMinutes = Math.floor(remainder / 60);
-                var displaySeconds = remainder - (displayMinutes * 60);
-                document.getElementById("timer").innerHTML =
-                    (displayHours < 10 ? "0" : "") + displayHours + ":" +
-                    (displayMinutes < 10 ? "0" : "") + displayMinutes + ":" +
-                    (displaySeconds < 10 ? "0" : "") + displaySeconds;
-            };
-
-            //starts the timer
-            if (interval) clearInterval(interval);
-
-            interval = setInterval(() => {
-                displayTime();
-                timeInSeconds -= 1;
-                if (timeInSeconds < 0) {
-                    clearInterval(interval);
-                    document.getElementById("timer").innerHTML = '00:00:00';
+        fetch('/api/FastingController/SaveTime', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                Hours: hours,
+                Minutes: minutes,
+                Seconds: seconds,
+                userID: userID,
+                start: now,
+                end: end
+            })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
-            }, 1000);
-        });
+                return response.json(); // Parse the response from the server
+            })
+            .then(result => {
+                if (result.success) {
+                    var startTime = new Date(result.startTime).getTime(); //  server start time
+                    endTime = startTime + timeInSeconds * 1000; // Calculate end time 
+                    startTimer(); // Start the countdown timer
+                } else {
+                    alert("Error: " + result.message); 
+                }
+            })
+            .catch(error => {
+                console.error('Error during fetch:', error);
+                alert("Error: There is an active please reset the timer and try again" ); 
+            });
+    });
 
-        //stops the timer
-        document.getElementById('stopTimer').addEventListener('click', () => {
-            if (interval) clearInterval(interval);
-        });
-        //resets the timer
-        document.getElementById('resetTimer').addEventListener('click', () => {
-            if (interval) clearInterval(interval);
-            document.getElementById('timer').innerHTML = '00:00:00';
-        });
-    </script>
 
+    // Function to start the countdown timer
+    function startTimer() {
+        var displayTime = () => {
+            var now = new Date().getTime(); // Get the current time
+            var remaining = Math.floor((endTime - now) / 1000); // Calculate the remaining time 
+
+            if (remaining <= 0) {
+                clearInterval(interval); // Stop the timer if the time is up
+                document.getElementById("timer").innerHTML = '00:00:00'; // Display 00:00:00 when the timer ends
+                return;
+            }
+
+            var displayHours = Math.floor(remaining / (60 * 60));
+            var remainder = remaining - (displayHours * 60 * 60);
+            var displayMinutes = Math.floor(remainder / 60);
+            var displaySeconds = remainder - (displayMinutes * 60);
+
+            document.getElementById("timer").innerHTML =
+                (displayHours < 10 ? "0" : "") + displayHours + ":" +
+                (displayMinutes < 10 ? "0" : "") + displayMinutes + ":" +
+                (displaySeconds < 10 ? "0" : "") + displaySeconds;
+        };
+
+        if (interval) clearInterval(interval);
+
+        interval = setInterval(displayTime, 1000);
+    }
+
+
+    // Event listener for the 'Reset Timer' button
+    document.getElementById('resetTimer').addEventListener('click', () => {
+        if (interval) {
+            clearInterval(interval);
+            interval = null;
+        }
+        document.getElementById('timer').innerHTML = '00:00:00';
+
+        var userID = document.getElementById('userID').value;
+
+        fetch(`/api/FastingController/ResetFastingSession?userID=${userID}`, {
+            method: 'POST'
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(result => {
+                if (result.success) {
+                    console.log('Fasting session reset successfully');
+                } else {
+                    console.error('Failed to reset fasting session:', result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error during fetch:', error);
+            });
+    });
+
+    // On page load, retrieve the existing fasting session for the current user
+    document.addEventListener('DOMContentLoaded', () => {
+        var userID = document.getElementById('userID').value;
+
+        fetch('/api/FastingController/GetFastingSession?userID=' + userID)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(result => {
+                if (result.success) {
+                    var remainingTime = result.remainingTime * 1000; 
+                    endTime = Date.now() + remainingTime;
+                    startTimer();
+                } else {
+                    console.error('Failed to retrieve fasting session:', result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error during fetch:', error);
+            });
+    });
+
+</script>
