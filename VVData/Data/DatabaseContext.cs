@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Security.Claims;
+using Data.Data.Models;
 
 namespace VVData.Data;
 
@@ -18,6 +19,9 @@ public class DatabaseContext : DbContext
 
     public DbSet<Person> People { get; set; }
     public DbSet<Goal> Goals { get; set; }
+    public DbSet<Bloodwork> Bloodworks { get; set; }
+    public DbSet<BloodTest> BloodTests { get; set; }
+    public DbSet<Test> Tests { get; set; }
 
     public override int SaveChanges()
     {
