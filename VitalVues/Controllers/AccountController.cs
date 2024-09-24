@@ -77,8 +77,8 @@ public class AccountController : Controller
                 var info = new UserInfoViewModel
                 {
                     Sid = userUniqueIdentifier,
-                    FirstName = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.GivenName)?.Value,
-                    LastName = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Surname)?.Value,
+                    FirstName = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.GivenName)?.Value ?? "",
+                    LastName = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Surname)?.Value ?? "",
                     Username = User.Identity.Name,
                     Email = "user@example.com",
                     ProfileImage = User.Claims.FirstOrDefault(c => c.Type == "picture")?.Value,
