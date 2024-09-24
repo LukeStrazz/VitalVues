@@ -1,0 +1,32 @@
+﻿<form id="emailForm" class="mb-3">
+    <div class="form-group">
+        <label for="message" class="form-label">Message:</label>
+        <textarea id="message" name="message" class="form-control" rows="4" placeholder="Enter your message" required></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Send Message</button>
+</form>
+
+<script>
+    $('#emailForm').on('submit', function (event) {
+        event.preventDefault(); // Prevent the form's default submission
+
+        var message = $('#message').val();
+
+        // Send the POST request via AJAX
+        $.ajax({
+            url: '/Notification/SendNotification',
+            method: 'POST',
+            data: {
+                message: message
+            },
+            success: function (response) {
+                alert(response); // Display success message
+            },
+            error: function (xhr, status, error) {
+                alert('Error: ' + error); // Display error message
+            }
+        });
+    });
+</script>
+
