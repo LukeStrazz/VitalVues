@@ -4,11 +4,13 @@ using Services.Interfaces; // Make sure you have the correct namespace for IMail
 public class NotificationController : Controller
 {
     private readonly IMailService _mailService;
+    private readonly IConfiguration _configuration;
 
     // Constructor to inject the MailService
-    public NotificationController(IMailService mailService)
+    public NotificationController(IMailService mailService, IConfiguration configuration)
     {
         _mailService = mailService;
+        _configuration = configuration;
     }
 
     // This method handles the form submission and sends the email
@@ -19,8 +21,8 @@ public class NotificationController : Controller
 
         _mailService.SendEmail(
             toEmail,                                // The recipient's email
-            "",                 // Your API key
-            "", // Your Mailgun domain
+            _configuration["mailgun:Mailgun_API_Key"],
+            _configuration["mailgun:Email_Domain"], // Your Mailgun domain
             "User Notification",                    // Email subject
             message                                 // Message content
         );
