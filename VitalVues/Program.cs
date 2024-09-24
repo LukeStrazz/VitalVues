@@ -36,6 +36,9 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IGoalService, GoalService>();
 
+builder.Services.AddScoped<IMailService, MailService>(); // Register the MailService
+
+
 builder.Services.AddDbContext<DatabaseContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -66,6 +69,11 @@ app.UseAuthorization();
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapDefaultControllerRoute();
+    endpoints.MapControllerRoute(
+    name: "notifications",
+    pattern: "send-notification",
+    defaults: new { controller = "Notification", action = "SendNotification" });
+
 });
 
 app.Run();
