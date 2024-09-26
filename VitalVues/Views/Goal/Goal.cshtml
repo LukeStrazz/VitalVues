@@ -145,10 +145,9 @@ else
             window.location.reload();
         }
         
-            .then(response =>response.ok ? response.json() : Promise.reject(response.text()))
-            .then(data => alert("Success: " + data))
-            .then(data => window.location.reload())
-            .catch(response => response.then(errorMessage => alert("Error: " + errorMessage)));
+        response.ok ? response.json() : Promise.reject(response.text())})
+        .then(data => alert("Goal created succesfully"))
+        .catch(response => response.then(errorMessage => alert("Error: " + errorMessage)));
     });
 
     document.querySelectorAll('.resolve-goal-btn').forEach(button => {
@@ -216,10 +215,9 @@ else
                 },
                 body: JSON.stringify(goalDataEdit)
             })
-            .then(response =>response.ok ? response.json() : Promise.reject(response.text()))
-            .then(data => alert("Success: " + data))
-            .then(data => window.location.reload())
-            .catch(response => response.then(errorMessage => alert("Error: " + errorMessage)));
+            .then(response => response.ok ? response.json() : Promise.reject(response.text()))
+            .then(data => alert(data.message))
+            .catch(error => alert("Error: " + error));
         });
     });
 </script>
