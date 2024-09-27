@@ -1,4 +1,4 @@
-﻿@{
+﻿﻿@{
     ViewData["Title"] = "Fasting Timer";
     var userID = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
 }
@@ -78,7 +78,7 @@
 
     // Event listener for the 'Start Timer' button
     document.getElementById('startTimer').addEventListener('click', () => {
-    
+
 
         var timeInSeconds = (hours * 60 * 60) + (minutes * 60) + seconds;
         var userID = document.getElementById('userID').value; // Get the user ID from the input field
@@ -108,15 +108,17 @@
             .then(result => {
                 if (result.success) {
                     var startTime = new Date(result.startTime).getTime(); //  server start time
-                    endTime = startTime + timeInSeconds * 1000; // Calculate end time 
+                    endTime = startTime + timeInSeconds * 1000; // Calculate end time
                     startTimer(); // Start the countdown timer
+             
+                    window.location.reload();
                 } else {
-                    alert("Error: " + result.message); 
+                    alert("Error: " + result.message);
                 }
             })
             .catch(error => {
                 console.error('Error during fetch:', error);
-                alert("Error: There is an active please reset the timer and try again" ); 
+                alert("Error: There is an active please reset the timer and try again");
             });
     });
 
@@ -125,7 +127,7 @@
     function startTimer() {
         var displayTime = () => {
             var now = new Date().getTime(); // Get the current time
-            var remaining = Math.floor((endTime - now) / 1000); // Calculate the remaining time 
+            var remaining = Math.floor((endTime - now) / 1000); // Calculate the remaining time
 
             if (remaining <= 0) {
                 clearInterval(interval); // Stop the timer if the time is up
@@ -194,7 +196,7 @@
             })
             .then(result => {
                 if (result.success) {
-                    var remainingTime = result.remainingTime * 1000; 
+                    var remainingTime = result.remainingTime * 1000;
                     endTime = Date.now() + remainingTime;
                     startTimer();
                 } else {

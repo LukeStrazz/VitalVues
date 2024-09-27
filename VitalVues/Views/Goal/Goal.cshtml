@@ -140,8 +140,13 @@ else
             },
             body: JSON.stringify(goalData)
         })
-        .then(response => response.ok ? response.json() : Promise.reject(response.text()))
-        .then(data => alert("Success: " + data))
+        .then(response => {
+        if(response.ok){
+            window.location.reload();
+        }
+        
+        response.ok ? response.json() : Promise.reject(response.text())})
+        .then(data => alert("Goal created succesfully"))
         .catch(response => response.then(errorMessage => alert("Error: " + errorMessage)));
     });
 
@@ -172,10 +177,15 @@ else
                 },
                 body: JSON.stringify(goalDataResolve)
             })
-            .then(response => response.ok ? response.json() : Promise.reject(response.text()))
-            .then(data => alert(data.message))
-            .catch(error => alert("Error: " + error));
+            .then(response =>response.ok ? response.json() : Promise.reject(response.text()))
+            .then(data => alert("Success: " + data))
+            .then(data => window.location.reload())
+            .catch(response => response.then(errorMessage => alert("Error: " + errorMessage)));
+            
         });
+       
+        
+        
     });
 
     document.querySelectorAll('.edit-goal-btn').forEach(button => {
