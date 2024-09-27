@@ -1,20 +1,10 @@
-﻿using VVData.Data;
-using System;
-using System.Collections.Generic;
+﻿using Data.Data.Models;
 
 namespace VVData.Data.Models;
 
 public class BloodTest : TrackableEntry
 {
-    //public HashSet<Test, Result> BloodWork { get; set; }
-}
-
-public class Test
-{
-
-}
-
-public class Result
-{
-
+    public DateTime SubmissionDate { get; set; }
+    public DateTime BloodworkDate { get; set; }
+    public List<Test> Test {  get; set; }
 }

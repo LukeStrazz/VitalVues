@@ -60,10 +60,20 @@
         <label for="Weight" class="form-label">Weight (lbs)</label>
         <input type="text" class="form-control" id="Weight" placeholder="123" value="@Model.CurrentWeight" required>
     </div>
-    <div class="col-md-4">
-        <label for="Allergies" class="form-label">Allergies (comma separated)</label>
-        <input type="text" class="form-control" id="Allergies" value="@string.Join(", ", Model.Allergies)" placeholder="e.g., Peanuts, Shellfish, Pollen">
-    </div>
+    @if(Model.Allergies != null)
+    {
+        <div class="col-md-4">
+            <label for="Allergies" class="form-label">Allergies (comma separated)</label>
+            <input type="text" class="form-control" id="Allergies" value="@string.Join(", ", Model.Allergies)" placeholder="e.g., Peanuts, Shellfish, Pollen">
+        </div>
+    }
+    else
+    {
+        <div class="col-md-4">
+            <label for="Allergies" class="form-label">Allergies (comma separated)</label>
+            <input type="text" class="form-control" id="Allergies" placeholder="e.g., Peanuts, Shellfish, Pollen">
+        </div>
+    }
     <div class="col-12">
         <div class="form-check">
             <input class="form-check-input" type="checkbox" id="invalidCheck" required>
@@ -148,6 +158,9 @@
                     alert('Error: ' + xhr.responseText);
                 }
             });
+
+            window.location.reload(true);
+
         });
     });
 

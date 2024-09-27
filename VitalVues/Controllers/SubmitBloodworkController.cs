@@ -7,28 +7,31 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace VitalVues.Controllers;
 
 
 [ApiController]
-[Route("api/PDFController")]
+[Route("api/SubmitBloodwork")]
 public class SubmitBloodworkController : Controller
 {
     private readonly ILogger<SubmitBloodworkController> _logger;
     private readonly IHttpClientFactory _clientFactory;
     private readonly IConfiguration _configuration;
     private readonly IChatService _chatService;
+    private readonly IBloodworkService _bloodworkService;
 
-    public SubmitBloodworkController(ILogger<SubmitBloodworkController> logger, IHttpClientFactory clientFactory, IConfiguration configuration, IChatService chatService)
+    public SubmitBloodworkController(ILogger<SubmitBloodworkController> logger, IHttpClientFactory clientFactory, IConfiguration configuration, IChatService chatService, IBloodworkService bloodworkService)
     {
         _logger = logger;
         _clientFactory = clientFactory;
         _configuration = configuration;
         _chatService = chatService;
+        _bloodworkService = bloodworkService;
     }
 
-    [HttpGet("PDF")]
+    [HttpGet("SubmitBloodwork")]
     public IActionResult SubmitBloodwork()
     {
         return View();
@@ -45,7 +48,6 @@ public class SubmitBloodworkController : Controller
         if (!Directory.Exists(uploadPath))
         {
             Directory.CreateDirectory(uploadPath);
-
         }
 
         var filePath = Path.Combine(uploadPath, pdfFile.FileName);
@@ -56,7 +58,6 @@ public class SubmitBloodworkController : Controller
         }
 
         var pdfContentList = new List<string>();
-
         using (PdfDocument document = PdfDocument.Open(filePath))
         {
             foreach (var page in document.GetPages())
@@ -67,19 +68,68 @@ public class SubmitBloodworkController : Controller
 
         string combinedPdfContent = string.Join("\n", pdfContentList);
 
-        var apiKey = _configuration["API_KEY"];
+        var testResults = ExtractTestResults(combinedPdfContent);
 
-        if(apiKey == null)
+        // Delete the temporary PDF file after extraction
+        if (System.IO.File.Exists(filePath))
         {
-            return Json(new { success = false, message = "Could not connect to services right now." });
+            System.IO.File.Delete(filePath);
         }
 
-        var response = await _chatService.GetChatResponse(apiKey, combinedPdfContent);
-
-        return Json(new { success = true, message = "File uploaded successfully", content = response });
-
+        return Json(new { success = true, message = "File uploaded successfully", content = testResults });
     }
 
- 
+    public List<TestResultViewModel> ExtractTestResults(string combinedPdfContent)
+    {
+        string pattern = @"(?<TestName>[A-Z ,\d\-\/]+(?:,\d+[A-Z]*)*)\s*(?<Result>\d+(\.\d+)?)\s*(?<Grade>[HL])?\s*Reference Range:";
 
+        // Extract matches
+        var matches = Regex.Matches(combinedPdfContent, pattern);
+        var testResults = matches
+            .Select(match => new TestResultViewModel
+            {
+                TestName = match.Groups["TestName"].Value.Trim(),
+                Result = match.Groups["Result"].Value.Trim(),
+                Grade = match.Groups["Grade"].Success ? match.Groups["Grade"].Value.Trim() : string.Empty // Capture grade if it exists
+            })
+            .ToList();
+
+
+        return testResults;
+    }
+
+    [HttpPost("SubmitResults")]
+    public IActionResult SubmitResults([FromBody] SubmitBloodworkRequest request)
+    {
+        if (request.Tests == null || !request.Tests.Any())
+        {
+            return BadRequest("The tests field is required.");
+        }
+
+        var userUniqueIdentifier = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+
+        _bloodworkService.AddBloodwork(request.Tests, userUniqueIdentifier, request.SubmissionDate);
+
+        return Json(new { success = true });
+    }
+
+    public IActionResult ChatConnector(string content)
+    {
+        var apiKey = _configuration["API_KEY"];
+
+        if (apiKey == null)
+        {
+            return Json(new { error = false, message = "Could not connect to services right now." });
+        }
+
+        var response = _chatService.GetChatResponse(apiKey, content);
+
+        if(response == null)
+        {
+            string errorResponse = "Unable to get response.";
+            return Json(new { success = false, message = errorResponse });
+        }
+
+        return Json(new { success = false, message = response });
+    }
 }

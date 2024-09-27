@@ -1,5 +1,6 @@
 ﻿using VVData.Data;
 using System;
+using Data.Data.Models;
 namespace VVData.Data.Models;
 
 public class Person : TrackableEntry
@@ -16,4 +17,5 @@ public class Person : TrackableEntry
     public double CurrentWeight { get; set; }
     public List<string>? Allergies { get; set; }
     public List<Goal>? Goals { get; set; }
+    public List<Bloodwork>? BloodWorks { get; set; }
 }

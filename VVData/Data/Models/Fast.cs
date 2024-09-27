@@ -9,6 +9,7 @@ namespace VVData.Data.Models;
 
 public class Fast : TrackableEntry
 {
+
     public string userID { get; set; }
     public DateTime start { get; set; }
     public DateTime end { get; set; }
