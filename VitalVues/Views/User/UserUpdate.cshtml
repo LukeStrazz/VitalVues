@@ -67,6 +67,13 @@
             <input type="text" class="form-control" id="Allergies" value="@string.Join(", ", Model.Allergies)" placeholder="e.g., Peanuts, Shellfish, Pollen">
         </div>
     }
+    else
+    {
+        <div class="col-md-4">
+            <label for="Allergies" class="form-label">Allergies (comma separated)</label>
+            <input type="text" class="form-control" id="Allergies" placeholder="e.g., Peanuts, Shellfish, Pollen">
+        </div>
+    }
     <div class="col-12">
         <div class="form-check">
             <input class="form-check-input" type="checkbox" id="invalidCheck" required>
@@ -151,6 +158,9 @@
                     alert('Error: ' + xhr.responseText);
                 }
             });
+
+            window.location.reload(true);
+
         });
     });
 

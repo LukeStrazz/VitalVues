@@ -4,13 +4,28 @@
 
 <head>
     <link rel="stylesheet" href="~/css/SubmitBloodwork.css" asp-append-version="true" />
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js" defer data-deferred="1"></script>
+
 </head>
+
+<div id="particles-js"></div>
 
 <div>
     <div class="container">
 
         <h2>Happy @DateTime.Today.DayOfWeek</h2>
         <h3>Bloodwork for @DateTime.Today</h3>
+
+        <div class="chat-container">
+            <div id="chatOutput" class="output"></div>
+            <form id="promptForm" class="input-form">
+                <textarea id="promptInput" placeholder="Ask a Question..." required></textarea>
+                <button type="submit" id="sendButton" class="btn btn-primary">
+                    <span class="spinner-border spinner-border-sm" aria-hidden="true" style="display: none;" id="spinner"></span>
+                    <span id="buttonText">Send</span>
+                </button>
+            </form>
+        </div>
 
         <div id="InputSelection" class="upload-or-manual-container">
             <h4>Will you be manually inputting test, or uploading a PDF today?</h4>
@@ -43,7 +58,7 @@
                 <label>Date of Bloodwork Test</label>
                 <div class="input-group">
                     <div class="input-group-text"></div>
-                    <input type="date"
+                    <input type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")"
                            class="form-control"
                            id="submissionDate"
                            placeholder="Date of Test" />
@@ -65,30 +80,14 @@
                     </tbody>
                 </table>
 
-                <button type="button" id="add-row" class="btn btn-primary">Add Test</button>
+                <button type="button" id="add-row" class="btn btn-primary blood-work-add-btn">Add Test</button>
                 <br /><br />
-                <button type="submit" class="btn btn-success">Submit Results</button>
+                <button type="submit" class="btn btn-success blood-work-submit-btn">Submit Results</button>
             </form>
         </div>
-
-
-        <div class="chat-container">
-            <div id="chatOutput" class="output"></div>
-            <form id="promptForm" class="input-form">
-                <textarea id="promptInput" placeholder="Ask a Question..." required></textarea>
-                <button type="submit" id="sendButton" class="btn btn-primary">
-                    <span class="spinner-border spinner-border-sm" aria-hidden="true" style="display: none;" id="spinner"></span>
-                    <span id="buttonText">Send</span>
-                </button>
-            </form>
-        </div>
-
     </div>
 </div>
 <script>
-    function SubmitResults(){
-
-    }
 
     function displayUploadPDF() {
         const pdfForm = document.getElementById('uploadForm');
@@ -128,7 +127,7 @@
         const inputBtn = document.getElementById('input-bloodwork-btn');
         const uploadBtn = document.getElementById('upload-bloodwork-btn');
 
-      
+
 
         $('#uploadForm').submit(function (e) {
             e.preventDefault();
@@ -176,16 +175,15 @@
                         var testCount = 0;
                         response.content.forEach(function (testResult, index) {
                             var newRow = `<tr>
-                                    <td><input type="text" name="TestResults[${index}].TestName" value="${testResult.TestName}" class="form-control test-name" placeholder="Test Name" /></td>
-                                    <td><input type="text" name="TestResults[${index}].Result" value="${testResult.Result}" class="form-control test-result" placeholder="Test Result" /></td>
-                                    <td><input type="text" name="TestResults[${index}].Grade" value="${testResult.Grade}" class="form-control test-grade" placeholder="Test Grade (L, M, H)" /></td>
-                                <td><button type="button" class="btn btn-danger remove-row">X</button></td>
-                              </tr>`;
+                                        <td><input type="text" name="TestResults[${index}].TestName" value="${testResult.TestName}" class="form-control test-name" placeholder="Test Name" /></td>
+                                        <td><input type="text" name="TestResults[${index}].Result" value="${testResult.Result}" class="form-control test-result" placeholder="Test Result" /></td>
+                                        <td><input type="text" name="TestResults[${index}].Grade" value="${testResult.Grade}" class="form-control test-grade" placeholder="Test Grade (L, M, H)" /></td>
+                                    <td><button type="button" class="btn btn-danger remove-row">X</button></td>
+                                  </tr>`;
                             $('#results-table tbody').append(newRow);
                             testCount++;
                         });
                         $('#testCount').html(`<p>Number of results: ${testCount}</p>`);
-                        $('#add-row').click();
                     } else {
                         $('#chatOutput').html('<p>Error: ' + response.message + '</p>');
                     }
@@ -222,11 +220,11 @@
 
             var rowCount = $('#results-table tbody tr').length;
             var newRow = `<tr>
-                                <td><input type="text" name="TestResults[${rowCount}].TestName" class="form-control" /></td>
-                                <td><input type="text" name="TestResults[${rowCount}].Result" class="form-control" /></td>
-                                <td><input type="text" name="TestResults[${rowCount}].Grade" class="form-control" /></td>
-                                <td><button type="button" class="btn btn-danger remove-row">X</button></td>
-                                </tr>`;
+                                    <td><input type="text" name="TestResults[${rowCount}].TestName" class="form-control" /></td>
+                                    <td><input type="text" name="TestResults[${rowCount}].Result" class="form-control" /></td>
+                                    <td><input type="text" name="TestResults[${rowCount}].Grade" class="form-control" /></td>
+                                    <td><button type="button" class="btn btn-danger remove-row">X</button></td>
+                                    </tr>`;
             $('#results-table tbody').append(newRow);
             $('#testCount').html(`<p>Number of results: ${rowCount + 1}</p>`);
         });
@@ -254,6 +252,13 @@
 
         var submissionDate = $('#submissionDate').val();
 
+        const minDate = new Date("2000-01-01");
+
+        if (submissionDate < minDate) {
+            alert("Date must be after January 1, 2000.");
+            return;
+        }
+
         var data = {
             submissionDate: submissionDate,
             tests: testResults
@@ -266,6 +271,7 @@
             data: JSON.stringify(data),
             success: function (response) {
                 alert('Results submitted successfully!');
+                window.location.reload();
             },
             error: function (xhr, status, error) {
                 console.error('Error submitting results:', error);
@@ -273,4 +279,125 @@
         });
     }
 </script>
+<script>
+    function resetParticles() {
+        document.getElementById('particles-js').innerHTML = ''; // Clear the content
+        particles(); // Reinitialize the particle system
+    }
 
+
+    window.addEventListener('DOMContentLoaded', (event) => {
+        
+        particlesJS("particles-js", {
+            "particles": {
+                "number": {
+                    "value": 200,
+                    "density": {
+                        "enable": true,
+                        "value_area": 800
+                    }
+                },
+                "color": {
+                    "value": "#ffffff"
+                },
+                "shape": {
+                    "type": "circle",
+                    "stroke": {
+                        "width": 0,
+                        "color": "#000000"
+                    },
+                    "polygon": {
+                        "nb_sides": 5
+                    },
+                    "image": {
+                        "src": "img/github.svg",
+                        "width": 100,
+                        "height": 100
+                    }
+                },
+                "opacity": {
+                    "value": 0.5,
+                    "random": false,
+                    "anim": {
+                        "enable": false,
+                        "speed": 1,
+                        "opacity_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "size": {
+                    "value": 3,
+                    "random": true,
+                    "anim": {
+                        "enable": false,
+                        "speed": 40,
+                        "size_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#ffffff",
+                    "opacity": 0.4,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 6,
+                    "direction": "none",
+                    "random": false,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false,
+                    "attract": {
+                        "enable": false,
+                        "rotateX": 600,
+                        "rotateY": 1200
+                    }
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": {
+                        "enable": true,
+                        "mode": "grab"
+                    },
+                    "onclick": {
+                        "enable": true,
+                        "mode": "push"
+                    },
+                    "resize": true
+                },
+                "modes": {
+                    "grab": {
+                        "distance": 140,
+                        "line_linked": {
+                            "opacity": 1
+                        }
+                    },
+                    "bubble": {
+                        "distance": 400,
+                        "size": 40,
+                        "duration": 2,
+                        "opacity": 8,
+                        "speed": 3
+                    },
+                    "repulse": {
+                        "distance": 200,
+                        "duration": 0.4
+                    },
+                    "push": {
+                        "particles_nb": 4
+                    },
+                    "remove": {
+                        "particles_nb": 2
+                    }
+                }
+            },
+            "retina_detect": true
+        });
+    });
+
+</script>
