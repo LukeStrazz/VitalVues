@@ -19,6 +19,7 @@ public class DatabaseContext : DbContext
     public DbSet<Person> People { get; set; }
     public DbSet<Goal> Goals { get; set; }
     public DbSet<Fast> Fasts { get; set; }
+    public DbSet<Workout> Workouts { get; set; }
     public override int SaveChanges()
     {
         var username = "N/A";
