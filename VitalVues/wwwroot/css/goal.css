@@ -1,3 +1,11 @@
+.top {
+  
+}
+
+.in-progress-title {
+  
+}
+
 .card-body {
   width: 100%;
   height: 100%;
@@ -59,5 +67,30 @@
   border-radius: 5px; /* Round the corners */
   background-color: #fff3e0; /* Light background color */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
+}
+
+.goalForm {
+  max-width: 600px; /* Set a maximum width */
+  margin: 0 auto; /* Center the form */
+  padding: 20px; /* Add padding */
+  border: 1px solid #ccc; /* Add a border */
+  border-radius: 10px; /* Round the corners */
+  background-color: #f9f9f9; /* Light background color */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
+}
+
+.inputLabel {
+  display: block; /* Make the label a block element */
+  font-weight: bold; /* Make the text bold */
+  margin-bottom: 5px; /* Add some space below the label */
+  color: #80c0e0; /* Set text color */
+  font-size: 1rem; /* Set font size */
+}
+
+.input-title {
+  display: block;
+  color: #5fea8b; /* Set text color */
+  font-size: 2rem; /* Set font size */
+  font-weight: bold;
 }
 
