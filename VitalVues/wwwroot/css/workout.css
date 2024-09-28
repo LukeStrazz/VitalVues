@@ -25,7 +25,7 @@ img.round-image {
 }
 
 body {
-  background-color: rgb(255, 255, 255);
+  background-color: rgba(135, 135, 135, 0.134);
 }
 
 .day-container {
@@ -48,7 +48,7 @@ body {
 }
 
 .day-container {
-  background-color: rgb(251, 255, 1);
+  background-color: rgba(251, 255, 1, 0.673);
 }
 
 .image-container {
@@ -87,7 +87,7 @@ body {
 }
 
 .workout-box {
-  background-color: #8bbbfe;
+  background-color: #8bbbfe5f;
   padding: 15px;
   border-radius: 8px;
   margin-top: 15px;
