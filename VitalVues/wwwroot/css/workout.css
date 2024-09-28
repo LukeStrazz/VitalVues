@@ -34,7 +34,7 @@ body {
   margin-top: 50px;
   margin-left: 80px;
   margin-right: 80px;
-  background-color: #f8f9fa;
+  background-color: #f4ff1f;
   border-radius: 10px;
 
   font-weight: bold;
@@ -47,9 +47,12 @@ body {
   transition: background-color 0.3s ease;
 }
 
-.day-container {
-  background-color: rgba(251, 255, 1, 0.673);
+.container-fluid {
+  color: #666666;
+  font-weight: bold;
 }
+
+
 
 .image-container {
   position: relative;
@@ -68,13 +71,15 @@ body {
 .overlay-text {
   position: absolute;
   top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 10px;
   color: white;
   font-weight: bold;
   background-color: rgba(0, 0, 0, 0.5);
   padding: 5px 10px;
   border-radius: 5px;
+  display: inline-block; /* Ensure the text is displayed inline */
+  margin-left: 45px;
+  
 }
 
 .workout-title {
@@ -87,7 +92,7 @@ body {
 }
 
 .workout-box {
-  background-color: #8bbbfe5f;
+  background-color: #f4b57b;
   padding: 15px;
   border-radius: 8px;
   margin-top: 15px;
@@ -168,3 +173,16 @@ body {
 .btn-secondary:hover {
   background-color: #5a6268; /* Darker shade on hover */
 }
+
+.custom-input {
+  background-color: lightgreen; /* Change the background color */
+  color: darkblue; /* Change the text color */
+  border: 2px solid rgb(0, 229, 15); /* Change the border color */
+}
+
+.custom-input[readonly] {
+  background-color: rgb(83, 83, 83); /* Change the background color */
+  color: darkblue; /* Change the text color */
+}
+
+

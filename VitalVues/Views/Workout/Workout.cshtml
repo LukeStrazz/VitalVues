@@ -3,14 +3,13 @@
 </head>
 
 <body>
-  <div class="modal" id="typeModal">
+  <div class="modal" id="loseWeightModal">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
           <h4 class="modal-title">Select a Workout</h4>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-
           <div class="modal-body">
             <select class="form-select mb-3" aria-label="Default select example">
               <option selected>Choose an exercise</option>
@@ -48,13 +47,101 @@
     </div>
   </div>
   
+  <div class="modal" id="buildMuscleModal">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Select a Workout</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <select class="form-select mb-3" aria-label="Default select example">
+              <option selected>Choose an exercise</option>
+              <option value="1">Build muscle option</option>
+              <option value="2">Build muscle option</option>
+              <option value="3">Build muscle option</option>
+              <option value="4">Build muscle option</option>
+              <option value="5">Build muscle option</option>
+              <option value="6">Build muscle option</option>
+              <option value="7">Build muscle option</option>
+              <option value="8">Build muscle option</option>
+              <option value="9">Build muscle option</option>
+            </select>
+
+            <select class="form-select mb-3" aria-label="Default select example">
+              <option selected>Choose a day for the workout</option>
+              <option value="1">Monday</option>
+              <option value="2">Tuesday</option>
+              <option value="3">Wednesday</option>
+              <option value="4">Thursday</option>
+              <option value="5">Friday</option>
+              <option value="6">Saturday</option>
+              <option value="7">Sunday</option>
+            </select>
+            <input type="number" class="form-control mb-3" placeholder="Enter reps" style="max-width: 150px;">
+            <input type="number" class="form-control mb-3" placeholder="Enter sets" style="max-width: 150px;">
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Add Workout</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="maintainMuscleModal">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Select a Workout</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <select class="form-select mb-3" aria-label="Default select example">
+              <option selected>Choose an exercise</option>
+              <option value="1">Maintain Muscle option</option>
+              <option value="2">Maintain Muscle option</option>
+              <option value="3">Maintain Muscle option</option>
+              <option value="4">Maintain Muscle option</option>
+              <option value="5">Maintain Muscle option</option>
+              <option value="6">Maintain Muscle option</option>
+              <option value="7">Maintain Muscle option</option>
+              <option value="8">Maintain Muscle option</option>
+              <option value="9">Maintain Muscle option</option>
+            </select>
+
+            <select class="form-select mb-3" aria-label="Default select example">
+              <option selected>Choose a day for the workout</option>
+              <option value="1">Monday</option>
+              <option value="2">Tuesday</option>
+              <option value="3">Wednesday</option>
+              <option value="4">Thursday</option>
+              <option value="5">Friday</option>
+              <option value="6">Saturday</option>
+              <option value="7">Sunday</option>
+            </select>
+            <input type="number" class="form-control mb-3" placeholder="Enter reps" style="max-width: 150px;">
+            <input type="number" class="form-control mb-3" placeholder="Enter sets" style="max-width: 150px;">
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Add Workout</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
   <div class="top-section mb-5">
     <div class="row">
       <div class="col-md-4 col-sm-8">
         <div class="image-container">
           <img src="https://cdn.shopify.com/s/files/1/0291/3743/6771/files/how-to-gain-muscles-image_1.png?v=1713348438" 
                class="round-image" 
-               onclick="DoSomething();">
+               onclick="showFirstModal();">
           <div class="overlay-text">Lose Weight</div>
         </div>
       </div>
@@ -62,7 +149,7 @@
         <div class="image-container">
           <img src="https://t3.ftcdn.net/jpg/07/00/51/10/360_F_700511019_TQKzdLHpKCHKty4Op7RcqdU4E2Edherd.jpg" 
                class="round-image" 
-               onclick="DoSomething();">
+               onclick="showSecondModal();">
           <div class="overlay-text">Build Muscle</div>
         </div>
       </div>
@@ -70,47 +157,50 @@
         <div class="image-container">
           <img src="https://manflowyoga.com/wp-content/uploads/2020/05/ManFlowYoga-does-yoga-build-muscle-twist.jpg" 
                class="round-image" 
-               onclick="DoSomething();">
-          <div class="overlay-text">Maintain</div>
+               onclick="showThirdModal();">
+          <div class="overlay-text">&nbsp;Maintain&nbsp;</div>
         </div>
       </div>
     </div>
   </div>
 
-<div class="container-fluid">
+  <div class="container-fluid">
+
   <h3 class="workout-title mb-3 text-center">Weekly Workout Schedule</h3>
+
   <div class="row text-center justify-content-between">
     
     <div class="col-md-auto col-sm-12">
         <div class="day-container">&nbsp;Monday&nbsp;</div>
         <div class="workout-box">
           <div class="form-group">
-            <label class="mb-3" for="workout-type-monday" style="font-weight: bold;">WALKING</label>
-            <input type="text" id="workout-type-monday" class="form-control" placeholder="Weight Lose Exercise" readonly>
+            <label class="mb-3" for="workout-type-monday" >WALKING</label>
+            <input type="text" id="workout-type-monday" class="form-control custom-input" placeholder="Weight Lose Exrc." readonly>
           </div>
           <div class="form-group">
             <label for="sets-monday">Sets:</label>
-            <input type="number" id="sets-monday" class="form-control" placeholder="3 Sets" readonly>
+            <input type="number" id="sets-monday" class="form-control custom-input" placeholder="3 Sets" readonly>
           </div>
           <div class="form-group">
             <label for="reps-monday">Reps:</label>
-            <input type="number" id="reps-monday" class="form-control" placeholder="3 Reps" readonly>
+            <input type="number" id="reps-monday" class="form-control custom-input" placeholder="3 Reps" readonly>
           </div>
         </div>
         <div class="workout-box">
           <div class="form-group">
             <label class="mb-3" for="workout-type-monday" style="font-weight: bold;">WALKING</label>
-            <input type="text" id="workout-type-monday" class="form-control" placeholder="Weight Lose Exercise" readonly>
+            <input type="text" id="workout-type-monday" class="form-control custom-input" placeholder="Weight Lose Exrc." readonly>
           </div>
           <div class="form-group">
             <label for="sets-monday">Sets:</label>
-            <input type="number" id="sets-monday" class="form-control" placeholder="3 Sets" readonly>
+            <input type="number" id="sets-monday" class="form-control custom-input" placeholder="3 Sets" readonly>
           </div>
           <div class="form-group">
             <label for="reps-monday">Reps:</label>
-            <input type="number" id="reps-monday" class="form-control" placeholder="3 Reps" readonly>
+            <input type="number" id="reps-monday" class="form-control custom-input" placeholder="3 Reps" readonly>
           </div>
         </div>
+
       </div>
 
    
@@ -119,15 +209,15 @@
       <div class="workout-box">
         <div class="form-group">
           <label class="mb-3" for="workout-type-monday" style="font-weight: bold;">WALKING</label>
-          <input type="text" id="workout-type-monday" class="form-control" placeholder="Weight Lose Exercise" readonly>
+          <input type="text" id="workout-type-monday" class="form-control custom-input" placeholder="Weight Lose Exrc." readonly>
         </div>
         <div class="form-group">
           <label for="sets-monday">Sets:</label>
-          <input type="number" id="sets-monday" class="form-control" placeholder="3 Sets" readonly>
+          <input type="number" id="sets-monday" class="form-control custom-input" placeholder="3 Sets" readonly>
         </div>
         <div class="form-group">
           <label for="reps-monday">Reps:</label>
-          <input type="number" id="reps-monday" class="form-control" placeholder="3 Reps" readonly>
+          <input type="number" id="reps-monday" class="form-control custom-input" placeholder="3 Reps" readonly>
         </div>
       </div>
     </div>
@@ -138,15 +228,15 @@
       <div class="workout-box">
         <div class="form-group">
           <label class="mb-3" for="workout-type-monday" style="font-weight: bold;">WALKING</label>
-          <input type="text" id="workout-type-monday" class="form-control" placeholder="Weight Lose Exercise" readonly>
+          <input type="text" id="workout-type-monday" class="form-control custom-input" placeholder="Weight Lose Exrc." readonly>
         </div>
         <div class="form-group">
           <label for="sets-monday">Sets:</label>
-          <input type="number" id="sets-monday" class="form-control" placeholder="3 Sets" readonly>
+          <input type="number" id="sets-monday" class="form-control custom-input" placeholder="3 Sets" readonly>
         </div>
         <div class="form-group">
           <label for="reps-monday">Reps:</label>
-          <input type="number" id="reps-monday" class="form-control" placeholder="3 Reps" readonly>
+          <input type="number" id="reps-monday" class="form-control custom-input" placeholder="3 Reps" readonly>
         </div>
       </div>
     </div>
@@ -157,15 +247,15 @@
       <div class="workout-box">
         <div class="form-group">
           <label class="mb-3" for="workout-type-monday" style="font-weight: bold;">WALKING</label>
-          <input type="text" id="workout-type-monday" class="form-control" placeholder="Weight Lose Exercise" readonly>
+          <input type="text" id="workout-type-monday" class="form-control custom-input" placeholder="Weight Lose Exrc." readonly>
         </div>
         <div class="form-group">
           <label for="sets-monday">Sets:</label>
-          <input type="number" id="sets-monday" class="form-control" placeholder="3 Sets" readonly>
+          <input type="number" id="sets-monday" class="form-control custom-input" placeholder="3 Sets" readonly>
         </div>
         <div class="form-group">
           <label for="reps-monday">Reps:</label>
-          <input type="number" id="reps-monday" class="form-control" placeholder="3 Reps" readonly>
+          <input type="number" id="reps-monday" class="form-control custom-input" placeholder="3 Reps" readonly>
         </div>
       </div>
     </div>
@@ -181,29 +271,29 @@
       <div class="workout-box">
         <div class="form-group">
           <label class="mb-3" for="workout-type-monday" style="font-weight: bold;">WALKING</label>
-          <input type="text" id="workout-type-monday" class="form-control" placeholder="Weight Lose Exercise" readonly>
+          <input type="text" id="workout-type-monday" class="form-control custom-input" placeholder="Weight Lose Exrc." readonly>
         </div>
         <div class="form-group">
           <label for="sets-monday">Sets:</label>
-          <input type="number" id="sets-monday" class="form-control" placeholder="3 Sets" readonly>
+          <input type="number" id="sets-monday" class="form-control custom-input" placeholder="3 Sets" readonly>
         </div>
         <div class="form-group">
           <label for="reps-monday">Reps:</label>
-          <input type="number" id="reps-monday" class="form-control" placeholder="3 Reps" readonly>
+          <input type="number" id="reps-monday" class="form-control custom-input" placeholder="3 Reps" readonly>
         </div>
       </div>
       <div class="workout-box">
         <div class="form-group">
           <label class="mb-3" for="workout-type-monday" style="font-weight: bold;">WALKING</label>
-          <input type="text" id="workout-type-monday" class="form-control" placeholder="Weight Lose Exercise" readonly>
+          <input type="text" id="workout-type-monday" class="form-control custom-input" placeholder="Weight Lose Exrc." readonly>
         </div>
         <div class="form-group">
           <label for="sets-monday">Sets:</label>
-          <input type="number" id="sets-monday" class="form-control" placeholder="3 Sets" readonly>
+          <input type="number" id="sets-monday" class="form-control custom-input" placeholder="3 Sets" readonly>
         </div>
         <div class="form-group">
           <label for="reps-monday">Reps:</label>
-          <input type="number" id="reps-monday" class="form-control" placeholder="3 Reps" readonly>
+          <input type="number" id="reps-monday" class="form-control custom-input" placeholder="3 Reps" readonly>
         </div>
       </div>
     </div>
@@ -214,45 +304,61 @@
       <div class="workout-box">
         <div class="form-group">
           <label class="mb-3" for="workout-type-monday" style="font-weight: bold;">WALKING</label>
-          <input type="text" id="workout-type-monday" class="form-control" placeholder="Weight Lose Exercise" readonly>
+          <input type="text" id="workout-type-monday" class="form-control custom-input" placeholder="Weight Lose Exrc." readonly>
         </div>
         <div class="form-group">
           <label for="sets-monday">Sets:</label>
-          <input type="number" id="sets-monday" class="form-control" placeholder="3 Sets" readonly>
+          <input type="number" id="sets-monday" class="form-control custom-input" placeholder="3 Sets" readonly>
         </div>
         <div class="form-group">
           <label for="reps-monday">Reps:</label>
-          <input type="number" id="reps-monday" class="form-control" placeholder="3 Reps" readonly>
+          <input type="number" id="reps-monday" class="form-control custom-input" placeholder="3 Reps" readonly>
         </div>
       </div>
-      <div class="workout-box">
+      <div class="workout-box mb-3">
         <div class="form-group">
           <label class="mb-3" for="workout-type-monday" style="font-weight: bold;">WALKING</label>
-          <input type="text" id="workout-type-monday" class="form-control" placeholder="Weight Lose Exercise" readonly>
+          <input type="text" id="workout-type-monday" class="form-control custom-input" placeholder="Weight Lose Exrc." readonly>
         </div>
         <div class="form-group">
           <label for="sets-monday">Sets:</label>
-          <input type="number" id="sets-monday" class="form-control" placeholder="3 Sets" readonly>
+          <input type="number" id="sets-monday" class="form-control custom-input" placeholder="3 Sets" readonly>
         </div>
         <div class="form-group">
           <label for="reps-monday">Reps:</label>
-          <input type="number" id="reps-monday" class="form-control" placeholder="3 Reps" readonly>
+          <input type="number" id="reps-monday" class="form-control custom-input" placeholder="3 Reps" readonly>
         </div>
       </div>
     </div>
   </div>
-</div>
+  </div>
 
 
  
 
   <script>
-    var myModal = new bootstrap.Modal(document.getElementById('typeModal'), {
+    var loseWeightModal = new bootstrap.Modal(document.getElementById('loseWeightModal'), {
     keyboard: false 
   });
 
-    function DoSomething() {
-      myModal.show();
+  var buildMuscleModal = new bootstrap.Modal(document.getElementById('buildMuscleModal'), {
+    keyboard: false 
+  });
+
+  var maintainMuscleModal = new bootstrap.Modal(document.getElementById('maintainMuscleModal'), {
+    keyboard: false 
+  });
+
+    function showFirstModal() {
+      loseWeightModal.show();
+    }
+
+    function showSecondModal() {
+      buildMuscleModal.show();
+    }
+
+    function showThirdModal() {
+      maintainMuscleModal.show();
     }
   </script>
 
