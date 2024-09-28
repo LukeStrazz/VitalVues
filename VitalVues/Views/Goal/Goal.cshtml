@@ -1,5 +1,8 @@
 @model Services.ViewModels.UserInfoViewModel
 
+<head>
+     <link rel="stylesheet" href="~/css/goal.css" asp-append-version="true" />
+</head>
 <section>
     <h2>Create a New Goal</h2>
     <form id="goalForm" class="row gx-2 gy-1 align-items-center">
@@ -26,7 +29,7 @@
             <textarea class="form-control" id="description" placeholder="Please enter description for your goal."></textarea>
         </div>
 
-        <div class="col-sm-2">
+        <div class="col-sm-2 mt-5">
             <button id="submit" type="submit" class="btn btn-primary mb-3 ml-3">Submit</button>
         </div>
         <hr class="rounded">
@@ -41,39 +44,47 @@
         {
             if (!goal.resolved)
             {
-                <div class="card w-75 mb-3">
+                <div class="card w-55 mb-3">
                     <div class="card-body">
-                        <h5 class="card-title">GOAL</h5>
-                        <hr class="rounded">
+                        @* <h5 class="card-title">GOAL</h5> *@
+                        @* <hr class="rounded" style="max-width: 650px;"> *@
 
                         @if (goal.targetWeight.HasValue && goal.targetWeight.Value != 0)
                         {
-                            <div class="form-group row">
-                                <label for="targetWeight-@goal.GoalId" class="col-sm-2 col-form-label">Target Weight:</label>
-                                <div class="col-sm-10">
+                            <div class="form-group row mb-2">
+                                <label for="targetWeight-@goal.GoalId" class="col-sm-2 col-form-label">Target Ibs:</label>
+                                <div class="col-sm-6">
+                                    <div class="existingGoalFields">
                                     <input type="number" id="targetWeight-@goal.GoalId" class="form-control" value="@goal.targetWeight" />
+                                    </div>
                                 </div>
                             </div>
                         }
 
-                        <div class="form-group row">
+                        <div class="form-group row mb-2">
                             <label for="startingGoalDate-@goal.GoalId" class="col-sm-2 col-form-label">Start Date:</label>
-                            <div class="col-sm-10">
+                            <div class="col-sm-6">
+                                <div class="existingGoalFields">
                                 <input type="date" id="startingGoalDate-@goal.GoalId" class="form-control" value="@goal.startingGoalDate.ToString("yyyy-MM-dd")" />
+                                </div>
                             </div>
                         </div>
 
-                        <div class="form-group row">
+                        <div class="form-group row mb-2">
                             <label for="endGoalDate-@goal.GoalId" class="col-sm-2 col-form-label">End Date:</label>
-                            <div class="col-sm-10">
+                            <div class="col-sm-6">
+                                <div class="existingGoalFields">
                                 <input type="date" id="endGoalDate-@goal.GoalId" class="form-control" value="@goal.endGoalDate.ToString("yyyy-MM-dd")" />
+                                </div>
                             </div>
                         </div>
 
-                        <div class="form-group row">
+                        <div class="form-group row mb-2">
                             <label for="description-@goal.GoalId" class="col-sm-2 col-form-label">Description:</label>
-                            <div class="col-sm-10">
+                            <div class="col-sm-6">
+                                <div class="existingGoalFields">
                                 <input type="text" id="description-@goal.GoalId" class="form-control" value="@goal.Description" />
+                                </div>
                             </div>
                         </div>
 
@@ -81,11 +92,6 @@
                         <input type="hidden" id="resolved-@goal.GoalId" value="@goal.resolved" />
                         <input type="hidden" id="goalId-@goal.GoalId" value="@goal.GoalId" />
                         <input type="hidden" id="currentWeight-@goal.GoalId" value="@Model.CurrentWeight" />
-
-                        <div class="mt-3">
-                            <a href="#" class="btn btn-primary resolve-goal-btn" data-goalid="@goal.GoalId">Resolve</a>
-                            <a href="#" class="btn btn-secondary edit-goal-btn" data-goalid="@goal.GoalId">Update</a>
-                        </div>
 
                          @{
                         var startingGoalDate = goal.startingGoalDate;
@@ -97,11 +103,15 @@
                         progressPercentage = Math.Clamp(progressPercentage, 0, 100);
                         }
                         
-                    <div class="progress mb-2">
+                    <div class="progress mb-1">
                        <div class="progress-bar bg-success" role="progressbar" style="width: @progressPercentage%;" aria-valuenow="@progressPercentage.ToString("0")" aria-valuemin="0" aria-valuemax="100">
                             @progressPercentage.ToString("0.##")%
                         <hr class="rounded"></div>
                     </div>
+                    <div class="mt-3 mb-1">
+                            <a href="#" class="btn btn-primary resolve-goal-btn" data-goalid="@goal.GoalId">Resolve</a>
+                            <a href="#" class="btn btn-secondary edit-goal-btn" data-goalid="@goal.GoalId">Update</a>
+                        </div>
                 </div>
             </div>
             }
@@ -217,6 +227,7 @@ else
             })
             .then(response => response.ok ? response.json() : Promise.reject(response.text()))
             .then(data => alert(data.message))
+            .then(data => window.location.reload())
             .catch(error => alert("Error: " + error));
         });
     });
