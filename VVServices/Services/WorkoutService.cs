@@ -33,22 +33,22 @@ public class WorkoutService : IWorkoutService
 
     var workoutViewModel = new List<WorkoutViewModel>();
 
-    foreach (var workout in workouts)
-    {
-      var workoutToAdd = new WorkoutViewModel
-      {
-        WorkoutId = workout.Id,
-        userSecretId = workout.UserID,
-        Type = workout.Type,
-        SubType = workout.SubType,
-        Set = workout.Set,
-        Rep = workout.Rep,
-        Day = workout.Day,
-        resolved = workout.resolved
-      };
+    // foreach (var workout in workouts)
+    // {
+    //   var workoutToAdd = new WorkoutViewModel
+    //   {
+    //     WorkoutId = workout.Id,
+    //     userSecretId = workout.UserID,
+    //     Type = workout.Type,
+    //     SubType = workout.SubType,
+    //     Set = workout.Set,
+    //     Rep = workout.Rep,
+    //     Day = workout.Day,
+    //     resolved = workout.resolved
+    //   };
 
-      workoutViewModel.Add(workoutToAdd);
-    }
+    //   workoutViewModel.Add(workoutToAdd);
+    // }
     return workoutViewModel;
   }
 
