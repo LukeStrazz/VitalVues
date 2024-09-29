@@ -334,7 +334,14 @@
   </div>
 
 
- 
+ <div class="Chat-AI mb-3">
+  <div class="form-group">
+    <label for="exampleFormControlTextarea1">Workout Suggestion</label>
+    <textarea class="form-control mb-3" id="exampleFormControlTextarea1" rows="3"></textarea>
+  </div>
+  <input id="userAIQuestion" type="text" class="form-control mb-3" placeholder="Ask for a suggestion" style="max-width: 300px;">
+  <button type="button" class="btn btn-primary" onclick="sendChatMessage();">Ask AI</button>
+ </div>
 
   <script>
     var loseWeightModal = new bootstrap.Modal(document.getElementById('loseWeightModal'), {
@@ -360,6 +367,33 @@
     function showThirdModal() {
       maintainMuscleModal.show();
     }
+   
+
+function sendChatMessage() {
+
+  var userInput = document.getElementById('userAIQuestion').value;
+
+    fetch('/api/SubmitBloodwork/ChatConnector', {
+        method: 'POST', 
+        headers: {
+            'Content-Type': 'application/json' 
+        },
+        body: JSON.stringify(userInput) 
+    })
+    .then(response => response.json()) 
+    .then(data => {
+        if (data.success) {
+            console.log("Workout AI:", data.message); 
+            document.getElementById("exampleFormControlTextarea1").value = data.message;
+        } else {
+            console.error("Error:", data.message); 
+        }
+    })
+    .catch(error => {
+        console.error("An error occurred:", error); 
+    });
+}
+
   </script>
 
 </body>
