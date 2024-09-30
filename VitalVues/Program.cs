@@ -69,6 +69,8 @@ app.UseCookiePolicy();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapControllers();
+app.MapDefaultControllerRoute();
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapDefaultControllerRoute();
