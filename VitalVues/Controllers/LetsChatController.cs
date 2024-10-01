@@ -6,6 +6,8 @@ using System.Net.Http.Headers;
 using VitalVues.Models;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
+using Azure;
+using Services.ViewModels;
 
 namespace VitalVues.Controllers;
 
@@ -42,7 +44,16 @@ public class LetsChatController : Controller
         {
             return RedirectToAction("Error", "Home");
         }
-        return View();
+
+        var chats = _chatService.GetChats(userUniqueIdentifier).ToList();
+
+        var userInfo = new UserInfoViewModel
+        {
+            Sid = userUniqueIdentifier,
+            Chats = chats
+        };
+
+        return View(userInfo);
     }
 
     [HttpPost]
@@ -68,5 +79,17 @@ public class LetsChatController : Controller
         {
             return Json(new { success = true, message = response });
         }
+    }
+
+
+
+    [HttpPost]
+    [Route("SaveChats")]
+    public async Task<IActionResult> SaveChats(ChatViewModel messages)
+    {
+        var userUniqueIdentifier = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+
+        _chatService.SaveChat(userUniqueIdentifier, messages);
+        return Json(new { success = true, message = "Chat saved!" });
     }
 }
