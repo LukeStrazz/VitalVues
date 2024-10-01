@@ -98,15 +98,15 @@ button {
     }
 
     button:nth-child(2) {
-        background: #2ecc71;
+        background: #838383; /*#2ecc71;*/
     }
 
     button:nth-child(3) {
-        background: #3498db;
+        background: #838383; /* #3498db;*/
     }
 
     button:nth-child(4) {
-        background: #9b59b6;
+        background: #838383; /* #9b59b6; */
     }
 
 .active {

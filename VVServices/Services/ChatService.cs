@@ -34,7 +34,7 @@ public class ChatService : IChatService
 
         var requestBody = new
         {
-            model = "gpt-4",
+            model = "gpt-4o-mini",
             messages = new[]
             {
                 new { role = "user", content = request }
@@ -51,14 +51,8 @@ public class ChatService : IChatService
         {
             var responseContent = await response.Content.ReadAsStringAsync();
             var jsonResponse = JObject.Parse(responseContent);
-
-            // Ensure the response structure is correct
-            var reply = jsonResponse["choices"]?[0]?["message"]?["content"]?.ToString();
-            if (reply != null)
-            {
-                return reply;
-            }
-            return "Response is not valid. Try again later.";
+            var reply = jsonResponse["choices"][0]["message"]["content"].ToString();
+            return reply.ToString();
         }
         else
         {
