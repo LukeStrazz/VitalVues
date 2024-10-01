@@ -1,0 +1,296 @@
+﻿<head>
+    <link rel="stylesheet" href="~/css/chat.css" asp-append-version="true" />
+    <script src="https://cdn.jsdelivr.net/npm/showdown/dist/showdown.min.js"></script>
+</head>
+
+
+
+<div class="container">
+    <div id="Button" class="fas fa-fire"></div>
+</div>
+<div class="chat-holder-buttons">
+    <button href="#"><span class="fas fa-heart"></span></button>
+    <button disabled href="#"><span class="fas fa-hourglass-half"></span></button>
+    <button disabled href="#"><span class="fas fa-spoon"></span></button>
+    <button disabled href="#"><span class="fas fa-asterisk"></span></button>
+</div>
+
+<canvas></canvas>
+
+<div id="content">
+</div>
+<div class="chat-holder">
+    <body>
+        <script rel="javascript" src="~/js/chatbuttons.js" asp-append-version="true"></script>
+
+        <div class="chat-container">
+            <div id="chatOutput" class="output"></div>
+            <form id="promptForm" class="input-form">
+                <textarea id="promptInput" placeholder="Ask 'TODO: Type of {question}' a Question..." required></textarea>
+                <button type="submit" id="sendButton" class="btn btn-primary">
+                    <span class="spinner-border spinner-border-sm" aria-hidden="true" style="display: none;" id="spinner"></span>
+                    <span id="buttonText">Send</span>
+                </button>
+            </form>
+        </div>
+    </body>
+</div>
+
+<div class="previous-chats">
+    @if (1 == 1)
+    {
+        var chat = "SAMPLE";
+        var listDChats = new List<string>();
+        listDChats.Add(chat);
+        listDChats.Add(chat);
+        listDChats.Add(chat);
+        listDChats.Add(chat);
+        listDChats.Add(chat);
+        <div class="chats">
+            @foreach (var c in listDChats)
+            {
+                <div class="chat-title">
+                    <a>@c.ToString()</a>
+                </div>
+            }
+        </div>
+
+
+    }
+
+</div>
+<div class="input-group" style="display: none; position: absolute;">
+    <div class="input-group-text"></div>
+    <input type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")"
+           class="form-control"
+           id="submissionDate"
+           placeholder="Date of Test" />
+</div>
+<script>
+    var canvas = $('canvas')[0];
+    var context = canvas.getContext('2d');
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    var Projectile;
+    var State = false;
+    var Explode = false;
+    var Collapse = false;
+    var Particles = [];
+
+    var colors = ["#1abc9c", "#2ecc71", "#3498db", "#9b59b6", "#9b59b6", "#f1c40f", "#e67e22", "#e74c3c"];
+
+    let currentChatType = '';
+
+    document.querySelectorAll('.chat-holder-buttons button').forEach(button => {
+        button.addEventListener('click', function () {
+            let buttonType = this.querySelector('span').classList;
+            let contentDiv = document.getElementById('content');
+
+            contentDiv.innerHTML = '';
+
+            let newDiv = document.createElement('div');
+
+            switch (true) {
+                case buttonType.contains('fa-heart'):
+                    newDiv.innerHTML = `<h2>Bloodwork Chat</h2><p></p>`;
+                    currentChatType = 'Bloodwork';
+                    break;
+                case buttonType.contains('fa-hourglass-half'):
+                    newDiv.innerHTML = `<h2>Fasting Chat</h2><p></p>`;
+                    currentChatType = 'Fasting';
+                    break;
+                case buttonType.contains('fa-spoon'):
+                    newDiv.innerHTML = `<h2>Diet Chat</h2><p></p>`;
+                    currentChatType = 'Diet';
+                    break;
+                case buttonType.contains('fa-asterisk'):
+                    newDiv.innerHTML = `<h2>Workout Chat</h2><p></p>`;
+                    currentChatType = 'Workout';
+                    break;
+                default:
+                    newDiv.innerHTML = `<h2>Error</h2><p>Unhandled</p>`;
+            }
+
+            $('#Button').click();
+
+            contentDiv.appendChild(newDiv);
+            const userChatForm = document.getElementById('promptForm');
+            userChatForm.style.display = 'flex';
+            const outputForm = document.getElementById('chatOutput');
+            outputForm.style.overflow = 'scroll';
+        });
+    });
+
+    $(document).ready(function () {
+        const userChatForm = document.getElementById('promptForm');
+        userChatForm.style.display = 'none';
+    });
+
+    document.getElementById('promptInput').addEventListener('input', function () {
+        this.style.height = 'auto'; // Reset the height
+        this.style.height = Math.min(this.scrollHeight, 150) + 'px'; // Set height based on content, up to a max
+    });
+
+    let messages = []; // Store chat history here
+
+    document.getElementById('promptForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const inputField = document.getElementById('promptInput');
+        const prompt = inputField.value;
+
+        const spinner = document.getElementById('spinner');
+        const buttonText = document.getElementById('buttonText');
+        const sendButton = document.getElementById('sendButton');
+
+        inputField.value = '';
+        inputField.style.height = '50px';
+        inputField.disabled = true;
+        spinner.style.display = 'inline-block';
+        spinner.style.color = 'darkgoldenrod';
+        sendButton.style.backgroundColor = 'goldenrod';
+        buttonText.textContent = 'Loading...';
+        sendButton.disabled = true;
+
+        // Display user message
+        const userMessage = document.createElement('div');
+        userMessage.className = 'message user-message';
+        userMessage.textContent = prompt;
+        document.getElementById('chatOutput').appendChild(userMessage);
+
+        messages.push({ role: 'user', content: prompt });
+
+        fetch('/api/LetsChat/GetChatResponse', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ messages: messages })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        try {
+                            const errorData = JSON.parse(text);
+                            const apiErrorMessage = errorData.error && errorData.error.message ? errorData.error.message : "Unknown API error occurred.";
+                            throw new Error(`Error from API: ${apiErrorMessage}`);
+                        } catch (e) {
+                            throw new Error(`Non-JSON Error from API: ${text}`);
+                        }
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                messages.push({ role: 'system', content: data.message });
+
+                const converter = new showdown.Converter();
+                const htmlResponse = converter.makeHtml(data.message);
+
+                const responseContainer = document.createElement('div');
+                responseContainer.className = 'message bot-message';
+                responseContainer.innerHTML = `<div class="response-content">${htmlResponse}</div>`;
+
+                if (/```(.*?)```/s.test(data.message)) {
+                    const codeText = data.message.match(/```(.*?)```/s)[1];
+                    const copyButton = document.createElement('button');
+                    copyButton.textContent = 'Copy';
+                    copyButton.onclick = () => {
+                        navigator.clipboard.writeText(codeText).then(() => {
+                            alert('Copied to clipboard!');
+                        }, err => {
+                            console.error('Could not copy text: ', err);
+                        });
+                    };
+                    responseContainer.appendChild(copyButton);
+                }
+
+
+                resetUI();
+                if (currentChatType === 'Diet') {
+                    displayMealsWithButtons(data);
+                }else{
+                    document.getElementById('chatOutput').appendChild(responseContainer);
+                }
+            })
+            .catch(error => {
+                displayErrorMessage(`Error: <strong>${error.message}</strong>`);
+                resetUI();
+            });
+    });
+
+    function displayMealsWithButtons(data) {
+        const chatOutput = document.getElementById('chatOutput');
+        const lines = data.message.split(',');
+
+        lines.forEach(line => {
+            const div = document.createElement('div');
+            div.classList.add('meal-line');
+            div.classList.add('message');
+            div.classList.add('bot-message');
+
+            if (line.includes('Breakfast') || line.includes('Lunch') || line.includes('Dinner') || line.includes('Snack')) {
+                div.textContent = line;
+
+                const addButton = document.createElement('button');
+                addButton.textContent = 'Add to meals';
+                addButton.onclick = function () {
+                    if (currentChatType === 'Diet') { 
+                        addToMealsTable(line);
+                    } else {
+                        alert('You can only add meals while in the Diet Chat.');
+                    }
+                };
+
+                div.appendChild(addButton);
+            } else {
+                div.textContent = line;
+            }
+
+            chatOutput.appendChild(div);
+        });
+    }
+
+    function addToMealsTable(mealText) {
+        const mealParts = mealText.split(':');
+        const mealType = mealParts[0].trim();
+        const mealDescription = mealParts[1].trim();
+
+        const mealData = {
+            mealType: mealType,
+            mealDescription: mealDescription
+        };
+
+        $.ajax({
+            url: '/api/Meals/AddMeal',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(mealData),
+            success: function (response) {
+                alert('Meal added successfully!');
+            },
+            error: function (error) {
+                alert('Error adding meal.');
+            }
+        });
+    }
+
+    function displayErrorMessage(message) {
+        const errorMessage = document.createElement('div');
+        errorMessage.className = 'alert alert-danger';
+        errorMessage.setAttribute('role', 'alert');
+        errorMessage.innerHTML = message;
+        document.getElementById('chatOutput').appendChild(errorMessage);
+    }
+
+    function resetUI() {
+        const inputField = document.getElementById('promptInput');
+
+        spinner.style.display = 'none';
+        buttonText.textContent = 'Send';
+        sendButton.disabled = false;
+        sendButton.style.backgroundColor = 'gold';
+        inputField.disabled = false;
+    }
+</script>

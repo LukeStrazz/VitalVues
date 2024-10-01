@@ -121,7 +121,6 @@ public class AccountController : Controller
             // Note that the resulting absolute Uri must be whitelisted in 
             .WithRedirectUri(Url.Action("Index", "Home"))
             .Build();
-
         await HttpContext.SignOutAsync(Auth0Constants.AuthenticationScheme, authenticationProperties);
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
     }
