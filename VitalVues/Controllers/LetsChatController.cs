@@ -45,29 +45,6 @@ public class LetsChatController : Controller
         return View();
     }
 
-
-    [HttpPost]
-    [Route("ChatConnector")]
-    public IActionResult ChatConnector([FromBody] string content)
-    {
-        var apiKey = _configuration["API_KEY"];
-
-        if (apiKey == null)
-        {
-            return Json(new { error = false, message = "Could not connect to services right now." });
-        }
-
-        var response = _chatService.GetChatResponse(apiKey, content);
-
-        if (response == null)
-        {
-            string errorResponse = "Unable to get response.";
-            return Json(new { success = false, message = errorResponse });
-        }
-
-        return Json(new { success = false, message = response });
-    }
-
     [HttpPost]
     [Route("GetChatResponse")]
     public async Task<IActionResult> GetChatResponse([FromBody] ChatRequest request)
@@ -89,7 +66,6 @@ public class LetsChatController : Controller
         }
         catch (Exception ex)
         {
-            // If it's not valid JSON, return the response as a string
             return Json(new { success = true, message = response });
         }
     }
