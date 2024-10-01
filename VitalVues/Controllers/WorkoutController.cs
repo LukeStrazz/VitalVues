@@ -65,7 +65,7 @@ namespace VitalVues.Controllers
         return BadRequest(ModelState);
       }
 
-      if (workoutInfo.userSecretId == null)
+      if (workoutInfo.WorkoutId == null)
       {
         return BadRequest("Workout information is null.");
       }

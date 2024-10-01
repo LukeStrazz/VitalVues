@@ -185,4 +185,10 @@ body {
   color: darkblue; /* Change the text color */
 }
 
-
+.delete-button {
+  border-radius: 50%;
+  background-color: #000000;
+  font-weight: bold;
+  color: rgb(250, 35, 35);
+  padding-left: 25px;
+}
