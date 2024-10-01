@@ -11,6 +11,7 @@ using Auth0.AspNetCore.Authentication;
 using VitalVues.Support;
 using VVData.Data;
 using Microsoft.Extensions.DependencyInjection;
+using VitalVues;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpContextAccessor();

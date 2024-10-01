@@ -5,6 +5,7 @@ using Services.Interfaces;
 using System.Net.Http.Headers;
 using VitalVues.Models;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 
 namespace VitalVues.Controllers;
 
@@ -31,9 +32,16 @@ public class LetsChatController : Controller
         _fastingService = fastingService;
     }
 
+    [NoCacheHeaders]
     [HttpGet("Chat")]
     public IActionResult Chat()
     {
+        var userUniqueIdentifier = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+
+        if (string.IsNullOrEmpty(userUniqueIdentifier))
+        {
+            return RedirectToAction("Error", "Home");
+        }
         return View();
     }
 
@@ -70,7 +78,7 @@ public class LetsChatController : Controller
 
         var payload = new
         {
-            model = "gpt-4",
+            model = "gpt-4o-mini",
             messages = request.Messages.Select(m => new { role = m.Role, content = m.Content }).ToList()
         };
 

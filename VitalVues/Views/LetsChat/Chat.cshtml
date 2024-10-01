@@ -10,9 +10,9 @@
 </div>
 <div class="chat-holder-buttons">
     <button href="#"><span class="fas fa-heart"></span></button>
-    <button href="#"><span class="fas fa-hourglass-half"></span></button>
-    <button href="#"><span class="fas fa-spoon"></span></button>
-    <button href="#"><span class="fas fa-asterisk"></span></button>
+    <button disabled href="#"><span class="fas fa-hourglass-half"></span></button>
+    <button disabled href="#"><span class="fas fa-spoon"></span></button>
+    <button disabled href="#"><span class="fas fa-asterisk"></span></button>
 </div>
 
 <canvas></canvas>
@@ -222,7 +222,7 @@
 
     function displayMealsWithButtons(data) {
         const chatOutput = document.getElementById('chatOutput');
-        const lines = data.message.split('\n');
+        const lines = data.message.split(',');
 
         lines.forEach(line => {
             const div = document.createElement('div');
