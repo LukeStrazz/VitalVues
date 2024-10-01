@@ -9,10 +9,10 @@ using System.Text;
 namespace VitalVues.Controllers;
 
 [ApiController]
-[Route("api/Chat")]
-public class ChatController : Controller
+[Route("api/LetsChat")]
+public class LetsChatController : Controller
 {
-    private readonly ILogger<ChatController> _logger;
+    private readonly ILogger<LetsChatController> _logger;
     private readonly IHttpClientFactory _clientFactory;
     private readonly IConfiguration _configuration;
     private readonly IChatService _chatService;
@@ -20,7 +20,7 @@ public class ChatController : Controller
     private readonly IGoalService _goalService;
     private readonly IFastingService _fastingService;
 
-    public ChatController(ILogger<ChatController> logger, IHttpClientFactory clientFactory, IConfiguration configuration, IChatService chatService, IBloodworkService bloodworkService, IGoalService goalService, IFastingService fastingService)
+    public LetsChatController(ILogger<LetsChatController> logger, IHttpClientFactory clientFactory, IConfiguration configuration, IChatService chatService, IBloodworkService bloodworkService, IGoalService goalService, IFastingService fastingService)
     {
         _logger = logger;
         _clientFactory = clientFactory;
@@ -49,7 +49,7 @@ public class ChatController : Controller
             return Json(new { error = false, message = "Could not connect to services right now." });
         }
 
-        var response = _chatService.GetChatResponse(apiKey, "");
+        var response = _chatService.GetChatResponse(apiKey, content);
 
         if (response == null)
         {
@@ -60,44 +60,37 @@ public class ChatController : Controller
         return Json(new { success = false, message = response });
     }
 
-    public async Task<string> GetChatResponse(string request)
+    [HttpPost]
+    [Route("GetChatResponse")]
+    public async Task<IActionResult> GetChatResponse([FromBody] ChatRequest request)
     {
         var client = _clientFactory.CreateClient();
         var apiKey = _configuration["API_KEY"];
-        if (string.IsNullOrEmpty(apiKey))
-        {
-            return "Null API Key.";
-        }
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
-        var requestBody = new
+
+        var payload = new
         {
             model = "gpt-4",
-            messages = new[]
-            {
-                new { role = "user", content = request }
-            }
+            messages = request.Messages.Select(m => new { role = m.Role, content = m.Content }).ToList()
         };
+
         var requestMessage = new HttpRequestMessage(HttpMethod.Post, "https://api.openai.com/v1/chat/completions")
         {
-            Content = new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, "application/json")
+            Content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json")
         };
+
         var response = await client.SendAsync(requestMessage);
         if (response.IsSuccessStatusCode)
         {
             var responseContent = await response.Content.ReadAsStringAsync();
             var jsonResponse = JObject.Parse(responseContent);
-            // Ensure the response structure is correct
-            var reply = jsonResponse["choices"]?[0]?["message"]?["content"]?.ToString();
-            if (reply != null)
-            {
-                return reply;
-            }
-            return "Response is not valid. Try again later.";
+            var reply = jsonResponse["choices"][0]["message"]["content"].ToString();
+            return Json(new { message = reply });
         }
         else
         {
             var errorContent = await response.Content.ReadAsStringAsync();
-            return "Error from API: {errorContent}" + errorContent;
+            return StatusCode((int)response.StatusCode, "Error from API: " + errorContent);
         }
     }
 }
