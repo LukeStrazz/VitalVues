@@ -5,6 +5,8 @@ using Services.Interfaces;
 using System.Net.Http.Headers;
 using VitalVues.Models;
 using System.Text;
+using Microsoft.SemanticKernel.ChatCompletion;
+using Microsoft.SemanticKernel;
 
 namespace VitalVues.Controllers;
 
@@ -62,8 +64,27 @@ public class LetsChatController : Controller
 
     [HttpPost]
     [Route("GetChatResponse")]
-    public async Task<IActionResult> GetChatResponse([FromBody] ChatRequest request)
+    [KernelFunction]
+    public async Task<IActionResult> GetChatResponse(ChatRequest request, Kernel kernel)
     {
+        var chatCompletionService = kernel.GetRequiredService<IChatCompletionService>();
+
+        ChatHistory chatHistory = [
+                new() {
+                    Role = AuthorRole.User,
+                    Content = request.Messages.Last().Content
+                }
+            ];
+
+        // Get the current length of the chat history object
+        int currentChatHistoryLength = chatHistory.Count;
+
+        // Get the chat message content
+        ChatMessageContent results = await chatCompletionService.GetChatMessageContentAsync(
+            chatHistory,
+            kernel: kernel
+        );
+
         var client = _clientFactory.CreateClient();
         var apiKey = _configuration["API_KEY"];
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
@@ -85,7 +106,7 @@ public class LetsChatController : Controller
             var responseContent = await response.Content.ReadAsStringAsync();
             var jsonResponse = JObject.Parse(responseContent);
             var reply = jsonResponse["choices"][0]["message"]["content"].ToString();
-            return Json(new { message = reply });
+            return Json(new { message = results });
         }
         else
         {

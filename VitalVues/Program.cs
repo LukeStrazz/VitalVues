@@ -11,6 +11,7 @@ using Auth0.AspNetCore.Authentication;
 using VitalVues.Support;
 using VVData.Data;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.SemanticKernel;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpContextAccessor();
@@ -30,6 +31,10 @@ builder.Services.AddAuth0WebAppAuthentication(options =>
     options.Domain = builder.Configuration["Auth0:Domain"];
     options.ClientId = builder.Configuration["Auth0:ClientId"];
 });
+
+builder.Services.AddOpenAIFiles(builder.Configuration["API_KEY"]);
+
+builder.Services.AddOpenAIChatCompletion(builder.Configuration["API_KEY"]);
 
 builder.Services.ConfigureSameSiteNoneCookies();
 

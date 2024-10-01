@@ -23,6 +23,7 @@ public class DatabaseContext : DbContext
     public DbSet<Bloodwork> Bloodworks { get; set; }
     public DbSet<BloodTest> BloodTests { get; set; }
     public DbSet<Test> Tests { get; set; }
+    public DbSet<SemanticMemoryDto> SemanticMemory { get; set; }
 
     public override int SaveChanges()
     {
