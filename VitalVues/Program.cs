@@ -11,6 +11,8 @@ using Auth0.AspNetCore.Authentication;
 using VitalVues.Support;
 using VVData.Data;
 using Microsoft.Extensions.DependencyInjection;
+using Hangfire; // Add Hangfire namespace
+
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpContextAccessor();
@@ -41,6 +43,11 @@ builder.Services.AddScoped<IFastingService, FastService>();
 
 builder.Services.AddScoped<IMailService, MailService>(); // Register the MailService
 
+// Configure Hangfire services
+builder.Services.AddHangfire(configuration => configuration
+    .UseSqlServerStorage(builder.Configuration.GetConnectionString("HangfireConnection")));
+
+builder.Services.AddHangfireServer(); // Add the processing server
 
 builder.Services.AddDbContext<DatabaseContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -69,6 +76,14 @@ app.UseCookiePolicy();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Enable the Hangfire Dashboard for monitoring background jobs
+app.UseHangfireDashboard(); 
+
+// Enqueue a test job
+//BackgroundJob.Enqueue(() => Console.WriteLine("Hello world from Hangfire!"));
+
+
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapDefaultControllerRoute();
