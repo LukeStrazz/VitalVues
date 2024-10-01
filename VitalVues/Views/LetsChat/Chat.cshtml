@@ -166,7 +166,7 @@
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ messages: messages })
+            body: JSON.stringify({ request: messages.lastIndexOf() })
         })
             .then(response => {
                 if (!response.ok) {

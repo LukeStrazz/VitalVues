@@ -7,6 +7,8 @@ using VitalVues.Models;
 using System.Text;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel;
+using Azure.Core;
+using Microsoft.SemanticKernel.Memory;
 
 namespace VitalVues.Controllers;
 
@@ -21,6 +23,10 @@ public class LetsChatController : Controller
     private readonly IBloodworkService _bloodworkService;
     private readonly IGoalService _goalService;
     private readonly IFastingService _fastingService;
+    private readonly Kernel _kernel;
+
+    bool historyStarted = false;
+    ChatHistory chatHistory = new ChatHistory();
 
     public LetsChatController(ILogger<LetsChatController> logger, IHttpClientFactory clientFactory, IConfiguration configuration, IChatService chatService, IBloodworkService bloodworkService, IGoalService goalService, IFastingService fastingService)
     {
@@ -64,17 +70,29 @@ public class LetsChatController : Controller
 
     [HttpPost]
     [Route("GetChatResponse")]
-    [KernelFunction]
-    public async Task<IActionResult> GetChatResponse(ChatRequest request, Kernel kernel)
+    public async Task<IActionResult> GetChatResponse(ChatRequest request)
     {
-        var chatCompletionService = kernel.GetRequiredService<IChatCompletionService>();
-
-        ChatHistory chatHistory = [
-                new() {
+        var chatCompletionService = _kernel.GetRequiredService<IChatCompletionService>();
+        if(historyStarted == false)
+        {
+             chatHistory = [
+                    new() {
                     Role = AuthorRole.User,
                     Content = request.Messages.Last().Content
                 }
-            ];
+                ];
+            historyStarted = true;
+        }
+        else
+        {
+            chatHistory.Add(
+               new()
+               {
+                   Role = AuthorRole.System,
+                   Content = request.Messages.Last().Content
+               }
+           );
+        }
 
         // Get the current length of the chat history object
         int currentChatHistoryLength = chatHistory.Count;
@@ -82,8 +100,13 @@ public class LetsChatController : Controller
         // Get the chat message content
         ChatMessageContent results = await chatCompletionService.GetChatMessageContentAsync(
             chatHistory,
-            kernel: kernel
+            kernel: _kernel
         );
+
+        if (results != null)
+        {
+            return Json(new { message = results });
+        }
 
         var client = _clientFactory.CreateClient();
         var apiKey = _configuration["API_KEY"];
