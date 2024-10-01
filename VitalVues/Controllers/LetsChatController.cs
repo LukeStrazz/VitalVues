@@ -6,6 +6,8 @@ using System.Net.Http.Headers;
 using VitalVues.Models;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
+using Azure;
+using Services.ViewModels;
 
 namespace VitalVues.Controllers;
 
@@ -42,30 +44,16 @@ public class LetsChatController : Controller
         {
             return RedirectToAction("Error", "Home");
         }
-        return View();
-    }
 
+        var chats = _chatService.GetChats(userUniqueIdentifier).ToList();
 
-    [HttpPost]
-    [Route("ChatConnector")]
-    public IActionResult ChatConnector([FromBody] string content)
-    {
-        var apiKey = _configuration["API_KEY"];
-
-        if (apiKey == null)
+        var userInfo = new UserInfoViewModel
         {
-            return Json(new { error = false, message = "Could not connect to services right now." });
-        }
+            Sid = userUniqueIdentifier,
+            Chats = chats
+        };
 
-        var response = _chatService.GetChatResponse(apiKey, content);
-
-        if (response == null)
-        {
-            string errorResponse = "Unable to get response.";
-            return Json(new { success = false, message = errorResponse });
-        }
-
-        return Json(new { success = false, message = response });
+        return View(userInfo);
     }
 
     [HttpPost]
@@ -73,32 +61,35 @@ public class LetsChatController : Controller
     public async Task<IActionResult> GetChatResponse([FromBody] ChatRequest request)
     {
         var client = _clientFactory.CreateClient();
+        var messages = string.Join(",", request.Messages.Last().Content);
         var apiKey = _configuration["API_KEY"];
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
-
-        var payload = new
+        var response = await _chatService.GetChatResponse(apiKey, messages);
+        if (response == null)
         {
-            model = "gpt-4o-mini",
-            messages = request.Messages.Select(m => new { role = m.Role, content = m.Content }).ToList()
-        };
-
-        var requestMessage = new HttpRequestMessage(HttpMethod.Post, "https://api.openai.com/v1/chat/completions")
-        {
-            Content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json")
-        };
-
-        var response = await client.SendAsync(requestMessage);
-        if (response.IsSuccessStatusCode)
-        {
-            var responseContent = await response.Content.ReadAsStringAsync();
-            var jsonResponse = JObject.Parse(responseContent);
-            var reply = jsonResponse["choices"][0]["message"]["content"].ToString();
-            return Json(new { message = reply });
+            string errorResponse = "Unable to get response.";
+            return Json(new { success = false, message = errorResponse });
         }
-        else
+
+        try
         {
-            var errorContent = await response.Content.ReadAsStringAsync();
-            return StatusCode((int)response.StatusCode, "Error from API: " + errorContent);
+            var jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(response);
+            return Json(new { success = true, message = jsonResponse });
         }
+        catch (Exception ex)
+        {
+            return Json(new { success = true, message = response });
+        }
+    }
+
+
+
+    [HttpPost]
+    [Route("SaveChats")]
+    public async Task<IActionResult> SaveChats(ChatViewModel messages)
+    {
+        var userUniqueIdentifier = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+
+        _chatService.SaveChat(userUniqueIdentifier, messages);
+        return Json(new { success = true, message = "Chat saved!" });
     }
 }

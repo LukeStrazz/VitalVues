@@ -1,9 +1,9 @@
-﻿<head>
+﻿@model Services.ViewModels.UserInfoViewModel
+
+<head>
     <link rel="stylesheet" href="~/css/chat.css" asp-append-version="true" />
     <script src="https://cdn.jsdelivr.net/npm/showdown/dist/showdown.min.js"></script>
 </head>
-
-
 
 <div class="container">
     <div id="Button" class="fas fa-fire"></div>
@@ -37,25 +37,16 @@
 </div>
 
 <div class="previous-chats">
-    @if (1 == 1)
+    @if (Model.Chats != null)
     {
-        var chat = "SAMPLE";
-        var listDChats = new List<string>();
-        listDChats.Add(chat);
-        listDChats.Add(chat);
-        listDChats.Add(chat);
-        listDChats.Add(chat);
-        listDChats.Add(chat);
         <div class="chats">
-            @foreach (var c in listDChats)
+            @foreach (var chat in Model.Chats)
             {
                 <div class="chat-title">
-                    <a>@c.ToString()</a>
+                    <a>@chat.ChatDate, @chat.ChatTopic</a>
                 </div>
             }
         </div>
-
-
     }
 
 </div>
@@ -183,38 +174,29 @@
                 return response.json();
             })
             .then(data => {
-                messages.push({ role: 'system', content: data.message });
+                try {
+                    messages.push({ role: 'system', content: data.message });
 
-                const converter = new showdown.Converter();
-                const htmlResponse = converter.makeHtml(data.message);
+                    const converter = new showdown.Converter();
+                    const htmlResponse = converter.makeHtml(data.message);
 
-                const responseContainer = document.createElement('div');
-                responseContainer.className = 'message bot-message';
-                responseContainer.innerHTML = `<div class="response-content">${htmlResponse}</div>`;
+                    const responseContainer = document.createElement('div');
+                    responseContainer.className = 'message bot-message';
+                    responseContainer.innerHTML = `<div class="response-content">${htmlResponse}</div>`;
 
-                if (/```(.*?)```/s.test(data.message)) {
-                    const codeText = data.message.match(/```(.*?)```/s)[1];
-                    const copyButton = document.createElement('button');
-                    copyButton.textContent = 'Copy';
-                    copyButton.onclick = () => {
-                        navigator.clipboard.writeText(codeText).then(() => {
-                            alert('Copied to clipboard!');
-                        }, err => {
-                            console.error('Could not copy text: ', err);
-                        });
-                    };
-                    responseContainer.appendChild(copyButton);
-                }
-
-
-                resetUI();
-                if (currentChatType === 'Diet') {
-                    displayMealsWithButtons(data);
-                }else{
-                    document.getElementById('chatOutput').appendChild(responseContainer);
+                    resetUI();
+                    if (currentChatType === 'Diet') {
+                        displayMealsWithButtons(data);
+                    } else {
+                        document.getElementById('chatOutput').appendChild(responseContainer);
+                    }
+                } catch (synchronousError) {
+                    displayErrorMessage(`Error: <strong>${synchronousError.message}</strong>`);
+                    resetUI();
                 }
             })
             .catch(error => {
+                console.error('Caught in catch:', error);  // Log error details
                 displayErrorMessage(`Error: <strong>${error.message}</strong>`);
                 resetUI();
             });
