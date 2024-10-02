@@ -1,32 +1,171 @@
-﻿<form id="emailForm" class="mb-3">
-    <div class="form-group">
-        <label for="message" class="form-label">Message:</label>
-        <textarea id="message" name="message" class="form-control" rows="4" placeholder="Enter your message" required></textarea>
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us</title>
+
+   
+    <style>
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: #4CAF50; 
+        }
+
+        
+        .form-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            background-color: #2e2e2e; 
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3); 
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            font-size: 1.2rem;
+            color: #fff; 
+        }
+
+        .form-control {
+            width: 100%;
+            background-color: #444; 
+            color: #fff; 
+            border: 1px solid #666;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            font-size: 1rem;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+            .form-control:focus {
+                background-color: #444;
+                border-color: #4CAF50; 
+                box-shadow: 0 0 8px rgba(76, 175, 80, 0.7); 
+                outline: none;
+            }
+
+        
+        .btn-primary {
+            background-color: #4CAF50;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1.2rem;
+            color: #fff;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            width: 100%;
+            text-transform: uppercase;
+        }
+
+            .btn-primary:hover {
+                background-color: #45a049;
+                transform: translateY(-2px);
+            }
+
+            .btn-primary:active {
+                background-color: #388E3C;
+                transform: translateY(0);
+            }
+
+        
+        .alert {
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 0.5rem;
+            display: none;
+        }
+
+        .alert-success {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .alert-error {
+            background-color: #f44336;
+            color: white;
+        }
+
+    </style>
+</head>
+<body>
+
+    
+    <div class="form-container">
+        <h1>Contact Us</h1>
+
+        
+        <form id="emailForm" class="mb-3">
+            <div class="form-group">
+                <label for="message" class="form-label">Message:</label>
+                <textarea id="message" name="message" class="form-control" rows="4" placeholder="Enter your message" required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-3">Send Message</button>
+        </form>
+
+        
+        <div id="successAlert" class="alert alert-success">
+            Your message has been sent successfully!
+        </div>
+
+        <div id="errorAlert" class="alert alert-error">
+            Something went wrong. Please try again.
+        </div>
     </div>
 
-    <button type="submit" class="btn btn-primary mt-3">Send Message</button>
-</form>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $('#emailForm').on('submit', function (event) {
+            event.preventDefault(); 
 
-<script>
-    $('#emailForm').on('submit', function (event) {
-        event.preventDefault(); // Prevent the form's default submission
+            var message = $('#message').val();
 
-        var message = $('#message').val();
-
-        // Send the POST request via AJAX
-        $.ajax({
-            url: '/Notification/SendNotification',
-            method: 'POST',
-            data: {
-                message: message
-            },
-            success: function (response) {
-                alert(response); // Display success message
-            },
-            error: function (xhr, status, error) {
-                alert('Error: ' + error); // Display error message
+            if (message.trim() === '') {
+                $('#errorAlert').text('Please enter a message.').show(); 
+                $('#successAlert').hide(); 
+                return;
             }
+
+            
+            $.ajax({
+                url: '/Notification/SendNotification',
+                method: 'POST',
+                data: {
+                    message: message
+                },
+                success: function (response) {
+                    $('#successAlert').text(response).show(); 
+                    $('#errorAlert').hide(); 
+                    $('#emailForm')[0].reset(); 
+                },
+                error: function (xhr, status, error) {
+                    $('#errorAlert').text('Error: ' + error).show(); 
+                    $('#successAlert').hide(); 
+                }
+            });
         });
-    });
-</script>
+    </script>
+</body>
+</html>
+
+
+
+
 

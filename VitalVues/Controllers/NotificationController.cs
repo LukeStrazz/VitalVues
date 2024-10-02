@@ -23,7 +23,7 @@ public class NotificationController : Controller
             toEmail,                                // The recipient's email
             _configuration["mailgun:Mailgun_API_Key"],
             _configuration["mailgun:Email_Domain"], // Your Mailgun domain
-            "User Notification",                    // Email subject
+            "Customer Support Request",                    // Email subject
             message                                 // Message content
         );
 
