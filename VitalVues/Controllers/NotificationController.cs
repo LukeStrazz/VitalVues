@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Services.Interfaces; // Make sure you have the correct namespace for IMailService
+namespace Services.Services;
 
 public class NotificationController : Controller
 {

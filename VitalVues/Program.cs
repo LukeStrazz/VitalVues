@@ -38,6 +38,12 @@ builder.Services.AddScoped<IGoalService, GoalService>();
 
 builder.Services.AddScoped<IMailService, MailService>(); // Register the MailService
 
+// Register the SendGridEmailService
+builder.Services.AddTransient<SendGridEmailService>(provider =>
+    new SendGridEmailService(builder.Configuration["SendGrid:SendGrid_API_Key"]));
+
+
+
 
 builder.Services.AddDbContext<DatabaseContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -73,6 +79,11 @@ app.UseEndpoints(endpoints =>
     name: "notifications",
     pattern: "send-notification",
     defaults: new { controller = "Notification", action = "SendNotification" });
+
+    endpoints.MapControllerRoute(
+        name: "sendgrid",
+        pattern: "sendgrid-notification",
+        defaults: new { controller = "SendGridNotification", action = "SendEmail" });
 
 });
 

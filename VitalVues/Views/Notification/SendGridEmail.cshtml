@@ -1,0 +1,26 @@
+﻿@{
+    ViewData["Title"] = "SendGrid Notification";
+}
+
+<h1>Send an Email via SendGrid</h1>
+
+<form asp-action="SendEmail" method="post">
+    <div class="form-group">
+        <label for="toEmail">Recipient Email:</label>
+        <input type="email" id="toEmail" name="toEmail" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label for="subject">Subject:</label>
+        <input type="text" id="subject" name="subject" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label for="plainTextContent">Plain Text Content:</label>
+        <textarea id="plainTextContent" name="plainTextContent" class="form-control" rows="4"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="htmlContent">HTML Content:</label>
+        <textarea id="htmlContent" name="htmlContent" class="form-control" rows="4"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Send Email</button>
+</form>
+
