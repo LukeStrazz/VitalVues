@@ -7,6 +7,6 @@ public interface IChatService
 {
     IEnumerable<ChatViewModel> GetChats(string userSecretId);
     public Task<string> GetChatResponse(string apiKey, string request);
-    void SaveChat(string? userUniqueIdentifier, ChatViewModel messages);
+    int SaveChat(int? chatId, string? userUniqueIdentifier, ChatViewModel messages);
 }
 
