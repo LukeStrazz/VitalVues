@@ -1,0 +1,256 @@
+﻿[class*="fontawesome-"]:before {
+    font-family: 'FontAwesome', sans-serif;
+}
+
+body {
+    overflow: hidden;
+    user-select: none;
+}
+
+span{
+    font-size: 2rem;
+    color: white;
+}
+
+#content{
+    transform: translate(25%, 100%);
+}
+
+.previous-chats {
+    background-color: #4a4a55;
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    width: 16%;
+    border-left: 2px solid;
+    border-color: grey;
+    overflow: hidden;
+}
+
+.chats {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 5rem;
+    margin-left: 10px;
+}
+
+.chat-title {
+    margin-top: 12px;
+    font-weight: 600;
+}
+
+#Button {
+    position: absolute;
+    transition: top 0.5s ease, left 0.5s ease;
+    top: 50%;
+    left: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 18px;
+    text-align: center;
+    line-height: 60px;
+    background: #e74c3c;
+    border-radius: 50%;
+    color: #ececec;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.chat-holder-buttons {
+    position: absolute;
+    margin: auto;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: -169px;
+    width: 302px;
+    height: 302px;
+    font-size: 0;
+    transform: scale(0);
+    transition: transform 0.8s;
+    box-shadow: 0px 0px 10px #999;
+    z-index: 1;
+}
+
+button {
+    display: inline-block;
+    width: 150px;
+    height: 150px;
+    font-size: 28px;
+    text-decoration: none;
+    line-height: 150px;
+    text-align: center;
+    /*   text-shadow: 2px 2px 4px #666;  */
+    color: #fff;
+}
+
+    button:nth-of-type(odd) {
+        margin-right: 2px;
+    }
+
+    button:nth-child(1) {
+        margin-bottom: 2px;
+        background: #1abc9c;
+    }
+
+    button:nth-child(2) {
+        background: #838383; /*#2ecc71;*/
+    }
+
+    button:nth-child(3) {
+        background: #838383; /* #3498db;*/
+    }
+
+    button:nth-child(4) {
+        background: #838383; /* #9b59b6; */
+    }
+
+.active {
+    transform: scale(1);
+}
+
+canvas {
+    position: absolute;
+}
+
+﻿body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    z-index: 10;
+}
+
+.chat-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    margin: 10px;
+    margin-right: 20px;
+    bottom: 5rem;
+    position: absolute;
+    min-width: -webkit-fill-available;
+}
+
+.output {
+    flex-grow: 1;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    height: 50vh;
+}
+
+#chatOutput {
+    overflow-x: auto !important;
+}
+
+.message {
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 10px;
+    max-width: 70%;
+}
+
+    .message button {
+        padding: 5px 10px;
+        margin-top: 5px;
+        cursor: pointer;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+    }
+
+        .message button:hover {
+            background-color: #45a049;
+        }
+
+.user-message {
+    border: 2px solid white;
+    align-self: flex-start;
+}
+
+.bot-message {
+    background-color: #007bff;
+    color: white;
+    align-self: flex-end;
+    margin-right: 10px;
+}
+
+.input-form {
+    display: flex;
+    margin-top: 10px;
+}
+
+#promptForm, #chatOutput {
+    width: 50vw;
+}
+
+    .input-form textarea {
+        flex-grow: 1;
+        border: 1px solid gold;
+        border-radius: 5px;
+        padding: 10px;
+        margin-right: 10px;
+        background-color: #333;
+        color: gold;
+        resize: none; /* Prevents manual resizing */
+        overflow-x: hidden; /* Hide horizontal overflow */
+        overflow-y: auto; /* Automatically add vertical scrollbar when needed */
+        line-height: 1.5; /* Improves readability */
+        min-height: 50px; /* Minimum height */
+        max-height: 150px; /* Maximum height before scrolling */
+        white-space: pre-wrap; /* Ensures that text wraps and whitespace is preserved */
+        word-wrap: break-word; /* Breaks long words if necessary to fit within the width */
+    }
+
+
+    .input-form button {
+        padding: 10px 20px;
+        border-radius: 5px;
+        border: none;
+        background-color: gold;
+        color: #333;
+        cursor: pointer;
+    }
+
+        .input-form button:hover {
+            background-color: goldenrod;
+        }
+
+.output::-webkit-scrollbar {
+    width: 12px;
+}
+
+.output::-webkit-scrollbar-track {
+    background: #222;
+    border-radius: 10px;
+}
+
+.output::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 10px;
+}
+
+    .output::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+
+.output::-webkit-scrollbar-button {
+    display: none;
+}
+
+/* Styling for Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #333 #222;
+}

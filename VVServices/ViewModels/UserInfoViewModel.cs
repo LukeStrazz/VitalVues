@@ -35,5 +35,6 @@ public class UserInfoViewModel
     public List<string>? Allergies { get; set; }
     public List<GoalViewModel>? Goals { get; set; }
     public List<WorkoutViewModel>? Workouts { get; set; }
+    public List<ChatViewModel>? Chats { get; set; }
 }
 
