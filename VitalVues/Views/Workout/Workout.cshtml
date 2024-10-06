@@ -218,11 +218,11 @@
                 foreach (var workout in workoutsForDay)
                 {
                   
-                  @if (workout.Type == "Lose Weight" && workout.resolved != true)
+                  @if (workout.Type == "Lose" && workout.resolved != true)
                   {
                     <div class="workout-box">
                       <div class="form-group d-flex align-items-center justify-content-center">
-                        <label class="mb-3 me-4 text-center w-100 center-text">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@workout.Type</label>
+                        <label class="mb-3 me-4 workout-title1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@workout.Type</label>
                         <input type="hidden" id="type-@workout.WorkoutId" value="@workout.Type"/> @*Hidden Input for Type *@
                         <input type="hidden" id="workoutId-@workout.WorkoutId" value="@workout.WorkoutId"/> @*Hidden Input for workoutId*@
                         <input type="hidden" id="day-@workout.WorkoutId" value="@workout.Day" /> @*Hidden Input for Day*@
@@ -235,7 +235,7 @@
                       <input type="text" id="subtype-@workout.WorkoutId" class="form-control custom-input" placeholder="@workout.SubType" readonly> @*Input for subtype*@
                       <div class="form-group">
                                   <label for="duration">Duration:</label>
-                                  <input type="number" class="form-control custom-input" placeholder="@workout.Duration" readonly>
+                                    <input type="text" class="form-control custom-input" placeholder="@workout.Duration minutes" readonly>
                               </div>
                           </div>
                   
@@ -248,7 +248,7 @@
                                  <label class="mb-3 me-4 text-center" style="padding-left: 48px; text-align: center;">@workout.Type</label>
                               }
                                 else {
-                                  <label class="mb-3 me-4 text-center" style="padding-left: 38px; text-align: center;">@workout.Type</label>
+                                  <label class="mb-3 me-4 workout-title1" style="padding-left: 38px; text-align: center;">@workout.Type</label>
                                 }
                                 <input type="hidden" id="type-@workout.WorkoutId" value="@workout.Type"/> @*Hidden Input for Type *@
                                 <input type="hidden" id="workoutId-@workout.WorkoutId" value="@workout.WorkoutId"/> @*Hidden Input for workoutId*@
@@ -308,137 +308,132 @@
   
 
     document.getElementById("loseWeightButton").addEventListener("click", function(event) {
-    event.preventDefault();
+      event.preventDefault();
 
-     const subType = document.getElementById("loseWeightSubTypeSelection").value;
-     const day = document.getElementById("loseWeightDaySelection").value;
-     const duration = document.getElementById("loseWeightDurationSelection").value;
+      const subType = document.getElementById("loseWeightSubTypeSelection").value;
+      const day = document.getElementById("loseWeightDaySelection").value;
+      const duration = document.getElementById("loseWeightDurationSelection").value;
 
-     if (subType === "Choose an exercise" || day === "Choose a day for the workout" || duration === "Choose duration") {
+      if (subType === "Choose an exercise" || day === "Choose a day for the workout" || duration === "Choose duration") {
         alert("Please fill in all fields.");
         return;
       }
 
-     var type = "Lose Weight";
-
-    const workoutData = {
-      userSecretId: document.getElementById("userSecretId").value,
-      Type: type,
-      SubType: subType,
-      Day: day,
-      //Duration: document.getElementById("duration").value,
-      Set: 0,
-      Rep: 0,
-      resolved: false,
-      Duration: duration,
-    }
-
-    fetch('/api/WorkoutController/CreateWorkout', {
-        method: 'POST', 
-        headers: {
-            'Content-Type': 'application/json' 
-        },
-        body: JSON.stringify(workoutData) 
-     })
-        .then(response => {
-        if(response.ok){
-            window.location.reload();
-        }
-        
-        response.ok ? response.json() : Promise.reject(response.text())})
-        .then(data => alert("Goal created succesfully"))
-        .catch(response => response.then(errorMessage => alert("Error: " + errorMessage)));
-    })
-
-    document.getElementById("buildWeightButton").addEventListener("click", function(event) {
-    event.preventDefault();
-
-      
-    const subType = document.getElementById("buildMuscleSubTypeSelection").value;
-    const day = document.getElementById("buildMuscleDaySelection").value;
-    const set = document.getElementById("buildMuscleSet").value;
-    const rep = document.getElementById("buildMuscleRep").value;
-    const duration = 0; 
-
-    if (subType === "Choose an exercise" || day === "Choose a day for the workout" || set === "Choose sets" || rep === "Choose reps") {
-        alert("Please fill in all fields.");
-        return;
-      }
-
-    var type = "Build Muscle";
+      var type = "Lose";
 
       const workoutData = {
-     userSecretId: document.getElementById("userSecretId").value,
-     Type: type,
-     SubType: subType,
-     Day: day,
-     Set: set,
-     Rep: rep,
-     Duration: duration,
-     resolved: false,
+        userSecretId: document.getElementById("userSecretId").value,
+        Type: type,
+        SubType: subType,
+        Day: day,
+        Set: 0,
+        Rep: 0,
+        resolved: false,
+        Duration: duration,
       }
 
-    fetch('/api/WorkoutController/CreateWorkout', {
+      fetch('/api/WorkoutController/CreateWorkout', {
         method: 'POST', 
         headers: {
-            'Content-Type': 'application/json' 
+          'Content-Type': 'application/json' 
         },
         body: JSON.stringify(workoutData) 
-     })
-        .then(response => {
+      })
+      .then(response => {
         if(response.ok){
-            window.location.reload();
+          window.location.reload();
         }
-        
-        response.ok ? response.json() : Promise.reject(response.text())})
-        .then(data => alert("Goal created succesfully"))
-        .catch(response => response.then(errorMessage => alert("Error: " + errorMessage)));
-    })
+        response.ok ? response.json() : Promise.reject(response.text())
+      })
+      .then(data => alert("Workout has been saved to " + day))
+      .catch(response => response.then(errorMessage => alert("Error: " + errorMessage)));
+    });
 
+    document.getElementById("buildWeightButton").addEventListener("click", function(event) {
+      event.preventDefault();
 
-    document.getElementById("maintainWeightButton").addEventListener("click", function(event) {
-    event.preventDefault();
+      const subType = document.getElementById("buildMuscleSubTypeSelection").value;
+      const day = document.getElementById("buildMuscleDaySelection").value;
+      const set = document.getElementById("buildMuscleSet").value;
+      const rep = document.getElementById("buildMuscleRep").value;
 
-     const subType = document.getElementById("maintainMuscleSubTypeSelection").value;
-     const day = document.getElementById("maintainMuscleDaySelection").value;
-     const set = document.getElementById("maintainMuscleSet").value;
-     const rep = document.getElementById("maintainMuscleRep").value;
-     const duration = 0; 
-
-     if (subType === "Choose an exercise" || day === "Choose a day for the workout" || set === "Choose sets" || rep === "Choose reps") {
+      if (subType === "Choose an exercise" || day === "Choose a day for the workout" || set === "Choose sets" || rep === "Choose reps") {
         alert("Please fill in all fields.");
         return;
       }
-      
-     var type = "Maintain";
 
-    const workoutData = {
-      userSecretId: document.getElementById("userSecretId").value,
-      Type: type,
-      SubType: subType,
-      Day: day,
-      Set: set,
-      Rep: rep,
-      Duration: duration,
-      resolved: false,
-    }
+      var type = "Build";
 
-    fetch('/api/WorkoutController/CreateWorkout', {
-      method: 'POST', 
-      headers: {
-        'Content-Type': 'application/json' 
-      },
-      body: JSON.stringify(workoutData) 
-     })
-      .then(response => {
-      if(response.ok){
-        window.location.reload();
+      const workoutData = {
+        userSecretId: document.getElementById("userSecretId").value,
+        Type: type,
+        SubType: subType,
+        Day: day,
+        Set: set,
+        Rep: rep,
+        Duration: 0,
+        resolved: false,
       }
-      
-      response.ok ? response.json() : Promise.reject(response.text())})
-      .then(data => alert("Goal created succesfully"))
+
+      fetch('/api/WorkoutController/CreateWorkout', {
+        method: 'POST', 
+        headers: {
+          'Content-Type': 'application/json' 
+        },
+        body: JSON.stringify(workoutData) 
+      })
+      .then(response => {
+        if(response.ok){
+          window.location.reload();
+        }
+        response.ok ? response.json() : Promise.reject(response.text())
+      })
+      .then(data => alert("Workout has been saved to " + day))
       .catch(response => response.then(errorMessage => alert("Error: " + errorMessage)));
-    })
+    });
+
+    document.getElementById("maintainWeightButton").addEventListener("click", function(event) {
+      event.preventDefault();
+
+      const subType = document.getElementById("maintainMuscleSubTypeSelection").value;
+      const day = document.getElementById("maintainMuscleDaySelection").value;
+      const set = document.getElementById("maintainMuscleSet").value;
+      const rep = document.getElementById("maintainMuscleRep").value;
+
+      if (subType === "Choose an exercise" || day === "Choose a day for the workout" || set === "Choose sets" || rep === "Choose reps") {
+        alert("Please fill in all fields.");
+        return;
+      }
+
+      var type = "Maintain";
+
+      const workoutData = {
+        userSecretId: document.getElementById("userSecretId").value,
+        Type: type,
+        SubType: subType,
+        Day: day,
+        Set: set,
+        Rep: rep,
+        Duration: 0,
+        resolved: false,
+      }
+
+      fetch('/api/WorkoutController/CreateWorkout', {
+        method: 'POST', 
+        headers: {
+          'Content-Type': 'application/json' 
+        },
+        body: JSON.stringify(workoutData) 
+      })
+      .then(response => {
+        if(response.ok){
+          window.location.reload();
+        }
+        response.ok ? response.json() : Promise.reject(response.text())
+      })
+      .then(data => alert("Workout has been saved to " + day))
+      .catch(response => response.then(errorMessage => alert("Error: " + errorMessage)));
+    });
 
 
     document.querySelectorAll('.btn-outline-danger').forEach(button => {
@@ -477,7 +472,7 @@
                 }
                 return response.ok ? response.json() : Promise.reject(response.text());
             })
-            .then(data => alert("Goal created successfully"))
+            .then(data => alert("Workout has been deleted from " + day))
             .catch(errorMessage => alert("Error: " + errorMessage));
         });
     });
