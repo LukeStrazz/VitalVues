@@ -37,6 +37,7 @@ builder.Services.ConfigureSameSiteNoneCookies();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IGoalService, GoalService>();
+builder.Services.AddScoped<IWorkoutService, WorkoutService>();
 builder.Services.AddScoped<IBloodworkService, BloodworkService>();
 builder.Services.AddScoped<IFastingService, FastService>();
 
