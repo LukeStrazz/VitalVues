@@ -14,16 +14,17 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
+            <div class="mb-1">
+                <label for="startingGoalDate" class="form-label" style="color: #6c757d; font-weight: bold;">Start Date</label>
+                <input type="date" class="form-control" id="startingGoalDate" placeholder="Start Date" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+            </div>
+
+            <div class="mb-3">
+                <label for="endGoalDate" class="form-label" style="color: #6c757d; font-weight: bold;">End Date</label>
+                <input type="date" class="form-control" id="endGoalDate" placeholder="End Date" value="@DateTime.Now.AddDays(30).ToString("yyyy-MM-dd")" />
+            </div>
             <div class="mb-3">
                  <input type="number" class="form-control" id="targetWeight" placeholder="Please enter your target weight" min="50" max="700" />
-            </div>
-
-             <div class="mb-3">
-                 <input type="date" class="form-control" id="startingGoalDate" placeholder="Start Date" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
-            </div>
-
-             <div class="mb-3">
-                 <input type="date" class="form-control" id="endGoalDate" placeholder="End Date" value="@DateTime.Now.AddDays(30).ToString("yyyy-MM-dd")" />
             </div>
             <div>
                 <textarea class="form-control" id="description" placeholder="Please enter description for your goal."></textarea>
@@ -126,7 +127,7 @@
                             <label for="startingGoalDate-@goal.GoalId" class="col-sm-2 col-form-label">Start Date:</label>
                             <div class="col-sm-6">
                                 <div class="existingGoalFields">
-                                <input type="date" id="startingGoalDate-@goal.GoalId" class="form-control" value="@goal.startingGoalDate.ToString("yyyy-MM-dd")" />
+                                <input type="date" id="startingGoalDate-@goal.GoalId" class="form-control" value="@goal.startingGoalDate.ToString("yyyy-MM-dd")"/>
                                 </div>
                             </div>
                         </div>
@@ -178,7 +179,7 @@
             }
             else if (Model.Goals.IndexOf(goal) == Model.Goals.Count - 1)
         {
-            <p>You don't have any goals yet. Create one above!</p>
+            <p style="margin-left: -15px;">You don't have any goals yet. Create one above!</p>
         }
         }
     </ul>
@@ -199,6 +200,7 @@
     document.getElementById("addGoalButton").addEventListener("click", function(event) {
         event.preventDefault();
 
+
         const goalData = {
             userSecretId: document.getElementById("userSecretId").value,
             resolved: false,
@@ -210,10 +212,29 @@
 
         console.log(goalData);
 
-        if (!goalData.startingGoalDate || !goalData.endGoalDate || !goalData.description) {
+        if (!goalData.startingGoalDate || !goalData.endGoalDate || !goalData.description || !goalData.targetWeight) {
             alert("Please fill out all required fields.");
             return;
         }
+
+        const today = new Date().toISOString().split('T')[0];
+        if (goalData.startingGoalDate < today) {
+            alert("The starting date must be today or a future date.");
+            return;
+        }
+
+        if (goalData.endGoalDate <= goalData.startingGoalDate) {
+            alert("The end date cannot be before the start date.");
+            return;
+        }
+
+
+        if (goalData.targetWeight < 50 || goalData.targetWeight > 700) {
+            alert("The target weight must be between 50 and 700.");
+            return;
+        }
+
+
 
         fetch("/api/GoalController/CreateGoal", {
             method: "POST",
@@ -289,6 +310,27 @@
                 description: description,
                 targetWeight: targetWeight
             };
+
+            if (!goalDataEdit.startingGoalDate || !goalDataEdit.endGoalDate || !goalDataEdit.description || !goalDataEdit.targetWeight) {
+                alert("Please fill out all required fields.");
+                return;
+            }
+
+            const today = new Date().toISOString().split('T')[0];
+            @* if (goalDataEdit.startingGoalDate < today) {
+                alert("The starting date must be today or a future date.");
+                return;
+            } *@
+
+            if (goalDataEdit.endGoalDate <= goalDataEdit.startingGoalDate) {
+                alert("The end date cannot be before the start date.");
+                return;
+            }
+
+            if (goalDataEdit.targetWeight < 50 || goalDataEdit.targetWeight > 700) {
+                alert("The target weight must be between 50 and 700.");
+                return;
+            }
 
             fetch("/api/GoalController/UpdateGoal", {
                 method: "POST",
