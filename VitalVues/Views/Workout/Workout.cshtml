@@ -1,8 +1,12 @@
+@model Services.ViewModels.UserInfoViewModel
+
+
 <head>
  <link rel="stylesheet" href="~/css/workout.css" asp-append-version="true" />
 </head>
 
 <body>
+   <input type="hidden" id="userSecretId" value="@Model.Sid" />
   <div class="modal" id="loseWeightModal">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
@@ -11,36 +15,40 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <select class="form-select mb-3" aria-label="Default select example">
+            <select id="loseWeightSubTypeSelection" class="form-select mb-3" aria-label="Default select example">
               <option selected>Choose an exercise</option>
-              <option value="1">Walking</option>
-              <option value="2">Jumping</option>
-              <option value="3">Cycling</option>
-              <option value="4">Swimming</option>
-              <option value="5">Strength</option>
-              <option value="6">Pilates</option>
-              <option value="7">Yoga</option>
-              <option value="8">Hiking</option>
-              <option value="9">Push-Up's</option>
+                <option value="Walking">Walking</option>
+                <option value="Jumping">Jumping</option>
+                <option value="Cycling">Cycling</option>
+                <option value="Swimming">Swimming</option>
+                <option value="Pilates">Pilates</option>
+                <option value="Yoga">Yoga</option>
+                <option value="Hiking">Hiking</option>
             </select>
 
-            <select class="form-select mb-3" aria-label="Default select example">
+            <select id="loseWeightDaySelection" class="form-select mb-5" aria-label="Default select example">
               <option selected>Choose a day for the workout</option>
-              <option value="1">Monday</option>
-              <option value="2">Tuesday</option>
-              <option value="3">Wednesday</option>
-              <option value="4">Thursday</option>
-              <option value="5">Friday</option>
-              <option value="6">Saturday</option>
-              <option value="7">Sunday</option>
+                <option value="Monday">Monday</option>
+                <option value="Tuesday">Tuesday</option>
+                <option value="Wednesday">Wednesday</option>
+                <option value="Thursday">Thursday</option>
+                <option value="Friday">Friday</option>
+                <option value="Saturday">Saturday</option>
+                <option value="Sunday">Sunday</option>
             </select>
-            <input type="number" class="form-control mb-3" placeholder="Enter reps" style="max-width: 150px;">
-            <input type="number" class="form-control mb-3" placeholder="Enter sets" style="max-width: 150px;">
+            <select id="loseWeightDurationSelection" class="form-select mb-3" aria-label="Select duration">
+              <option selected>Choose duration</option>
+              @for (int i = 1; i <= 12; i++)
+              {
+              var minutes = i * 5;
+              <option value="@minutes">@minutes minutes</option>
+              }
+            </select>
           </div>
 
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Add Workout</button>
+            <button id="loseWeightButton" type="button" class="btn btn-primary">Add Workout</button>
         </div>
 
       </div>
@@ -55,36 +63,48 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <select class="form-select mb-3" aria-label="Default select example">
-              <option selected>Choose an exercise</option>
-              <option value="1">Build muscle option</option>
-              <option value="2">Build muscle option</option>
-              <option value="3">Build muscle option</option>
-              <option value="4">Build muscle option</option>
-              <option value="5">Build muscle option</option>
-              <option value="6">Build muscle option</option>
-              <option value="7">Build muscle option</option>
-              <option value="8">Build muscle option</option>
-              <option value="9">Build muscle option</option>
+            <select id="buildMuscleSubTypeSelection" class="form-select mb-3" aria-label="Default select example">
+                <option selected>Choose an exercise</option>
+                <option value="Push-Up">Push-Up</option>
+                <option value="Pull-Up">Pull-Up</option>
+                <option value="Bench-Press">Bench-Press</option>
+                <option value="Squat">Squat</option>
+                <option value="Deadlift">Deadlift</option>
+                <option value="Bicep-Curl">Bicep-Curl</option>
+                <option value="Tricep-Dip">Tricep-Dip</option>
+                <option value="Shoulder-Press">Shoulder-Press</option>
+                <option value="Leg-Press">Leg-Press</option>
             </select>
 
-            <select class="form-select mb-3" aria-label="Default select example">
+            <select id="buildMuscleDaySelection" class="form-select mb-3" aria-label="Default select example">
               <option selected>Choose a day for the workout</option>
-              <option value="1">Monday</option>
-              <option value="2">Tuesday</option>
-              <option value="3">Wednesday</option>
-              <option value="4">Thursday</option>
-              <option value="5">Friday</option>
-              <option value="6">Saturday</option>
-              <option value="7">Sunday</option>
+              <option value="Monday">Monday</option>
+              <option value="Tuesday">Tuesday</option>
+              <option value="Wednesday">Wednesday</option>
+              <option value="Thursday">Thursday</option>
+              <option value="Friday">Friday</option>
+              <option value="Saturday">Saturday</option>
+              <option value="Sunday">Sunday</option>
             </select>
-            <input type="number" class="form-control mb-3" placeholder="Enter reps" style="max-width: 150px;">
-            <input type="number" class="form-control mb-3" placeholder="Enter sets" style="max-width: 150px;">
+            <select id="buildMuscleRep" class="form-select mb-3" aria-label="Select reps">
+              <option selected>Choose reps</option>
+              @for (int i = 1; i <= 20; i++)
+              {
+                <option value="@i">@i</option>
+              }
+            </select>
+            <select id="buildMuscleSet" class="form-select mb-3" aria-label="Select sets">
+              <option selected>Choose sets</option>
+              @for (int i = 1; i <= 5; i++)
+              {
+                <option value="@i">@i</option>
+              }
+            </select>
           </div>
 
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Add Workout</button>
+            <button id="buildWeightButton" type="button" class="btn btn-primary">Add Workout</button>
         </div>
 
       </div>
@@ -99,36 +119,48 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <select class="form-select mb-3" aria-label="Default select example">
+            <select id="maintainMuscleSubTypeSelection" class="form-select mb-3" aria-label="Default select example">
               <option selected>Choose an exercise</option>
-              <option value="1">Maintain Muscle option</option>
-              <option value="2">Maintain Muscle option</option>
-              <option value="3">Maintain Muscle option</option>
-              <option value="4">Maintain Muscle option</option>
-              <option value="5">Maintain Muscle option</option>
-              <option value="6">Maintain Muscle option</option>
-              <option value="7">Maintain Muscle option</option>
-              <option value="8">Maintain Muscle option</option>
-              <option value="9">Maintain Muscle option</option>
+                <option value="Push-Up">Push-Up</option>
+                <option value="Pull-Up">Pull-Up</option>
+                <option value="Bench-Press">Bench-Press</option>
+                <option value="Squat">Squat</option>
+                <option value="Deadlift">Deadlift</option>
+                <option value="Bicep-Curl">Bicep-Curl</option>
+                <option value="Tricep-Dip">Tricep-Dip</option>
+                <option value="Shoulder-Press">Shoulder-Press</option>
+                <option value="Leg-Press">Leg-Press</option>
             </select>
 
-            <select class="form-select mb-3" aria-label="Default select example">
+            <select id="maintainMuscleDaySelection" class="form-select mb-3" aria-label="Default select example">
               <option selected>Choose a day for the workout</option>
-              <option value="1">Monday</option>
-              <option value="2">Tuesday</option>
-              <option value="3">Wednesday</option>
-              <option value="4">Thursday</option>
-              <option value="5">Friday</option>
-              <option value="6">Saturday</option>
-              <option value="7">Sunday</option>
+              <option value="Monday">Monday</option>
+              <option value="Tuesday">Tuesday</option>
+              <option value="Wednesday">Wednesday</option>
+              <option value="Thursday">Thursday</option>
+              <option value="Friday">Friday</option>
+              <option value="Saturday">Saturday</option>
+              <option value="Sunday">Sunday</option>
             </select>
-            <input type="number" class="form-control mb-3" placeholder="Enter reps" style="max-width: 150px;">
-            <input type="number" class="form-control mb-3" placeholder="Enter sets" style="max-width: 150px;">
+            <select id="maintainMuscleRep" class="form-select mb-3" aria-label="Select reps">
+              <option selected>Choose reps</option>
+              @for (int i = 1; i <= 20; i++)
+              {
+              <option value="@i">@i</option>
+              }
+            </select>
+            <select id="maintainMuscleSet" class="form-select mb-3" aria-label="Select sets">
+              <option selected>Choose sets</option>
+              @for (int i = 1; i <= 5; i++)
+              {
+              <option value="@i">@i</option>
+              }
+            </select>
           </div>
 
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Add Workout</button>
+            <button id="maintainWeightButton" type="button" class="btn btn-primary">Add Workout</button>
         </div>
 
       </div>
@@ -158,192 +190,95 @@
           <img src="https://manflowyoga.com/wp-content/uploads/2020/05/ManFlowYoga-does-yoga-build-muscle-twist.jpg" 
                class="round-image" 
                onclick="showThirdModal();">
-          <div class="overlay-text">&nbsp;Maintain&nbsp;</div>
+            <div class="overlay-text text-3">Maintain Muscle</div>
         </div>
       </div>
     </div>
   </div>
 
+@{
+     var daysOfWeek = new List<string> { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+}
   <div class="container-fluid">
 
   <h3 class="workout-title mb-3 text-center">Weekly Workout Schedule</h3>
 
   <div class="row text-center justify-content-between">
     
-    <div class="col-md-auto col-sm-12">
-        <div class="day-container">&nbsp;Monday&nbsp;</div>
-        <div class="workout-box">
-            <div class="form-group d-flex align-items-center">
-            <label class="mb-3 me-4" for="workout-type-monday" style="padding-left: 40px;">WALKING</label>
-            <img src="https://static-00.iconduck.com/assets.00/remove-icon-2048x2048-ojgymcv1.png" style="max-width: 25px; max-height: 25px;">
-            </div>
-            <input type="text" id="workout-type-monday" class="form-control custom-input" placeholder="Weight Lose Exrc." readonly>
-          
-          <div class="form-group">
-            <label for="sets-monday">Sets:</label>
-            <input type="number" id="sets-monday" class="form-control custom-input" placeholder="3 Sets" readonly>
-          </div>
-          <div class="form-group">
-            <label for="reps-monday">Reps:</label>
-            <input type="number" id="reps-monday" class="form-control custom-input" placeholder="3 Reps" readonly>
-          </div>
-        </div>
-        <div class="workout-box">
-          <div class="form-group">
-            <label class="mb-3" for="workout-type-monday" style="font-weight: bold;">WALKING</label>
-            <input type="text" id="workout-type-monday" class="form-control custom-input" placeholder="Weight Lose Exrc." readonly>
-          </div>
-          <div class="form-group">
-            <label for="sets-monday">Sets:</label>
-            <input type="number" id="sets-monday" class="form-control custom-input" placeholder="3 Sets" readonly>
-          </div>
-          <div class="form-group">
-            <label for="reps-monday">Reps:</label>
-            <input type="number" id="reps-monday" class="form-control custom-input" placeholder="3 Reps" readonly>
-          </div>
-        </div>
 
-      </div>
+    @foreach (var day in daysOfWeek)
+    {
 
-   
-    <div class="col-md-auto col-sm-12">
-      <div class="day-container">&nbsp;Tuesday&nbsp;</div>
-      <div class="workout-box">
-        <div class="form-group">
-          <label class="mb-3" for="workout-type-monday" style="font-weight: bold;">WALKING</label>
-          <input type="text" id="workout-type-monday" class="form-control custom-input" placeholder="Weight Lose Exrc." readonly>
-        </div>
-        <div class="form-group">
-          <label for="sets-monday">Sets:</label>
-          <input type="number" id="sets-monday" class="form-control custom-input" placeholder="3 Sets" readonly>
-        </div>
-        <div class="form-group">
-          <label for="reps-monday">Reps:</label>
-          <input type="number" id="reps-monday" class="form-control custom-input" placeholder="3 Reps" readonly>
-        </div>
-      </div>
-    </div>
+      var workoutsForDay = Model.Workouts.Where(w => w.Day == day).ToList();
 
-   
-    <div class="col-md-auto col-sm-12">
-      <div class="day-container">Wednesday</div>
-      <div class="workout-box">
-        <div class="form-group">
-          <label class="mb-3" for="workout-type-monday" style="font-weight: bold;">WALKING</label>
-          <input type="text" id="workout-type-monday" class="form-control custom-input" placeholder="Weight Lose Exrc." readonly>
+        <div class="col-md-auto col-sm-12">
+              <div class="day-container mb-3">&nbsp;@day&nbsp;</div>
+              @if (workoutsForDay.Any())
+              {
+                foreach (var workout in workoutsForDay)
+                {
+                  
+                  @if (workout.Type == "Lose Weight" && workout.resolved != true)
+                  {
+                    <div class="workout-box">
+                      <div class="form-group d-flex align-items-center justify-content-center">
+                        <label class="mb-3 me-4 text-center w-100 center-text">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@workout.Type</label>
+                        <input type="hidden" id="type-@workout.WorkoutId" value="@workout.Type"/> @*Hidden Input for Type *@
+                        <input type="hidden" id="workoutId-@workout.WorkoutId" value="@workout.WorkoutId"/> @*Hidden Input for workoutId*@
+                        <input type="hidden" id="day-@workout.WorkoutId" value="@workout.Day" /> @*Hidden Input for Day*@
+                        <input type="hidden" id="sid-@workout.WorkoutId" value="@workout.userSecretId" /> @*Hidden Input for userSecretId*@
+                        <input type="hidden" id="rep-@workout.WorkoutId" value="@workout.Rep" /> @*Hidden Input for rep*@
+                        <input type="hidden" id="set-@workout.WorkoutId" value="@workout.Set" /> @*Hidden Input for set*@
+                        <input type="hidden" id="duration-@workout.WorkoutId" value="@workout.Duration" /> @*Hidden Input for Duration*@
+                        <button type="button" class="btn btn-outline-danger" data-workoutid="@workout.WorkoutId">X</button>
+                      </div>
+                      <input type="text" id="subtype-@workout.WorkoutId" class="form-control custom-input" placeholder="@workout.SubType" readonly> @*Input for subtype*@
+                      <div class="form-group">
+                                  <label for="duration">Duration:</label>
+                                  <input type="number" class="form-control custom-input" placeholder="@workout.Duration" readonly>
+                              </div>
+                          </div>
+                  
+                  }
+                  else if (workout.resolved != true)
+                  {
+                          <div class="workout-box">
+                            <div class="form-group d-flex align-items-center">
+                              @if (@workout.Type == "Maintain"){
+                                 <label class="mb-3 me-4 text-center" style="padding-left: 48px; text-align: center;">@workout.Type</label>
+                              }
+                                else {
+                                  <label class="mb-3 me-4 text-center" style="padding-left: 38px; text-align: center;">@workout.Type</label>
+                                }
+                                <input type="hidden" id="type-@workout.WorkoutId" value="@workout.Type"/> @*Hidden Input for Type *@
+                                <input type="hidden" id="workoutId-@workout.WorkoutId" value="@workout.WorkoutId"/> @*Hidden Input for workoutId*@
+                                <input type="hidden" id="day-@workout.WorkoutId" value="@workout.Day" /> @*Hidden Input for Day*@
+                                <input type="hidden" id="sid-@workout.WorkoutId" value="@workout.userSecretId" /> @*Hidden Input for userSecretId*@
+                                <input type="hidden" id="rep-@workout.WorkoutId" value="@workout.Rep" /> @*Hidden Input for rep*@
+                                <input type="hidden" id="set-@workout.WorkoutId" value="@workout.Set" /> @*Hidden Input for set*@
+                                <input type="hidden" id="duration-@workout.WorkoutId" value="@workout.Duration" /> @*Hidden Input for Duration*@
+                                <button type="button" class="btn btn-outline-danger" data-workoutid="@workout.WorkoutId">X</button>
+                             </div>
+                              <input type="text" id="subtype-@workout.WorkoutId" class="form-control custom-input" placeholder="@workout.SubType" readonly> @*Input for subtype*@
+                             <div class="form-group">
+                              <label>Sets:</label>
+                              <input type="number"  class="form-control custom-input" placeholder="@workout.Set" readonly> 
+                             </div>
+                            <div class="form-group">
+                              <label>Reps:</label>
+                              <input type="number" class="form-control custom-input" placeholder="@workout.Rep" readonly> @*Input for rep*@
+                            </div>
+                          </div>
+                  }
+                }
+              }
         </div>
-        <div class="form-group">
-          <label for="sets-monday">Sets:</label>
-          <input type="number" id="sets-monday" class="form-control custom-input" placeholder="3 Sets" readonly>
-        </div>
-        <div class="form-group">
-          <label for="reps-monday">Reps:</label>
-          <input type="number" id="reps-monday" class="form-control custom-input" placeholder="3 Reps" readonly>
-        </div>
-      </div>
-    </div>
-
-    
-    <div class="col-md-auto col-sm-12">
-      <div class="day-container">Thursday</div>
-      <div class="workout-box">
-        <div class="form-group">
-          <label class="mb-3" for="workout-type-monday" style="font-weight: bold;">WALKING</label>
-          <input type="text" id="workout-type-monday" class="form-control custom-input" placeholder="Weight Lose Exrc." readonly>
-        </div>
-        <div class="form-group">
-          <label for="sets-monday">Sets:</label>
-          <input type="number" id="sets-monday" class="form-control custom-input" placeholder="3 Sets" readonly>
-        </div>
-        <div class="form-group">
-          <label for="reps-monday">Reps:</label>
-          <input type="number" id="reps-monday" class="form-control custom-input" placeholder="3 Reps" readonly>
-        </div>
-      </div>
-    </div>
-
-    
-    <div class="col-md-auto col-sm-12">
-      <div class="day-container">&nbsp;&nbsp;Friday&nbsp;&nbsp;</div>
-    </div>
-
-    
-    <div class="col-md-auto col-sm-12">
-      <div class="day-container">Saturday</div>
-      <div class="workout-box">
-        <div class="form-group">
-          <label class="mb-3" for="workout-type-monday" style="font-weight: bold;">WALKING</label>
-          <input type="text" id="workout-type-monday" class="form-control custom-input" placeholder="Weight Lose Exrc." readonly>
-        </div>
-        <div class="form-group">
-          <label for="sets-monday">Sets:</label>
-          <input type="number" id="sets-monday" class="form-control custom-input" placeholder="3 Sets" readonly>
-        </div>
-        <div class="form-group">
-          <label for="reps-monday">Reps:</label>
-          <input type="number" id="reps-monday" class="form-control custom-input" placeholder="3 Reps" readonly>
-        </div>
-      </div>
-      <div class="workout-box">
-        <div class="form-group">
-          <label class="mb-3" for="workout-type-monday" style="font-weight: bold;">WALKING</label>
-          <input type="text" id="workout-type-monday" class="form-control custom-input" placeholder="Weight Lose Exrc." readonly>
-        </div>
-        <div class="form-group">
-          <label for="sets-monday">Sets:</label>
-          <input type="number" id="sets-monday" class="form-control custom-input" placeholder="3 Sets" readonly>
-        </div>
-        <div class="form-group">
-          <label for="reps-monday">Reps:</label>
-          <input type="number" id="reps-monday" class="form-control custom-input" placeholder="3 Reps" readonly>
-        </div>
-      </div>
-    </div>
-
-    
-    <div class="col-md-auto col-sm-12">
-      <div class="day-container">&nbsp;Sunday&nbsp;</div>
-      <div class="workout-box">
-        <div class="form-group">
-          <label class="mb-3" for="workout-type-monday" style="font-weight: bold;">WALKING</label>
-          <input type="text" id="workout-type-monday" class="form-control custom-input" placeholder="Weight Lose Exrc." readonly>
-        </div>
-        <div class="form-group">
-          <label for="sets-monday">Sets:</label>
-          <input type="number" id="sets-monday" class="form-control custom-input" placeholder="3 Sets" readonly>
-        </div>
-        <div class="form-group">
-          <label for="reps-monday">Reps:</label>
-          <input type="number" id="reps-monday" class="form-control custom-input" placeholder="3 Reps" readonly>
-        </div>
-      </div>
-      <div class="workout-box mb-3">
-        <div class="form-group">
-          <label class="mb-3" for="workout-type-monday" style="font-weight: bold;">WALKING</label>
-          <input type="text" id="workout-type-monday" class="form-control custom-input" placeholder="Weight Lose Exrc." readonly>
-        </div>
-        <div class="form-group">
-          <label for="sets-monday">Sets:</label>
-          <input type="number" id="sets-monday" class="form-control custom-input" placeholder="3 Sets" readonly>
-        </div>
-        <div class="form-group">
-          <label for="reps-monday">Reps:</label>
-          <input type="number" id="reps-monday" class="form-control custom-input" placeholder="3 Reps" readonly>
-        </div>
-      </div>
-    </div>
+    }
   </div>
   </div>
 
 
- <div class="Chat-AI mb-3">
-  <div class="form-group">
-    <label for="exampleFormControlTextarea1">Workout Suggestion</label>
-    <textarea class="form-control mb-3" id="exampleFormControlTextarea1" rows="3"></textarea>
-  </div>
-  <input id="userAIQuestion" type="text" class="form-control mb-3" placeholder="Ask for a suggestion" style="max-width: 300px;">
-  <button type="button" class="btn btn-primary" onclick="sendChatMessage();">Ask AI</button>
- </div>
+
 
   <script>
     var loseWeightModal = new bootstrap.Modal(document.getElementById('loseWeightModal'), {
@@ -369,32 +304,184 @@
     function showThirdModal() {
       maintainMuscleModal.show();
     }
-   
 
-function sendChatMessage() {
+  
 
-  var userInput = document.getElementById('userAIQuestion').value;
+    document.getElementById("loseWeightButton").addEventListener("click", function(event) {
+    event.preventDefault();
 
-    fetch('/api/SubmitBloodwork/ChatConnector', {
+     const subType = document.getElementById("loseWeightSubTypeSelection").value;
+     const day = document.getElementById("loseWeightDaySelection").value;
+     const duration = document.getElementById("loseWeightDurationSelection").value;
+
+     if (subType === "Choose an exercise" || day === "Choose a day for the workout" || duration === "Choose duration") {
+        alert("Please fill in all fields.");
+        return;
+      }
+
+     var type = "Lose Weight";
+
+    const workoutData = {
+      userSecretId: document.getElementById("userSecretId").value,
+      Type: type,
+      SubType: subType,
+      Day: day,
+      //Duration: document.getElementById("duration").value,
+      Set: 0,
+      Rep: 0,
+      resolved: false,
+      Duration: duration,
+    }
+
+    fetch('/api/WorkoutController/CreateWorkout', {
         method: 'POST', 
         headers: {
             'Content-Type': 'application/json' 
         },
-        body: JSON.stringify(userInput) 
-    })
-    .then(response => response.json()) 
-    .then(data => {
-        if (data.success) {
-            console.log("Workout AI:", data.message); 
-            document.getElementById("exampleFormControlTextarea1").value = data.message;
-        } else {
-            console.error("Error:", data.message); 
+        body: JSON.stringify(workoutData) 
+     })
+        .then(response => {
+        if(response.ok){
+            window.location.reload();
         }
+        
+        response.ok ? response.json() : Promise.reject(response.text())})
+        .then(data => alert("Goal created succesfully"))
+        .catch(response => response.then(errorMessage => alert("Error: " + errorMessage)));
     })
-    .catch(error => {
-        console.error("An error occurred:", error); 
+
+    document.getElementById("buildWeightButton").addEventListener("click", function(event) {
+    event.preventDefault();
+
+      
+    const subType = document.getElementById("buildMuscleSubTypeSelection").value;
+    const day = document.getElementById("buildMuscleDaySelection").value;
+    const set = document.getElementById("buildMuscleSet").value;
+    const rep = document.getElementById("buildMuscleRep").value;
+    const duration = 0; 
+
+    if (subType === "Choose an exercise" || day === "Choose a day for the workout" || set === "Choose sets" || rep === "Choose reps") {
+        alert("Please fill in all fields.");
+        return;
+      }
+
+    var type = "Build Muscle";
+
+      const workoutData = {
+     userSecretId: document.getElementById("userSecretId").value,
+     Type: type,
+     SubType: subType,
+     Day: day,
+     Set: set,
+     Rep: rep,
+     Duration: duration,
+     resolved: false,
+      }
+
+    fetch('/api/WorkoutController/CreateWorkout', {
+        method: 'POST', 
+        headers: {
+            'Content-Type': 'application/json' 
+        },
+        body: JSON.stringify(workoutData) 
+     })
+        .then(response => {
+        if(response.ok){
+            window.location.reload();
+        }
+        
+        response.ok ? response.json() : Promise.reject(response.text())})
+        .then(data => alert("Goal created succesfully"))
+        .catch(response => response.then(errorMessage => alert("Error: " + errorMessage)));
+    })
+
+
+    document.getElementById("maintainWeightButton").addEventListener("click", function(event) {
+    event.preventDefault();
+
+     const subType = document.getElementById("maintainMuscleSubTypeSelection").value;
+     const day = document.getElementById("maintainMuscleDaySelection").value;
+     const set = document.getElementById("maintainMuscleSet").value;
+     const rep = document.getElementById("maintainMuscleRep").value;
+     const duration = 0; 
+
+     if (subType === "Choose an exercise" || day === "Choose a day for the workout" || set === "Choose sets" || rep === "Choose reps") {
+        alert("Please fill in all fields.");
+        return;
+      }
+      
+     var type = "Maintain";
+
+    const workoutData = {
+      userSecretId: document.getElementById("userSecretId").value,
+      Type: type,
+      SubType: subType,
+      Day: day,
+      Set: set,
+      Rep: rep,
+      Duration: duration,
+      resolved: false,
+    }
+
+    fetch('/api/WorkoutController/CreateWorkout', {
+      method: 'POST', 
+      headers: {
+        'Content-Type': 'application/json' 
+      },
+      body: JSON.stringify(workoutData) 
+     })
+      .then(response => {
+      if(response.ok){
+        window.location.reload();
+      }
+      
+      response.ok ? response.json() : Promise.reject(response.text())})
+      .then(data => alert("Goal created succesfully"))
+      .catch(response => response.then(errorMessage => alert("Error: " + errorMessage)));
+    })
+
+
+    document.querySelectorAll('.btn-outline-danger').forEach(button => {
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
+            
+            const workoutId = this.getAttribute('data-workoutid');
+            const userSecretId = document.getElementById(`sid-${workoutId}`).value;
+            const day = document.getElementById(`day-${workoutId}`).value;
+            const type = document.getElementById(`type-${workoutId}`).value;
+            const subType = document.getElementById(`subtype-${workoutId}`).value;
+            const set = document.getElementById(`set-${workoutId}`).value;
+            const rep = document.getElementById(`rep-${workoutId}`).value;
+
+            
+            const workoutData = {
+              WorkoutId: workoutId,
+              userSecretId: userSecretId,
+              Type: type,
+              SubType: subType,
+              Day: day,
+              Set: set,
+              Rep: rep,
+            };
+
+            fetch('/api/WorkoutController/ResolveWorkout', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(workoutData)
+            })
+            .then(response => {
+                if(response.ok){
+                    window.location.reload();
+                }
+                return response.ok ? response.json() : Promise.reject(response.text());
+            })
+            .then(data => alert("Goal created successfully"))
+            .catch(errorMessage => alert("Error: " + errorMessage));
+        });
     });
-}
+
 
   </script>
 

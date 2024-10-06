@@ -33,22 +33,23 @@ public class WorkoutService : IWorkoutService
 
     var workoutViewModel = new List<WorkoutViewModel>();
 
-    // foreach (var workout in workouts)
-    // {
-    //   var workoutToAdd = new WorkoutViewModel
-    //   {
-    //     WorkoutId = workout.Id,
-    //     userSecretId = workout.UserID,
-    //     Type = workout.Type,
-    //     SubType = workout.SubType,
-    //     Set = workout.Set,
-    //     Rep = workout.Rep,
-    //     Day = workout.Day,
-    //     resolved = workout.resolved
-    //   };
+    foreach (var workout in workouts)
+    {
+      var workoutToAdd = new WorkoutViewModel
+      {
+        WorkoutId = workout.Id,
+        userSecretId = workout.UserID,
+        Type = workout.Type,
+        SubType = workout.SubType,
+        Set = workout.Set,
+        Rep = workout.Rep,
+        Day = workout.Day,
+        resolved = workout.resolved,
+        Duration = workout.Duration
+      };
 
-    //   workoutViewModel.Add(workoutToAdd);
-    // }
+      workoutViewModel.Add(workoutToAdd);
+    }
     return workoutViewModel;
   }
 
@@ -64,7 +65,8 @@ public class WorkoutService : IWorkoutService
       Set = workoutViewModel.Set,
       Rep = workoutViewModel.Rep,
       Day = workoutViewModel.Day,
-      resolved = workoutViewModel.resolved
+      resolved = workoutViewModel.resolved,
+      Duration = workoutViewModel.Duration
     };
     _context.Workouts.Add(newWorkout);
     _context.SaveChanges();
