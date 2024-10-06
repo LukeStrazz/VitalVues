@@ -11,5 +11,6 @@ namespace Services.Interfaces;
 public interface IBloodworkService
 {
     public void AddBloodwork(IEnumerable<TestResultViewModel> result, string userId, DateTime bloodworkDate);
+    public List<BloodworkViewModel> GetBloodworks(string userUniqueIdentifier);
     public void UpdateBloodwork(IEnumerable<TestResultViewModel> result);
 }

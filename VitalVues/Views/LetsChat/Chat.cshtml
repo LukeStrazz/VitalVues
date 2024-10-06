@@ -17,7 +17,44 @@
 
 <canvas></canvas>
 
+<div class="previous-bloodworks chat-section" style="display:none;">
+    @if (Model.Bloodworks != null)
+    {
+        @foreach (var bloodwork in Model.Bloodworks)
+        {
+            <div class="bloodwork-item">
+                <h4>Bloodwork recorded on @bloodwork.BloodTests.First().BloodworkDate.ToShortDateString()</h4>
+                @foreach (var bloodTest in bloodwork.BloodTests)
+                {
+                    <div>
+                        Talk about:
+                        <h5>Submission Date: @bloodTest.SubmissionDate.ToShortDateString()</h5>
+                        <button class="talk-bloodwork-btn" data-bloodwork-id="@bloodwork.Id">
+                            Start Chat
+                        </button>
+                        @foreach(var t in bloodTest.Test)
+                        {
+                            <div style="display: none;">
+                            @t.TestName, @t.Result, @t.Grade
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    }
+</div>
+
+
 <div id="content">
+    <div class="input-group" style="display: none;">
+        <div class="input-group-text"></div>
+        <input type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")"
+               class="form-control"
+               id="submissionDate"
+               placeholder="Date of Test" />
+    </div>
+    <input type="hidden" id="currentChatId" value="0" />
 </div>
 <div class="chat-holder">
     <body>
@@ -42,14 +79,17 @@
         <div class="chats">
             @foreach (var chat in Model.Chats)
             {
-                <div class="chat-title">
-                    <a>@chat.ChatDate, @chat.ChatTopic</a>
-                </div>
+                if (chat.ChatTopic == "Bloodwork")
+                {
+                    <div class="chat-title">
+                        <a style="color: red;">@chat.ChatDate, @chat.ChatTopic</a>
+                    </div>
+                }
             }
         </div>
     }
-
 </div>
+
 <div class="input-group" style="display: none; position: absolute;">
     <div class="input-group-text"></div>
     <input type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")"
@@ -70,6 +110,8 @@
     var Collapse = false;
     var Particles = [];
 
+    let messages = []; // Store chat history here
+
     var colors = ["#1abc9c", "#2ecc71", "#3498db", "#9b59b6", "#9b59b6", "#f1c40f", "#e67e22", "#e74c3c"];
 
     let currentChatType = '';
@@ -86,6 +128,7 @@
             switch (true) {
                 case buttonType.contains('fa-heart'):
                     newDiv.innerHTML = `<h2>Bloodwork Chat</h2><p></p>`;
+                    document.querySelector('.previous-bloodworks').style.display = 'flex';
                     currentChatType = 'Bloodwork';
                     break;
                 case buttonType.contains('fa-hourglass-half'):
@@ -114,6 +157,75 @@
         });
     });
 
+    document.querySelectorAll('.talk-bloodwork-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            document.querySelector('.previous-bloodworks').style.display = 'none';
+            const inputField = document.getElementById('promptInput');
+            const spinner = document.getElementById('spinner');
+            const buttonText = document.getElementById('buttonText');
+            const sendButton = document.getElementById('sendButton');
+
+            inputField.value = '';
+            inputField.style.height = '50px';
+            inputField.disabled = true;
+            spinner.style.display = 'inline-block';
+            spinner.style.color = 'darkgoldenrod';
+            sendButton.style.backgroundColor = 'goldenrod';
+            buttonText.textContent = 'Loading...';
+            sendButton.disabled = true;
+            const bloodworkId = this.getAttribute('data-bloodwork-id');
+
+            let allTestResults = "";
+            const bloodworkItem = this.closest('.bloodwork-item');
+
+            bloodworkItem.querySelectorAll('div').forEach(testDiv => {
+                const testDetails = testDiv.textContent.trim();
+                if (testDetails) {
+                    allTestResults += testDetails + "\n"; 
+                }
+            });
+            const prompt = `Let's talk about bloodwork. Here is a list of all test results, separated by new lines. Now provide a detailed report on the bloodwork:\n${allTestResults}`;
+            const userMessage = document.createElement('div');
+            userMessage.className = 'message user-message';
+            userMessage.textContent = prompt;
+            document.getElementById('chatOutput').appendChild(userMessage);
+
+            messages.push({ role: 'user', content: prompt });
+
+            fetch('/api/LetsChat/GetChatResponse', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ messages: messages })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    try {
+                        messages.push({ role: 'system', content: data.message });
+
+                        const converter = new showdown.Converter();
+                        const htmlResponse = converter.makeHtml(data.message);
+
+                        const responseContainer = document.createElement('div');
+                        responseContainer.className = 'message bot-message';
+                        responseContainer.innerHTML = `<div class="response-content">${htmlResponse}</div>`;
+
+                        resetUI();
+                        document.getElementById('chatOutput').appendChild(responseContainer);
+                    } catch (synchronousError) {
+                        displayErrorMessage(`Error: <strong>${synchronousError.message}</strong>`);
+                        resetUI();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error); 
+                    resetUI();
+                });
+        });
+    });
+
+
     $(document).ready(function () {
         const userChatForm = document.getElementById('promptForm');
         userChatForm.style.display = 'none';
@@ -123,8 +235,6 @@
         this.style.height = 'auto'; // Reset the height
         this.style.height = Math.min(this.scrollHeight, 150) + 'px'; // Set height based on content, up to a max
     });
-
-    let messages = []; // Store chat history here
 
     document.getElementById('promptForm').addEventListener('submit', function (event) {
         event.preventDefault();
