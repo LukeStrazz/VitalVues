@@ -34,6 +34,7 @@ public class UserInfoViewModel
     public double CurrentWeight { get; set; }
     public List<string>? Allergies { get; set; }
     public List<GoalViewModel>? Goals { get; set; }
+    public List<ChatViewModel>? Chats { get; set; }
     public List<WorkoutViewModel>? Workouts { get; set; }
 }
 
