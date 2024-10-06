@@ -20,13 +20,6 @@ namespace VitalVues.Controllers
             {
                 return RedirectToAction("SignIn", "Account");
             }
-
-            // Enqueue a background job
-            BackgroundJob.Enqueue(() => LogMessage("Hello world from Hangfire!"));
-
-            //Schedule a background job
-            BackgroundJob.Schedule(() => Console.WriteLine("Delayed!"), TimeSpan.FromDays(7));
-
             return View();
         }
 
@@ -41,11 +34,5 @@ namespace VitalVues.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        // Job method to be called by Hangfire
-        public static void LogMessage(string message)
-        {
-            // Log the message or perform any other task
-            Console.WriteLine(message); 
-        }
     }
 }
