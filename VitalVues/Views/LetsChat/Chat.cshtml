@@ -70,6 +70,7 @@
                 </button>
             </form>
         </div>
+        <button style="display: none;" id="saveChatButton" class="btn btn-secondary">Save Chat</button>
     </body>
 </div>
 
@@ -82,7 +83,9 @@
                 if (chat.ChatTopic == "Bloodwork")
                 {
                     <div class="chat-title">
-                        <a style="color: red;">@chat.ChatDate, @chat.ChatTopic</a>
+                        <a style="color: red;" class="load-chat" data-chat-id="@chat.Id">
+                            @chat.ChatDate, @chat.ChatTopic
+                        </a>
                     </div>
                 }
             }
@@ -157,6 +160,31 @@
         });
     });
 
+    document.querySelectorAll('.load-chat').forEach(link => {
+        link.addEventListener('click', function () {
+            const chatId = this.getAttribute('data-chat-id');
+
+            fetch(`/api/Chats/${chatId}`)
+                .then(response => response.json())
+                .then(chat => {
+                    const chatOutput = document.getElementById('chatOutput');
+
+                    chatOutput.innerHTML = '';
+
+                    chat.Messages.forEach(message => {
+                        const messageDiv = document.createElement('div');
+                        messageDiv.className = message.role === 'system' ? 'message bot-message' : 'message user-message';
+                        messageDiv.innerHTML = message.content;
+                        chatOutput.appendChild(messageDiv);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading chat:', error);
+                });
+        });
+    });
+
+
     document.querySelectorAll('.talk-bloodwork-btn').forEach(button => {
         button.addEventListener('click', function () {
             document.querySelector('.previous-bloodworks').style.display = 'none';
@@ -204,6 +232,9 @@
                     try {
                         messages.push({ role: 'system', content: data.message });
 
+                        const currentChatId = document.getElementById('currentChatId').value;
+                        saveChat(currentChatId, messages.concat({ role: 'system', content: data.message }));
+
                         const converter = new showdown.Converter();
                         const htmlResponse = converter.makeHtml(data.message);
 
@@ -213,6 +244,7 @@
 
                         resetUI();
                         document.getElementById('chatOutput').appendChild(responseContainer);
+
                     } catch (synchronousError) {
                         displayErrorMessage(`Error: <strong>${synchronousError.message}</strong>`);
                         resetUI();
@@ -225,6 +257,37 @@
         });
     });
 
+    document.getElementById('saveChatButton').addEventListener('click', function () {
+        const currentChatId = document.getElementById('currentChatId').value;
+        const messages = [];
+
+        const chatMessages = document.querySelectorAll('#chatOutput .message');
+        chatMessages.forEach(messageElement => {
+            const role = messageElement.classList.contains('bot-message') ? 'system' : 'user';
+            const content = messageElement.textContent;
+            messages.push({ role: role, content: content });
+        });
+
+        saveChat(currentChatId, messages);
+    });
+
+    function saveChat(chatId, messages) {
+        fetch(`/api/LetsChat/SaveChat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chatId: chatId , messages: messages })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Chat saved:', data); 
+            const currentChatId = document.getElementById('currentChatId').value;
+
+            document.getElementById('currentChatId').value = data.chatId;
+        })
+        .catch(error => {
+            console.error('Error saving chat:', error);
+        });
+    }
 
     $(document).ready(function () {
         const userChatForm = document.getElementById('promptForm');

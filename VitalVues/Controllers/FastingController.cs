@@ -6,6 +6,9 @@ using Hangfire;
 using System;
 using Services.Services;
 using System.Collections.Generic;
+using VitalVues;
+
+namespace VitalVues.Controllers;
 
 [ApiController]
 [Route("api/FastingController")]
@@ -143,9 +146,17 @@ public class FastingController : Controller
         });
     }
 
+    [NoCacheHeaders]
     [HttpGet("Fasting")]
     public IActionResult Fasting()
     {
+        var userUniqueIdentifier = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+
+        if (string.IsNullOrEmpty(userUniqueIdentifier))
+        {
+            return RedirectToAction("Error", "Home");
+        }
+
         return View();
     }
 }

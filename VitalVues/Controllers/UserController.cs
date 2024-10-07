@@ -21,10 +21,17 @@ public class UserController : Controller
         _userService = userService;
     }
 
+    [NoCacheHeaders]
     [HttpGet("UserUpdate")]
     public IActionResult UserUpdate()
     {
-		var userUniqueIdentifier = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+        var userUniqueIdentifier = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+
+        if (string.IsNullOrEmpty(userUniqueIdentifier))
+        {
+            return RedirectToAction("Error", "Home");
+        }
+
         var user = _userService.FindUser(userUniqueIdentifier);
 		return View(user);
     }

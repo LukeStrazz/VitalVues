@@ -11,7 +11,6 @@ using System.Text.RegularExpressions;
 
 namespace VitalVues.Controllers;
 
-
 [ApiController]
 [Route("api/SubmitBloodwork")]
 public class SubmitBloodworkController : Controller
@@ -31,9 +30,17 @@ public class SubmitBloodworkController : Controller
         _bloodworkService = bloodworkService;
     }
 
+    [NoCacheHeaders]
     [HttpGet("SubmitBloodwork")]
     public IActionResult SubmitBloodwork()
     {
+        var userUniqueIdentifier = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+
+        if (string.IsNullOrEmpty(userUniqueIdentifier))
+        {
+            return RedirectToAction("Error", "Home");
+        }
+
         return View();
     }
 

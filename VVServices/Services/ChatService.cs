@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Services.ViewModels;
 using VVData.Data;
 using Data.Data.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Services.Services;
 
@@ -95,31 +96,53 @@ public class ChatService : IChatService
         }
     }
 
-    void IChatService.SaveChat(string? userUniqueIdentifier, ChatViewModel messages)
+    public int SaveChat(int? chatId, string? userUniqueIdentifier, ChatViewModel chatViewModel)
     {
-        var exisitingChat = _context.Chats.Where(m => m.Id == messages.Id).FirstOrDefault();
+        var existingChat = _context.Chats.Include(c => c.Messages).FirstOrDefault(c => c.Id == chatId);
 
-        if (exisitingChat != null)
+        if (existingChat == null)
         {
             var messageList = new List<Message>();
-            foreach (var message in messages.Messages)
+            foreach (var message in chatViewModel.Messages)
             {
-                messageList.Add(message);
-                _context.Add(message);
-            }
+                var existingMessage = _context.Messages.FirstOrDefault(m => m.content == message.content && m.role == message.role);
 
+                if (existingMessage == null)
+                {
+                    var newMessage = new Message { role = message.role, content = message.content };
+                    messageList.Add(newMessage);
+                    _context.Add(newMessage); 
+                }
+            }
+            var today = DateTime.Today;
             var newChat = new Chat
             {
                 UserSID = userUniqueIdentifier,
-                ChatDate = messages.ChatDate,
-                ChatTopic = messages.ChatTopic,
+                ChatDate = today,
+                ChatTopic = chatViewModel.ChatTopic,
                 Messages = messageList
             };
 
             _context.Add(newChat);
+            _context.SaveChanges();
+            return newChat.Id;
+        }
+        else
+        {
+            foreach (var message in chatViewModel.Messages)
+            {
+                var existingMessage = existingChat.Messages.FirstOrDefault(m => m.content == message.content && m.role == message.role);
+
+                if (existingMessage == null)
+                {
+                    existingChat.Messages.Add(new Message { role = message.role, content = message.content });
+                }
+            }
+            _context.SaveChanges();
+            return existingChat.Id;
         }
 
-        _context.SaveChanges(); 
     }
+
 }
 
