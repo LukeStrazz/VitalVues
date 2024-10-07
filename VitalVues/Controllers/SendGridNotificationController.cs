@@ -2,29 +2,36 @@
 using Services.Services;
 using System.Threading.Tasks;
 
-namespace VitalVues.Controllers
+namespace VitalVues.Controllers;
+
+public class SendGridNotificationController : Controller
 {
-    public class SendGridNotificationController : Controller
+    private readonly SendGridEmailService _sendGridEmailService;
+
+    public SendGridNotificationController(SendGridEmailService sendGridEmailService)
     {
-        private readonly SendGridEmailService _sendGridEmailService;
+        _sendGridEmailService = sendGridEmailService;
+    }
 
-        public SendGridNotificationController(SendGridEmailService sendGridEmailService)
+    [HttpPost]
+    public async Task<IActionResult> SendEmail(string toEmail, string subject, string plainTextContent, string htmlContent)
+    {
+        await _sendGridEmailService.SendEmail(toEmail, subject, plainTextContent, htmlContent);
+        return Ok("Email sent successfully.");
+    }
+
+    [NoCacheHeaders]
+    [HttpGet]
+    public IActionResult Email()
+    {
+        var userUniqueIdentifier = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+
+        if (string.IsNullOrEmpty(userUniqueIdentifier))
         {
-            _sendGridEmailService = sendGridEmailService;
+            return RedirectToAction("Error", "Home");
         }
 
-        [HttpPost]
-        public async Task<IActionResult> SendEmail(string toEmail, string subject, string plainTextContent, string htmlContent)
-        {
-            await _sendGridEmailService.SendEmail(toEmail, subject, plainTextContent, htmlContent);
-            return Ok("Email sent successfully.");
-        }
-
-        [HttpGet]
-        public IActionResult Email()
-        {
-            return View("~/Views/Notification/SendGridEmail.cshtml"); // Render the email form
-        }
+        return View("~/Views/Notification/SendGridEmail.cshtml"); // Render the email form
     }
 }
 
