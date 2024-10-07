@@ -11,7 +11,7 @@ public class UserInfoViewModel
 {
     public int Id { get; set; }
 
-	public string Sid { get; set; }
+    public string Sid { get; set; }
 
     [Required]
     public string FirstName { get; set; }
@@ -34,6 +34,8 @@ public class UserInfoViewModel
     public double CurrentWeight { get; set; }
     public List<string>? Allergies { get; set; }
     public List<GoalViewModel>? Goals { get; set; }
+    public List<BloodworkViewModel>? Bloodworks { get; set; }
     public List<ChatViewModel>? Chats { get; set; }
+    public List<WorkoutViewModel>? Workouts { get; set; }
 }
 
