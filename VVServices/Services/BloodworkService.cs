@@ -1,5 +1,6 @@
 ﻿using Data.Data.Enums;
 using Data.Data.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Services.Interfaces;
 using Services.ViewModels;
@@ -90,5 +91,42 @@ public class BloodworkService : IBloodworkService
     public void UpdateBloodwork(IEnumerable<TestResultViewModel> result)
     {
         throw new NotImplementedException();
+    }
+
+    List<BloodworkViewModel> IBloodworkService.GetBloodworks(string userUniqueIdentifier)
+    {
+        var bloodworks = _databaseContext.Bloodworks
+                            .Where(bw => bw.UserId == userUniqueIdentifier)
+                            .Include(bw => bw.BloodTests) // Ensure related BloodTests are loaded
+                            .ThenInclude(bt => bt.Test)   // Ensure related Test data is loaded
+                            .ToList();
+
+        var bwList = new List<BloodworkViewModel>();
+
+        foreach (var bloodwork in bloodworks)
+        {
+            var bwvm = new BloodworkViewModel
+            {
+                Id = bloodwork.Id,
+                UserId = bloodwork.UserId,
+                BloodTests = bloodwork.BloodTests.Select(bt => new BloodTestViewModel
+                {
+                    Id = bt.Id,
+                    SubmissionDate = bt.SubmissionDate,
+                    BloodworkDate = bt.BloodworkDate,
+                    Test = bt.Test.Select(t => new TestViewModel
+                    {
+                        Id = t.Id,
+                        TestName = t.TestName,
+                        Result = t.Result,
+                        Grade = t.Grade
+                    }).ToList()
+                }).ToList()
+            };
+
+            bwList.Add(bwvm);
+        }
+
+        return bwList;
     }
 }

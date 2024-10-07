@@ -74,9 +74,7 @@ span{
     transition: transform 0.8s;
     box-shadow: 0px 0px 10px #999;
     z-index: 1;
-}
-
-button {
+    button{
     display: inline-block;
     width: 150px;
     height: 150px;
@@ -86,7 +84,10 @@ button {
     text-align: center;
     /*   text-shadow: 2px 2px 4px #666;  */
     color: #fff;
+    }
 }
+
+
 
     button:nth-of-type(odd) {
         margin-right: 2px;
@@ -146,7 +147,7 @@ header {
     border-radius: 5px;
     display: flex;
     flex-direction: column;
-    height: 50vh;
+    height: 65vh;
 }
 
 #chatOutput {
@@ -253,4 +254,33 @@ header {
 * {
     scrollbar-width: thin;
     scrollbar-color: #333 #222;
+}
+
+#buttonText{
+    font-size: 1rem;
+}
+/*Blood work*/
+.previous-bloodworks {
+    position: absolute;
+    width: 50vw;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    z-index: 10000;
+    border-radius: 7px;
+    font-size: 15px;
+    h4, h5{
+        font-size: 15px;
+    }
+    .bloodwork-item{
+        border: 2px solid black;
+        border-radius: 12px;
+        padding: 1rem;
+        background-color: #652e2e;
+    }
+
+    .talk-bloodwork-btn{
+        border: 2px solid #ffffff;
+        border-radius: 5px;
+        background-color: red;
+    }
 }

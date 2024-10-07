@@ -46,11 +46,12 @@ public class LetsChatController : Controller
         }
 
         var chats = _chatService.GetChats(userUniqueIdentifier).ToList();
-
+        var bloodworks = _bloodworkService.GetBloodworks(userUniqueIdentifier).ToList();
         var userInfo = new UserInfoViewModel
         {
             Sid = userUniqueIdentifier,
-            Chats = chats
+            Chats = chats,
+            Bloodworks = bloodworks
         };
 
         return View(userInfo);
@@ -58,10 +59,12 @@ public class LetsChatController : Controller
 
     [HttpPost]
     [Route("GetChatResponse")]
-    public async Task<IActionResult> GetChatResponse([FromBody] ChatRequest request)
+    public async Task<IActionResult> GetChatResponse([FromBody] ChatRequest requests)
     {
         var client = _clientFactory.CreateClient();
-        var messages = string.Join(",", request.Messages.Last().Content);
+        var messages = string.Join(",", requests.Messages.Select(m => m.Content));
+    
+
         var apiKey = _configuration["API_KEY"];
         var response = await _chatService.GetChatResponse(apiKey, messages);
         if (response == null)

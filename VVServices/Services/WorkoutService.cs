@@ -44,7 +44,8 @@ public class WorkoutService : IWorkoutService
         Set = workout.Set,
         Rep = workout.Rep,
         Day = workout.Day,
-        resolved = workout.resolved
+        resolved = workout.resolved,
+        Duration = workout.Duration
       };
 
       workoutViewModel.Add(workoutToAdd);
@@ -64,7 +65,8 @@ public class WorkoutService : IWorkoutService
       Set = workoutViewModel.Set,
       Rep = workoutViewModel.Rep,
       Day = workoutViewModel.Day,
-      resolved = workoutViewModel.resolved
+      resolved = workoutViewModel.resolved,
+      Duration = workoutViewModel.Duration
     };
     _context.Workouts.Add(newWorkout);
     _context.SaveChanges();
