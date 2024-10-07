@@ -37,5 +37,7 @@ public class UserInfoViewModel
     public List<BloodworkViewModel>? Bloodworks { get; set; }
     public List<ChatViewModel>? Chats { get; set; }
     public List<WorkoutViewModel>? Workouts { get; set; }
+
+
 }
 
