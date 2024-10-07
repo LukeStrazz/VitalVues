@@ -1,58 +1,147 @@
-﻿﻿@{
+﻿@{
     ViewData["Title"] = "Fasting Timer";
     var userID = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
 }
 
-<section>
-    <h2>Fasting Timer</h2>
-    <form id="timerForm" class="row gx-3 gy-2 align-items-center">
-        <input type="hidden" id="userID" value="@userID" />
+<section class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8 col-sm-10">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-gradient-primary text-white text-center py-4">
+                    <h2>Fasting Timer</h2>
+                </div>
+                <div class="card-body p-4">
+                    <form id="timerForm" class="row gx-3 gy-2 align-items-center">
+                        <input type="hidden" id="userID" value="@userID" />
 
-        <div class="col-sm-3">
-            <label for="hours" class="visually-hidden">Hours:</label>
-            <input type="number"
-                   id="hours"
-                   name="Hours"
-                   min="0"
-                   placeholder="Hours"
-                   class="form-control" />
-        </div>
-        <div class="col-sm-3">
-            <label for="minutes" class="visually-hidden">Minutes:</label>
-            <input type="number"
-                   id="minutes"
-                   name="Minutes"
-                   min="0"
-                   placeholder="Minutes"
-                   class="form-control" />
-        </div>
-        <div class="col-sm-3">
-            <label for="seconds" class="visually-hidden">Seconds:</label>
-            <input type="number"
-                   id="seconds"
-                   name="Seconds"
-                   min="0"
-                   placeholder="Seconds"
-                   class="form-control" />
-        </div>
-        <div class="col-auto">
-            <button type="button" class="btn btn-primary" id="startTimer">Start Timer</button>
-        </div>
-    </form>
+                        <div class="col-4 text-center">
+                            <label for="hours" class="form-label">Hours</label>
+                            <input type="number"
+                                   id="hours"
+                                   name="Hours"
+                                   min="0"
+                                   placeholder="0"
+                                   class="form-control form-control-lg text-center shadow-sm" />
+                        </div>
+                        <div class="col-4 text-center">
+                            <label for="minutes" class="form-label">Minutes</label>
+                            <input type="number"
+                                   id="minutes"
+                                   name="Minutes"
+                                   min="0"
+                                   placeholder="0"
+                                   class="form-control form-control-lg text-center shadow-sm" />
+                        </div>
+                        <div class="col-4 text-center">
+                            <label for="seconds" class="form-label">Seconds</label>
+                            <input type="number"
+                                   id="seconds"
+                                   name="Seconds"
+                                   min="0"
+                                   placeholder="0"
+                                   class="form-control form-control-lg text-center shadow-sm" />
+                        </div>
+                        <div class="col-12 text-center mt-4">
+                            <button type="button" class="btn btn-primary btn-lg px-5 py-3 shadow" id="startTimer">Start Timer</button>
+                        </div>
+                    </form>
 
-    <div id="timer" class="mt-3">
-        <span>00:00:00</span>
-    </div>
+                    <div id="circle-container" class="mt-5 text-center position-relative">
+                        <div id="circle">
+                            <div id="circle-text">00:00:00</div>
+                            <svg>
+                                <circle cx="50%" cy="50%" r="45%" stroke-linecap="round"></circle>
+                            </svg>
+                        </div>
+                    </div>
 
-    <div class="col-auto mt-3">
-        <button type="button" class="btn btn-primary" id="resetTimer">Reset Timer</button>
+                    <div class="col-12 text-center mt-5">
+                        <button type="button" class="btn btn-danger btn-lg px-5 py-3 shadow" id="resetTimer">Reset Timer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 
 <style>
-    #timer {
-        font-size: 2em;
-        margin-top: 20px;
+    .card {
+        border-radius: 1rem;
+        background: linear-gradient(to bottom right, #1a1a1a, #333);
+    }
+
+    .card-header {
+        background: linear-gradient(to right, #28a745, #218838);
+        border-top-left-radius: 1rem;
+        border-top-right-radius: 1rem;
+    }
+
+    #circle-container {
+        position: relative;
+        width: 250px;
+        height: 250px;
+        margin: auto;
+    }
+
+    #circle {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at 50%, rgba(0, 255, 0, 0.2), transparent);
+        border-radius: 50%;
+        box-shadow: 0 0 20px rgba(40, 167, 69, 0.3);
+    }
+
+        #circle svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        #circle circle {
+            fill: none;
+            stroke: #28a745;
+            stroke-width: 10;
+            stroke-dasharray: 180;
+            stroke-dashoffset: 180;
+            transition: stroke-dashoffset 1s linear;
+        }
+
+    #circle-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 2rem;
+        font-weight: bold;
+        color: #28a745;
+        text-shadow: 1px 1px 5px rgba(40, 167, 69, 0.5);
+    }
+
+    .btn {
+        border-radius: 30px;
+        font-size: 1.2rem;
+    }
+
+    .btn-primary {
+        background-color: #28a745;
+        border: none;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border: none;
+    }
+
+    .form-control-lg {
+        border-radius: 1rem;
+    }
+
+    .shadow-sm {
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
 </style>
 
@@ -60,10 +149,9 @@
     var hours = 0;
     var minutes = 0;
     var seconds = 0;
-    var interval = null; // To store the interval for the countdown timer
-    var endTime = null;   // Stores the end time of the fasting session
+    var interval = null;
+    var endTime = null;
 
-    // Event listeners to update the 'hours', 'minutes', and 'seconds' variables based on user input
     document.getElementById('hours').addEventListener('change', e => {
         hours = +e.target.value;
     });
@@ -76,14 +164,22 @@
         seconds = +e.target.value;
     });
 
-    // Event listener for the 'Start Timer' button
     document.getElementById('startTimer').addEventListener('click', () => {
-
+        if (hours < 0 || minutes < 0 || seconds < 0) {
+            alert("Please enter valid non-negative number.");
+            return;
+        }
 
         var timeInSeconds = (hours * 60 * 60) + (minutes * 60) + seconds;
-        var userID = document.getElementById('userID').value; // Get the user ID from the input field
-        var now = new Date().toISOString(); // Get the current time in ISO format
-        var end = new Date(Date.now() + timeInSeconds * 1000).toISOString(); // Calculate the end time
+
+        if (timeInSeconds === 0) {
+            alert("Please enter a valid time.");
+            return;
+        }
+
+        var userID = document.getElementById('userID').value;
+        var now = new Date().toISOString();
+        var end = new Date(Date.now() + timeInSeconds * 1000).toISOString();
 
         fetch('/api/FastingController/SaveTime', {
             method: 'POST',
@@ -103,14 +199,14 @@
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                return response.json(); // Parse the response from the server
+                return response.json();
             })
             .then(result => {
                 if (result.success) {
-                    var startTime = new Date(result.startTime).getTime(); //  server start time
-                    endTime = startTime + timeInSeconds * 1000; // Calculate end time
-                    startTimer(); // Start the countdown timer
-             
+                    var startTime = new Date(result.startTime).getTime();
+                    endTime = startTime + timeInSeconds * 1000;
+                    startTimer(timeInSeconds);
+
                     window.location.reload();
                 } else {
                     alert("Error: " + result.message);
@@ -118,20 +214,19 @@
             })
             .catch(error => {
                 console.error('Error during fetch:', error);
-                alert("Error: There is an active please reset the timer and try again");
+                alert("Error: There is an active timer, please reset the timer and try again.");
             });
     });
 
-
-    // Function to start the countdown timer
-    function startTimer() {
+    function startTimer(totalSeconds) {
         var displayTime = () => {
-            var now = new Date().getTime(); // Get the current time
-            var remaining = Math.floor((endTime - now) / 1000); // Calculate the remaining time
+            var now = new Date().getTime();
+            var remaining = Math.floor((endTime - now) / 1000);
 
             if (remaining <= 0) {
-                clearInterval(interval); // Stop the timer if the time is up
-                document.getElementById("timer").innerHTML = '00:00:00'; // Display 00:00:00 when the timer ends
+                clearInterval(interval);
+                document.getElementById("circle-text").innerHTML = '00:00:00';
+                updateCircleProgress(1);
                 return;
             }
 
@@ -140,10 +235,14 @@
             var displayMinutes = Math.floor(remainder / 60);
             var displaySeconds = remainder - (displayMinutes * 60);
 
-            document.getElementById("timer").innerHTML =
+            document.getElementById("circle-text").innerHTML =
                 (displayHours < 10 ? "0" : "") + displayHours + ":" +
                 (displayMinutes < 10 ? "0" : "") + displayMinutes + ":" +
                 (displaySeconds < 10 ? "0" : "") + displaySeconds;
+
+            var secondsInMinute = remaining % 60;
+            var progress = secondsInMinute / 60;
+            updateCircleProgress(progress);
         };
 
         if (interval) clearInterval(interval);
@@ -151,14 +250,21 @@
         interval = setInterval(displayTime, 1000);
     }
 
+    function updateCircleProgress(progress) {
+        var circle = document.querySelector('#circle circle');
+        var radius = circle.r.baseVal.value;
+        var circumference = 2 * Math.PI * radius;
+        var offset = circumference * (1 - progress);
+        circle.style.strokeDashoffset = offset;
+    }
 
-    // Event listener for the 'Reset Timer' button
     document.getElementById('resetTimer').addEventListener('click', () => {
         if (interval) {
             clearInterval(interval);
             interval = null;
         }
-        document.getElementById('timer').innerHTML = '00:00:00';
+        document.getElementById('circle-text').innerHTML = '00:00:00';
+        updateCircleProgress(0);
 
         var userID = document.getElementById('userID').value;
 
@@ -183,7 +289,6 @@
             });
     });
 
-    // On page load, retrieve the existing fasting session for the current user
     document.addEventListener('DOMContentLoaded', () => {
         var userID = document.getElementById('userID').value;
 
@@ -198,7 +303,7 @@
                 if (result.success) {
                     var remainingTime = result.remainingTime * 1000;
                     endTime = Date.now() + remainingTime;
-                    startTimer();
+                    startTimer(remainingTime / 1000);
                 } else {
                     console.error('Failed to retrieve fasting session:', result.message);
                 }
@@ -207,5 +312,5 @@
                 console.error('Error during fetch:', error);
             });
     });
-
 </script>
+ 

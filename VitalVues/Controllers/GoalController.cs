@@ -5,7 +5,6 @@ using Services.Services;
 
 namespace VitalVues.Controllers;
 
-
 [ApiController]
 [Route("api/GoalController")]
 public class GoalController : Controller
@@ -17,11 +16,17 @@ public class GoalController : Controller
         _goalService = goalService;
     }
 
+    [NoCacheHeaders]
     [HttpGet("Goal")]
     public IActionResult Goal()
     {
 
         var userUniqueIdentifier = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+
+        if (string.IsNullOrEmpty(userUniqueIdentifier))
+        {
+            return RedirectToAction("Error", "Home");
+        }
 
         var goals = _goalService.GetGoals(userUniqueIdentifier).ToList();
 
@@ -29,7 +34,7 @@ public class GoalController : Controller
         {
             Sid = userUniqueIdentifier,
             Goals = goals
-        };
+        }; 
 
         return View(userInfo);
     }

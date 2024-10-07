@@ -1,0 +1,210 @@
+.top {
+  
+}
+
+.in-progress-title {
+  
+}
+
+.card-body {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 15%;
+}
+
+
+.progress {
+  max-width: 469px;
+  margin-left: -12px;
+}
+
+.existingGoalFields {
+  max-width: 500px;
+}
+
+.card {
+  max-width: 730px; /* Shorten the width on the right side */
+  border-style: dotted;
+  border-width: 2px;
+  border-color: #ff0000; /* Highlight border with red color */
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.5); /* Add shadow to highlight */
+}
+
+.col-form-label {
+  font-weight: bold;
+  color: #333;
+  background-color: #08d412;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
+}
+
+.col-form-label:hover {
+  background-color: #993232;
+}
+
+.mt-3 {
+  margin-left: -12px;
+}
+
+.card-title {
+  font-size: .5rem;
+  color: #11cbff;
+  padding: 10px 0;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+}
+
+.inProgress {
+  font-size: 1.25rem; /* Set font size */
+  color: #ff9900; /* Set text color */
+  font-weight: bold; /* Make text bold */
+  max-width: 200px;
+  margin: 20px 0; /* Add margin */
+  padding: 10px; /* Add padding */
+  border: 2px solid #ff9900; /* Add border */
+  border-radius: 5px; /* Round the corners */
+  background-color: #fff3e0; /* Light background color */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
+}
+
+.goalForm {
+  max-width: 600px; /* Set a maximum width */
+  margin: 0 auto; /* Center the form */
+  padding: 20px; /* Add padding */
+  border: 1px solid #ccc; /* Add a border */
+  border-radius: 10px; /* Round the corners */
+  background-color: #f9f9f9; /* Light background color */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
+}
+
+.inputLabel {
+  display: block; /* Make the label a block element */
+  font-weight: bold; /* Make the text bold */
+  margin-bottom: 5px; /* Add some space below the label */
+  color: #80c0e0; /* Set text color */
+  font-size: 1rem; /* Set font size */
+}
+
+.input-title {
+  display: block;
+  color: #5fea8b; /* Set text color */
+  font-size: 2rem; /* Set font size */
+  font-weight: bold;
+}
+
+.modal {
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+}
+
+.modal-dialog {
+  max-width: 500px; /* Set a maximum width for the modal */
+  margin: 1.75rem auto; /* Center the modal */
+}
+
+.modal-content {
+  background-color: #ffffff; /* White background for the modal content */
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Subtle shadow for depth */
+}
+
+.modal-header {
+  border-bottom: none; /* Remove the default border */
+  padding: 1rem 1.5rem; /* Add padding */
+  background-color: #007bff; /* Bootstrap primary color */
+  color: white; /* White text color */
+  border-top-left-radius: 10px; /* Rounded corners for the top */
+  border-top-right-radius: 10px; /* Rounded corners for the top */
+}
+
+.modal-title {
+  margin: 0; /* Remove default margin */
+  font-size: 1.5rem; /* Increase font size */
+}
+
+.modal-body {
+  padding: 1.5rem; /* Add padding */
+}
+
+.modal-footer {
+  border-top: none; /* Remove the default border */
+  padding: 1rem 1.5rem; /* Add padding */
+  background-color: #f1f1f1; /* Light grey background */
+  border-bottom-left-radius: 10px; /* Rounded corners for the bottom */
+  border-bottom-right-radius: 10px; /* Rounded corners for the bottom */
+}
+
+.btn-close {
+  background-color: white; /* White background for the close button */
+  border: none; /* Remove border */
+  border-radius: 50%; /* Make it circular */
+  width: 30px; /* Set width */
+  height: 30px; /* Set height */
+  display: flex; /* Center the icon */
+  align-items: center; /* Center the icon */
+  justify-content: center; /* Center the icon */
+}
+
+.btn-close:hover {
+  background-color: #f8d7da; /* Light red background on hover */
+}
+
+.btn-primary {
+  background-color: #007bff; /* Bootstrap primary color */
+  border: none; /* Remove border */
+}
+
+.btn-primary:hover {
+  background-color: #0056b3; /* Darker shade on hover */
+}
+
+.btn-secondary {
+  background-color: #6c757d; /* Bootstrap secondary color */
+  border: none; /* Remove border */
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268; /* Darker shade on hover */
+}
+
+.add-image {
+  background-color: transparent;
+  position: relative;
+  width: 150px;
+  height: 150px;
+  margin-top: 10px; /* Space from the top */
+  margin-left: -7px; /* Space from the left */
+  margin-right: 10px; /* Space from the right */
+}
+
+.add-image:hover {
+  background-color: green; /* Green background on hover */
+  border-radius: 15%; /* Same border radius on hover */
+}
+
+img.round-image {
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 15%;
+}
+
+.add-image-title {
+  margin-left: 13px;
+  font-size: 1.5rem; /* Set font size */
+  color: #ddfee6; /* Set text color */
+  font-weight: bold; /* Make text bold */
+  font-family: Arial, Helvetica, sans-serif; /* Set font family */
+}
+
+
+.in-progress-title {
+  margin-left: -10px;
+  font-size: 3rem; /* Set font size */
+  color: #ddfee6; /* Set text color */
+  font-weight: bold; /* Make text bold */
+  font-family: Arial, Helvetica, sans-serif; /* Set font family */
+  
+}

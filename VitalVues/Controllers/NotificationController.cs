@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Services.Interfaces; // Make sure you have the correct namespace for IMailService
+using Services.Interfaces;
+using VitalVues; // Make sure you have the correct namespace for IMailService
+
+namespace Services.Services;
 
 public class NotificationController : Controller
 {
@@ -23,7 +26,7 @@ public class NotificationController : Controller
             toEmail,                                // The recipient's email
             _configuration["mailgun:Mailgun_API_Key"],
             _configuration["mailgun:Email_Domain"], // Your Mailgun domain
-            "User Notification",                    // Email subject
+            "Customer Support Request",                    // Email subject
             message                                 // Message content
         );
 
@@ -31,9 +34,17 @@ public class NotificationController : Controller
     }
 
     // This method renders the email form
+    [NoCacheHeaders]
     [HttpGet]
     public IActionResult Email()
     {
+        var userUniqueIdentifier = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+
+        if (string.IsNullOrEmpty(userUniqueIdentifier))
+        {
+            return RedirectToAction("Error", "Home");
+        }
+
         return View(); // This will render the email.cshtml form
     }
 }

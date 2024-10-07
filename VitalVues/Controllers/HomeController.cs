@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 using VitalVues.Models;
 
@@ -13,14 +14,15 @@ public class HomeController : Controller
         _logger = logger;
     }
 
+    [NoCacheHeaders]
     public IActionResult Index()
     {
-		if (!User.Identity.IsAuthenticated)
-		{
-			return RedirectToAction("SignIn", "Account");
-		}
+        if (!User.Identity.IsAuthenticated)
+        {
+            return RedirectToAction("SignIn", "Account");
+        }
 
-		return View();
+        return View();
     }
 
     public IActionResult Privacy()
@@ -33,5 +35,5 @@ public class HomeController : Controller
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
-}
 
+}
