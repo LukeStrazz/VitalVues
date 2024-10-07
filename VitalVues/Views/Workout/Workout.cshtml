@@ -220,7 +220,7 @@
                   
                   @if (workout.Type == "Lose" && workout.resolved != true)
                   {
-                    <div class="workout-box">
+                    <div class="workout-box mb-5">
                       <div class="form-group d-flex align-items-center justify-content-center">
                         <label class="mb-3 me-4 workout-title1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@workout.Type</label>
                         <input type="hidden" id="type-@workout.WorkoutId" value="@workout.Type"/> @*Hidden Input for Type *@
@@ -242,7 +242,7 @@
                   }
                   else if (workout.resolved != true)
                   {
-                          <div class="workout-box">
+                          <div class="workout-box mb-5">
                             <div class="form-group d-flex align-items-center">
                               @if (@workout.Type == "Maintain"){
                                  <label class="mb-3 me-4 text-center" style="padding-left: 48px; text-align: center;">@workout.Type</label>
