@@ -24,14 +24,15 @@ public class AccountController : Controller
         _userService = userService;
     }
 
-	public IActionResult SignIn()
+    [NoCacheHeaders]
+    public IActionResult SignIn()
 	{
 		if (User.Identity.IsAuthenticated)
 		{
 			return RedirectToAction("Index", "Home");
 		}
 
-		return View();
+        return View();
 	}
 
 	public IActionResult Login(string returnUrl = "/")
