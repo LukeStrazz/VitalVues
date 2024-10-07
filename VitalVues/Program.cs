@@ -12,6 +12,8 @@ using VitalVues.Support;
 using VVData.Data;
 using Microsoft.Extensions.DependencyInjection;
 using VitalVues;
+using Hangfire; // Add Hangfire namespace
+
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpContextAccessor();
@@ -43,6 +45,16 @@ builder.Services.AddScoped<IFastingService, FastService>();
 
 builder.Services.AddScoped<IMailService, MailService>(); // Register the MailService
 
+// Configure Hangfire services
+builder.Services.AddHangfire(configuration => configuration
+    .UseSqlServerStorage(builder.Configuration.GetConnectionString("HangfireConnection")));
+
+builder.Services.AddHangfireServer(); // Add the processing server
+
+// Register the SendGridEmailService
+builder.Services.AddTransient<SendGridEmailService>(provider =>
+    new SendGridEmailService(builder.Configuration["SendGrid:SendGrid_API_Key"]));
+
 
 builder.Services.AddDbContext<DatabaseContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -71,6 +83,14 @@ app.UseCookiePolicy();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Enable the Hangfire Dashboard for monitoring background jobs
+app.UseHangfireDashboard(); 
+
+// Enqueue a test job
+//BackgroundJob.Enqueue(() => Console.WriteLine("Hello world from Hangfire!"));
+
+
 app.MapControllers();
 app.MapDefaultControllerRoute();
 app.UseEndpoints(endpoints =>
@@ -80,6 +100,11 @@ app.UseEndpoints(endpoints =>
     name: "notifications",
     pattern: "send-notification",
     defaults: new { controller = "Notification", action = "SendNotification" });
+
+    endpoints.MapControllerRoute(
+        name: "sendgrid",
+        pattern: "sendgrid-notification",
+        defaults: new { controller = "SendGridNotification", action = "SendEmail" });
 
 });
 
