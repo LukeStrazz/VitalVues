@@ -232,8 +232,8 @@
                     try {
                         messages.push({ role: 'system', content: data.message });
 
-                        const currentChatId = document.getElementById('currentChatId').value;
-                        saveChat(currentChatId, messages.concat({ role: 'system', content: data.message }));
+                        // const currentChatId = document.getElementById('currentChatId').value;
+                        // saveChat(currentChatId, messages.concat({ role: 'system', content: data.message }));
 
                         const converter = new showdown.Converter();
                         const htmlResponse = converter.makeHtml(data.message);
@@ -257,37 +257,37 @@
         });
     });
 
-    document.getElementById('saveChatButton').addEventListener('click', function () {
-        const currentChatId = document.getElementById('currentChatId').value;
-        const messages = [];
+    // document.getElementById('saveChatButton').addEventListener('click', function () {
+    //     const currentChatId = document.getElementById('currentChatId').value;
+    //     const messages = [];
 
-        const chatMessages = document.querySelectorAll('#chatOutput .message');
-        chatMessages.forEach(messageElement => {
-            const role = messageElement.classList.contains('bot-message') ? 'system' : 'user';
-            const content = messageElement.textContent;
-            messages.push({ role: role, content: content });
-        });
+    //     const chatMessages = document.querySelectorAll('#chatOutput .message');
+    //     chatMessages.forEach(messageElement => {
+    //         const role = messageElement.classList.contains('bot-message') ? 'system' : 'user';
+    //         const content = messageElement.textContent;
+    //         messages.push({ role: role, content: content });
+    //     });
 
-        saveChat(currentChatId, messages);
-    });
+    //     saveChat(currentChatId, messages);
+    // });
 
-    function saveChat(chatId, messages) {
-        fetch(`/api/LetsChat/SaveChat`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chatId: chatId , messages: messages })
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Chat saved:', data); 
-            const currentChatId = document.getElementById('currentChatId').value;
+    // function saveChat(chatId, messages) {
+    //     fetch(`/api/LetsChat/SaveChat`, {
+    //         method: 'POST',
+    //         headers: { 'Content-Type': 'application/json' },
+    //         body: JSON.stringify({ chatId: chatId , messages: messages })
+    //     })
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         console.log('Chat saved:', data); 
+    //         const currentChatId = document.getElementById('currentChatId').value;
 
-            document.getElementById('currentChatId').value = data.chatId;
-        })
-        .catch(error => {
-            console.error('Error saving chat:', error);
-        });
-    }
+    //         document.getElementById('currentChatId').value = data.chatId;
+    //     })
+    //     .catch(error => {
+    //         console.error('Error saving chat:', error);
+    //     });
+    // }
 
     $(document).ready(function () {
         const userChatForm = document.getElementById('promptForm');

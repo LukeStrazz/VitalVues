@@ -92,8 +92,6 @@ public class AccountController : Controller
                 };
 
                 await _userService.CreateUser(info);
-
-                return LocalRedirect("/UserController/UserUpdate");
             }
             else
             {
