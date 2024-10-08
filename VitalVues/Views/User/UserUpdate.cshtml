@@ -53,7 +53,13 @@
             <div class="input-group-text">
                 <i class="fa fa-calendar"></i>
             </div>
-            <input type="date" class="form-control" id="Birthday" value="@Model.Birthday.ToString("yyyy-MM-dd")" required />
+            @if (Model.Birthday != DateTime.MinValue)
+            {
+                <input type="date" class="form-control" id="Birthday" value="@Model.Birthday.ToString("yyyy-MM-dd")" required />
+            }
+            else{
+                <input type="date" class="form-control" id="Birthday" value="@DateTime.Now" required />
+            }
         </div>
     </div>
     <div class="col-md-4">
@@ -153,13 +159,12 @@
                 data: JSON.stringify(userInfo),
                 success: function (response) {
                     alert(response.message);
+                    window.location.reload(true);
                 },
                 error: function (xhr, status, error) {
                     alert('Error: ' + xhr.responseText);
                 }
             });
-
-            window.location.reload(true);
 
         });
     });
