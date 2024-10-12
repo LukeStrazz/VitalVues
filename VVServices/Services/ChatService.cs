@@ -29,9 +29,9 @@ public class ChatService : IChatService
 
     public IEnumerable<ChatViewModel> GetChats(string userSecretId)
     {
-        var user = _context.People.FirstOrDefault(g => g.Sid == userSecretId);
-
-        var chats = _context.Chats.Where(g => g.UserSID == userSecretId);
+        var chats = _context.Chats
+            .Include(c => c.Messages)  // Ensure messages are loaded
+            .Where(g => g.UserSID == userSecretId);
 
         if (chats == null)
         {
@@ -39,15 +39,30 @@ public class ChatService : IChatService
         }
 
         var viewModelChats = new List<ChatViewModel>();
+
         foreach (var chat in chats)
         {
+            var viewModelMessages = new List<MessageViewModel>();  // Initialize a new list for each chat
+
+            if (chat.Messages != null)
+            {
+                foreach (var message in chat.Messages)
+                {
+                    viewModelMessages.Add(new MessageViewModel
+                    {
+                        content = message.content,
+                        role = message.role
+                    });
+                }
+            }
+
             var chatToAdd = new ChatViewModel
             {
                 Id = chat.Id,
                 UserSID = chat.UserSID,
                 ChatDate = chat.ChatDate,
                 ChatTopic = chat.ChatTopic,
-                Messages = chat.Messages,
+                Messages = viewModelMessages
             };
 
             viewModelChats.Add(chatToAdd);
@@ -55,6 +70,7 @@ public class ChatService : IChatService
 
         return viewModelChats;
     }
+
 
     public async Task<string> GetChatResponse(string apiKey, string request)
     {
@@ -142,6 +158,12 @@ public class ChatService : IChatService
             return existingChat.Id;
         }
 
+    }
+    public Chat GetChatById(int chatId)
+    {
+        return _context.Chats
+            .Include(c => c.Messages) 
+            .FirstOrDefault(c => c.Id == chatId);
     }
 
 }

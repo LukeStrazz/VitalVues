@@ -45,6 +45,10 @@
     }
 </div>
 
+<div style="display: none;">
+    Chats #:
+    <input id="currentChatId" value="0" />
+</div>
 
 <div id="content">
     <div class="input-group" style="display: none;">
@@ -54,7 +58,6 @@
                id="submissionDate"
                placeholder="Date of Test" />
     </div>
-    <input type="hidden" id="currentChatId" value="0" />
 </div>
 <div class="chat-holder">
     <body>
@@ -70,7 +73,7 @@
                 </button>
             </form>
         </div>
-        <button style="display: none;" id="saveChatButton" class="btn btn-secondary">Save Chat</button>
+        <button id="saveChatButton" class="btn btn-secondary">Save Chat</button>
     </body>
 </div>
 
@@ -80,7 +83,7 @@
         <div class="chats">
             @foreach (var chat in Model.Chats)
             {
-                if (chat.ChatTopic == "Bloodwork")
+                if (chat.ChatTopic == "bloodwork")
                 {
                     <div class="chat-title">
                         <a style="color: red;" class="load-chat" data-chat-id="@chat.Id">
@@ -164,17 +167,22 @@
         link.addEventListener('click', function () {
             const chatId = this.getAttribute('data-chat-id');
 
-            fetch(`/api/Chats/${chatId}`)
+            fetch(`/api/LetsChat/${chatId}`)
                 .then(response => response.json())
                 .then(chat => {
                     const chatOutput = document.getElementById('chatOutput');
 
+                    // Clear the existing messages
                     chatOutput.innerHTML = '';
+                    messages = [];
 
+                    document.getElementById('currentChatId').value = chat.Id;
+                    // Loop through and display the messages
                     chat.Messages.forEach(message => {
                         const messageDiv = document.createElement('div');
                         messageDiv.className = message.role === 'system' ? 'message bot-message' : 'message user-message';
                         messageDiv.innerHTML = message.content;
+                        messages.push({ role: message.role, content: message.content });
                         chatOutput.appendChild(messageDiv);
                     });
                 })
@@ -183,6 +191,15 @@
                 });
         });
     });
+
+
+
+    let currentChatId = 0;  // Use 'let' to allow reassignment
+    document.addEventListener('DOMContentLoaded', function () {
+        currentChatId = document.getElementById('currentChatId').value;
+        console.log(currentChatId);
+    });
+
 
 
     document.querySelectorAll('.talk-bloodwork-btn').forEach(button => {
@@ -231,9 +248,17 @@
                 .then(data => {
                     try {
                         messages.push({ role: 'system', content: data.message });
+                        debugger;
+                        const messages = [];
 
-                        // const currentChatId = document.getElementById('currentChatId').value;
-                        // saveChat(currentChatId, messages.concat({ role: 'system', content: data.message }));
+                        const chatMessages = document.querySelectorAll('#chatOutput .message');
+                        chatMessages.forEach(messageElement => {
+                            const role = messageElement.classList.contains('bot-message') ? 'system' : 'user';
+                            const content = messageElement.textContent;
+                            messages.push({ role: role, content: content });
+                        });
+                        let topic = "bloodwork";
+                        saveChat(currentChatId, messages, topic);
 
                         const converter = new showdown.Converter();
                         const htmlResponse = converter.makeHtml(data.message);
@@ -257,37 +282,37 @@
         });
     });
 
-    // document.getElementById('saveChatButton').addEventListener('click', function () {
-    //     const currentChatId = document.getElementById('currentChatId').value;
-    //     const messages = [];
+    document.getElementById('saveChatButton').addEventListener('click', function () {
+        debugger;
+        const messages = [];
 
-    //     const chatMessages = document.querySelectorAll('#chatOutput .message');
-    //     chatMessages.forEach(messageElement => {
-    //         const role = messageElement.classList.contains('bot-message') ? 'system' : 'user';
-    //         const content = messageElement.textContent;
-    //         messages.push({ role: role, content: content });
-    //     });
+        const chatMessages = document.querySelectorAll('#chatOutput .message');
+        chatMessages.forEach(messageElement => {
+            const role = messageElement.classList.contains('bot-message') ? 'system' : 'user';
+            const content = messageElement.textContent;
+            messages.push({ role: role, content: content });
+        });
+        let topic = "bloodwork";
+        saveChat(currentChatId, messages, topic);
+    });
 
-    //     saveChat(currentChatId, messages);
-    // });
+    function saveChat(chatId, messages, topic) {
+        debugger;
+        fetch(`/api/LetsChat/SaveChats`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chatId: chatId, ChatTopic: topic, messages: messages })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Chat saved:', data); 
 
-    // function saveChat(chatId, messages) {
-    //     fetch(`/api/LetsChat/SaveChat`, {
-    //         method: 'POST',
-    //         headers: { 'Content-Type': 'application/json' },
-    //         body: JSON.stringify({ chatId: chatId , messages: messages })
-    //     })
-    //     .then(response => response.json())
-    //     .then(data => {
-    //         console.log('Chat saved:', data); 
-    //         const currentChatId = document.getElementById('currentChatId').value;
-
-    //         document.getElementById('currentChatId').value = data.chatId;
-    //     })
-    //     .catch(error => {
-    //         console.error('Error saving chat:', error);
-    //     });
-    // }
+            document.getElementById('currentChatId').value = data.chatId;
+        })
+        .catch(error => {
+            console.error('Error saving chat:', error);
+        });
+    }
 
     $(document).ready(function () {
         const userChatForm = document.getElementById('promptForm');
@@ -449,3 +474,9 @@
         inputField.disabled = false;
     }
 </script>
+
+        <style>
+            .load-chat{
+                cursor: pointer;
+            }
+        </style>

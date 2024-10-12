@@ -84,8 +84,6 @@ public class LetsChatController : Controller
         }
     }
 
-
-
     [HttpPost]
     [Route("SaveChats")]
     public async Task<IActionResult> SaveChats(int? chatId, [FromBody] ChatViewModel messages)
@@ -95,4 +93,30 @@ public class LetsChatController : Controller
         var thisChatId = _chatService.SaveChat(chatId, userUniqueIdentifier, messages);
         return Json(new { thisChatId });
     }
+
+    [HttpGet("{chatId}")]
+    public IActionResult GetChatById(int chatId)
+    {
+        var chat = _chatService.GetChatById(chatId);  // Call the service method
+        if (chat == null)
+        {
+            return NotFound();  // Return 404 if the chat isn't found
+        }
+
+        var chatViewModel = new ChatViewModel
+        {
+            Id = chat.Id,
+            UserSID = chat.UserSID,
+            ChatDate = chat.ChatDate,
+            ChatTopic = chat.ChatTopic,
+            Messages = chat.Messages.Select(m => new MessageViewModel
+            {
+                role = m.role,
+                content = m.content
+            }).ToList()
+        };
+
+        return Ok(chatViewModel);  // Return the chat as a JSON object
+    }
+
 }
