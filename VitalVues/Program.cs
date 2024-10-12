@@ -102,6 +102,11 @@ app.UseEndpoints(endpoints =>
     defaults: new { controller = "Notification", action = "SendNotification" });
 
     endpoints.MapControllerRoute(
+        name: "about",
+        pattern: "About",
+        defaults: new { controller = "About", action = "About" });
+
+    endpoints.MapControllerRoute(
         name: "sendgrid",
         pattern: "sendgrid-notification",
         defaults: new { controller = "SendGridNotification", action = "SendEmail" });
