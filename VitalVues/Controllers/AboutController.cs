@@ -8,5 +8,11 @@ namespace VitalVues.Controllers
         {
             return View();
         }
+
+
+        public IActionResult Contact()
+        {
+            return View();
+        }
     }
 }

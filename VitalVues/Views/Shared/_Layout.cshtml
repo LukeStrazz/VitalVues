@@ -46,10 +46,7 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="LetsChat" asp-action="Chat">Chat</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Notification" asp-action="Email">Customer Support</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="About" asp-action="Index">About Us</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="About" asp-action="Contact">Customer Support</a>
                             </li>
 
                         </ul>
@@ -65,7 +62,14 @@
         {
             <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
                 <div class="container-fluid">
-                    <a class="navbar-brand">VitalVues</a>
+                    <a asp-area="" asp-controller="Account" asp-action="SignIn" class="navbar-brand">VitalVues</a>
+                </div>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="About" asp-action="Index">About Us</a>
+                        </li>
+                    </ul>
                 </div>
                 <ul class="nav navbar-nav navbar-right">
                     <li><a id="qsLoginBtn" asp-controller="Account" asp-action="Login">Login</a></li>
