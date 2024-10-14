@@ -15,4 +15,6 @@ public class GoalViewModel
     public DateTime endGoalDate { get; set; }
     public double? targetWeight { get; set; }
     public required string Description { get; set; }
+    public string? HangfireJobId { get; set; }
+    public string? HangfireHalfwayJobId { get; set; }  
 }

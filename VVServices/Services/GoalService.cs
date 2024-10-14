@@ -39,7 +39,10 @@ public class GoalService : IGoalService
                 resolved = goal.resolved,
                 userSecretId = goal.UserID,
                 GoalId = goal.Id,
-                targetWeight = goal.targetWeight
+                targetWeight = goal.targetWeight,
+                HangfireJobId = goal.HangfireJobId,
+                HangfireHalfwayJobId = goal.HangfireHalfwayJobId 
+
             };
 
             viewModelGoals.Add(goalToAdd);
@@ -48,7 +51,7 @@ public class GoalService : IGoalService
         return viewModelGoals;
     }
 
-    public void CreateGoal(GoalViewModel goalViewModel)
+    public int CreateGoal(GoalViewModel goalViewModel)
     {
         var newGoal = new Goal
         {
@@ -57,11 +60,14 @@ public class GoalService : IGoalService
             endGoalDate = goalViewModel.endGoalDate,
             resolved = goalViewModel.resolved,
             UserID = goalViewModel.userSecretId,
-            targetWeight = goalViewModel.targetWeight
+            targetWeight = goalViewModel.targetWeight,
+            HangfireJobId = goalViewModel.HangfireJobId, 
+             HangfireHalfwayJobId = goalViewModel.HangfireHalfwayJobId 
         };
 
         _context.Goals.Add(newGoal);
         _context.SaveChanges();
+        return newGoal.Id;
     }
 
 
@@ -76,6 +82,8 @@ public class GoalService : IGoalService
             goalToUpdate.endGoalDate = goalViewModel.endGoalDate;
             goalToUpdate.resolved = goalViewModel.resolved;
             goalToUpdate.targetWeight = goalViewModel.targetWeight;
+            goalToUpdate.HangfireJobId = goalViewModel.HangfireJobId; 
+            goalToUpdate.HangfireHalfwayJobId = goalViewModel.HangfireHalfwayJobId; 
 
             _context.SaveChanges();
         }
@@ -90,8 +98,27 @@ public class GoalService : IGoalService
         var goalToUpdate = _context.Goals.FirstOrDefault(g => g.Id == goalId);
 
         goalToUpdate.resolved = true;
-
         _context.SaveChanges();
     }
+
+    public void UpdateGoalHangfireJobIds(int goalId, string halfwayJobId, string oneDayJobId)
+    {
+        var goalToUpdate = _context.Goals.FirstOrDefault(g => g.Id == goalId);
+
+        if (goalToUpdate != null)
+        {
+            // Update both Hangfire job IDs in the database
+            goalToUpdate.HangfireHalfwayJobId = halfwayJobId;
+            goalToUpdate.HangfireJobId = oneDayJobId;
+
+            _context.SaveChanges();
+        }
+        else
+        {
+            throw new InvalidOperationException("Goal not found");
+        }
+    }
+
+
 }
 

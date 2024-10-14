@@ -12,7 +12,8 @@ namespace Services.Interfaces;
 public interface IGoalService
 {
     public IEnumerable<GoalViewModel> GetGoals(string userSecretId);
-    public void CreateGoal(GoalViewModel goalViewModel);
+    public int CreateGoal(GoalViewModel goalViewModel);
     public void UpdateGoal(GoalViewModel goalViewModel);
     public void ResolveGoal(int goalId);
+    void UpdateGoalHangfireJobIds(int goalId, string halfwayJobId, string oneDayJobId);
 }
