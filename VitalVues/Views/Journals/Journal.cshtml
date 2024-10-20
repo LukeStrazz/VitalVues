@@ -1,0 +1,456 @@
+@model Services.ViewModels.UserInfoViewModel
+
+<head>
+    <title>Dropdown Example</title>
+    <link rel="stylesheet" href="~/css/journal.css" asp-append-version="true" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <section>
+        <input type="hidden" id="userSecretId" value="@Model.Sid" />
+
+        <div class="row mb-5">
+            <div class="col-sm-10 d-flex flex-column">
+
+                <div>
+                    <h1 id="title-journal-h1">JOURNALS</h1>
+                    <p>
+                        Hi @Model.FirstName, welcome to the journal page. Here you can create journals by adding desired bloodworks,
+                         workouts, chats, and goals that you have in your account. You will be able to get a PDF of each journal.
+                          This functionality will be implemented in the future!
+                    </p>
+                </div>
+
+                <div class="totals-container mt-4" style="text-align: center;">
+
+                    <div class="total-item">
+                        <h4>
+                            Workouts Created:
+                            @{
+                                int workoutCount = 0;
+                                if (Model.Workouts != null)
+                                {
+                                    foreach (var workout in Model.Workouts)
+                                    {
+                                        workoutCount++;
+                                    }
+                                }
+                            }
+                            <span id="workoutsTotal">@workoutCount</span>
+                        </h4>
+                    </div>
+
+                    <div class="total-item">
+                        <h4>
+                            Goals Created:
+                            @{
+                                int goalCount = 0;
+                                if (Model.Goals != null)
+                                {
+                                    foreach (var goal in Model.Goals)
+                                    {
+                                        goalCount++;
+                                    }
+                                }
+                            }
+                            <span id="goalsTotal">@goalCount</span>
+                        </h4>
+                    </div>
+
+                    <div class="total-item">
+                        <h4>
+                            Bloodworks Submitted:
+                            @{
+                                int bloodworkCount = 0;
+                                if (Model.Bloodworks != null)
+                                {
+                                    foreach (var bloodwork in Model.Bloodworks)
+                                    {
+                                        bloodworkCount++;
+                                    }
+                                }
+                            }
+                            <span id="bloodworksTotal">@bloodworkCount</span>
+                        </h4>
+                    </div>
+
+                    <div class="total-item">
+                        <h4>
+                            Has Chatted:
+                            @{
+                                int chatCount = 0;
+                                if (Model.Chats != null)
+                                {
+                                    foreach (var chat in Model.Chats)
+                                    {
+                                        chatCount++;
+                                    }
+                                }
+                            }
+                            <span id="chatsTotal">@chatCount</span>
+                        </h4>
+                    </div>
+                    <div></div>
+
+                </div>
+            </div>
+
+            <div class="col-sm-2 d-flex flex-column align-items-center justify-content-center">
+                <div class="image-and-journals">
+                    <div class="add-image">
+                        <img src="~/images/goals/plus-sign.png"
+                             class="round-image"
+                             onclick="showJournalModel();">
+                    </div>
+
+                    <hr class="rounded">
+                    <div class="journals-container">
+                        @if (Model.Journals != null && Model.Journals.Any())
+                        {
+                            foreach (var journal in Model.Journals)
+                            {
+                                <div class="stack-item mb-3 journal-item" data-journal-id="@journal.JournalId" onclick="viewJournalDetails(@journal.JournalId)">
+                                    <h5 id="journal-view-title-h5">@journal.Title</h5>
+                                    <input type="hidden" id="" value="">
+                                    <small id="journal-view-date-small">@journal.JournalDate.ToString("MM/dd/yyyy")</small>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="stack-item" >
+                                No Journals Available
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="showJournalModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            
+            <div class="modal-header">
+                <div class="d-flex flex-column w-100">
+
+                    <div class="d-flex justify-content-between">
+                        <h4 class="modal-title" id="modal-journal-title">Journal Title</h4>
+                        <p><strong>Date:</strong> <span id="modal-journal-date"></span></p>
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <div id="modal-journal-content">
+                    <p><strong>Content:</strong> <span id="modal-journal-description"></span></p>
+                </div>
+
+
+                <h5>Workouts</h5>
+                <ul id="modal-journal-workouts"></ul>
+                
+                <h5>Blood Tests</h5>
+                <ul id="modal-journal-bloodtests"></ul>
+                
+                <h5>Goals</h5>
+                <ul id="modal-journal-goals"></ul>
+            </div>                  
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+        <div class="modal fade" id="createJournalModal" tabindex="-1" aria-labelledby="createJournalModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="createJournalModalLabel">Create Journal</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <form>
+                            <div class="mb-3">
+                                <input type="text" class="form-control" id="journalTitle" placeholder="Please enter a title for the journal.">
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <div class="dropdown">
+                                        <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Bloodtests
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" id="bloodtestDropdown">
+
+                    
+                                            @if (Model.Bloodworks != null && Model.Bloodworks.Any())
+                                            {
+                                                foreach (var bw in Model.Bloodworks)
+                                                {
+                                                    if (bw.BloodTests != null && bw.BloodTests.Any())
+                                                    {
+                                                        foreach (var bt in bw.BloodTests)
+                                                        {
+                                                            <li style="padding-left: 15px;">
+                                                                <div class="form-check px-3">
+                                                                    <input class="form-check-input" type="checkbox" value="@bt.Id" id="bloodtest-@bt.Id">
+                                                                    <label class="form-check-label" for="bloodtest-@bt.Id">Date: @bt.SubmissionDate.ToString("MM/dd/yyyy")</label>
+                                                                </div>
+                                                            </li>
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <li class="px-3">No Bloodtests Available</li>
+                                            }
+
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="dropdown">
+                                        <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Workouts
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2" id="workoutDropdown">
+
+                                            @if (Model.Workouts?.Any() == true)
+                                            {
+                                                foreach (var wo in Model.Workouts)
+                                                {
+                                                    <li style="padding-left: 15px;">
+                                                        <div class="form-check px-3">
+                                                            <input class="form-check-input" type="checkbox" name="SelectedWorkouts" value="@wo.WorkoutId" id="workout-@wo.WorkoutId">
+                                                            <label class="form-check-label" for="workout-@wo.WorkoutId">@wo.Day - @wo.SubType</label>
+                                                        </div>
+                                                    </li>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <li class="px-3">No Workouts Available</li>
+                                            }
+
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <div class="dropdown">
+                                        <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Goals
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton3" id="goalDropdown">
+                                            @if (Model.Goals?.Any() == true)
+                                            {
+                                                foreach (var g in Model.Goals)
+                                                {
+                                                    <li style="padding-left: 15px;">
+                                                        <div class="form-check px-3">
+                                                            <input class="fo</div>rm-check-input" type="checkbox" value="@g.GoalId" id="goal-@g.GoalId">
+                                                            <label class="form-check-label" for="goal-@g.GoalId">@g.endGoalDate.ToString("MM/dd/yyyy") - @g.targetWeight Ibs</label>
+                                                        </div>
+                                                    </li>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <li class="px-3">No Goals Available</li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="dropdown">
+                                        <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="dropdownMenuButton4" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Chats
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton4" id="chatDropdown">
+
+                                            @if (Model.Chats?.Any() == true)
+                                            {
+                                                foreach (var c in Model.Chats)
+                                                {
+                                                    <li style="padding-left: 15px;">
+                                                        <div class="form-check px-3">
+                                                            <input class="form-check-input" type="checkbox" value="@c.Id" id="chat-@c.Id">
+                                                            <label class="form-check-label" for="chat-@c.Id">@c.ChatDate</label>
+                                                        </div>
+                                                    </li>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <li class="px-3">No Chats Available</li>
+                                            }
+
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="content-box">
+                                    <textarea class="form-control" id="description" placeholder="Please enter description for your Journal."></textarea>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button id="createJournalButton" type="button" class="btn btn-primary">Create Journal</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </section>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+<script>
+    const journalModel = new bootstrap.Modal(document.getElementById('createJournalModal'), {
+        keyboard: false
+    });
+
+    function showJournalModel() {
+        journalModel.show();
+    }
+
+
+    function getSelectedOptions(dropdownId) {
+        const dropdown = document.getElementById(dropdownId);
+        const checkboxes = dropdown.querySelectorAll('input[type="checkbox"]:checked');
+        return Array.from(checkboxes).map(cb => cb.value);
+    }
+
+
+    const showJournalModal = new bootstrap.Modal(document.getElementById('showJournalModal'), {
+        keyboard: false
+    });
+
+
+
+
+    function viewJournalDetails(journalId) {
+
+    fetch(`/api/JournalController/GetJournalDetails?journalId=${journalId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            document.getElementById('modal-journal-content').innerText = data.content;
+            document.getElementById('modal-journal-title').innerText = data.title;
+            document.getElementById('modal-journal-date').innerText = data.journalDate;
+            document.getElementById('modal-journal-workouts').innerHTML = generateWorkoutsHtml(data.workouts);
+            document.getElementById('modal-journal-bloodtests').innerHTML = generateBloodTestsHtml(data.bloodTests);
+            document.getElementById('modal-journal-goals').innerHTML = generateGoalsHtml(data.goals);
+
+
+            showJournalModal.show();
+        })
+        .catch(error => {
+            console.error('Error fetching journal details:', error);
+        });
+}
+
+
+        function generateWorkoutsHtml(workouts) {
+            if (workouts.length === 0) return '<p>No workouts available.</p>';
+            return workouts.map(workout => `<li>${workout.type}: ${workout.date}</li>`).join('');
+        }
+
+        function generateBloodTestsHtml(bloodTests) {
+            if (bloodTests.length === 0) return '<p>No blood tests available.</p>';
+            return bloodTests.map(test => `<li>Test Date: ${test.date}</li>`).join('');
+        }
+
+        function generateGoalsHtml(goals) {
+            if (goals.length === 0) return '<p>No goals available.</p>';
+            return goals.map(goal => `<li>Target Weight: ${goal.targetWeight}, End Date: ${goal.endDate}</li>`).join('');
+        }
+
+
+</script>
+
+<script>
+    document.getElementById("createJournalButton").addEventListener("click", function (event) {
+        event.preventDefault();
+
+        const selectedBloodtests = getSelectedOptions('bloodtestDropdown');
+        const selectedWorkouts = getSelectedOptions('workoutDropdown');
+        const selectedGoals = getSelectedOptions('goalDropdown');
+        const selectedChats = getSelectedOptions('chatDropdown');
+
+        console.log('Selected Bloodtests:', selectedBloodtests);
+        console.log('Selected Workouts:', selectedWorkouts);
+        console.log('Selected Goals:', selectedGoals);
+        console.log('Selected Chats:', selectedChats);
+
+        const sid = document.getElementById("userSecretId").value;
+        const date = new Date().toISOString().split('T')[0];
+        const title = document.getElementById("journalTitle").value;
+        const content = document.getElementById("description").value;
+        const resolved = false;
+
+        if (!content) {
+            alert("Description cannot be empty.");
+            return;
+        }
+
+        if(!title){
+            alert("Title cannot be empty.");
+            return;
+        }
+
+        const journal = {
+            userID: sid,
+            journalDate: date,
+            title: title,
+            content: content,
+            resolved: resolved,
+            selectedBloodTestIds: selectedBloodtests,
+            selectedWorkoutIds: selectedWorkouts,
+            selectedGoalIds: selectedGoals,
+            selectedChatIds: selectedChats
+        };
+
+        console.log('Journal Object:', journal);
+
+        fetch('/api/JournalController/CreateJournal', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(journal),
+        })
+            .then(response => response.ok ? response.json() : Promise.reject(response.text()))
+            .then(data => alert("Success: " + data))
+            .then(data => window.location.reload())
+            .catch(response => response.then(errorMessage => alert("Error: " + errorMessage)));
+    });
+</script>
