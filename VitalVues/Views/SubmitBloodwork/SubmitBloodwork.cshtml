@@ -5,7 +5,50 @@
 <head>
     <link rel="stylesheet" href="~/css/SubmitBloodwork.css" asp-append-version="true" />
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js" defer data-deferred="1"></script>
+    <style>
+        .dropdown {
+            position: absolute;
+            top: 100px; 
+            right: 05px; 
+            z-index: 1000;
+            padding: 15px; 
+            background-color: #343A40;
+            border-radius: 8px; 
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1); 
+        }
 
+        .dropdown-toggle {
+            background-color: #007bff; 
+            color: white;
+            padding: 10px 20px; 
+            border-radius:  5px; 
+            border: none;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #343A40;
+            border: 1px solid #ccc;
+            padding: 10px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            width: 150px;
+            border-radius: 5px;
+        }
+
+            .dropdown-content label {
+                display: block;
+                margin-bottom: 10px; 
+                font-size: 14px; 
+                color: white; 
+            }
+
+        .show {
+            display: block; 
+        }
+
+    </style>
 </head>
 
 <div id="particles-js"></div>
@@ -15,6 +58,23 @@
 
         <h2>Happy @DateTime.Today.DayOfWeek</h2>
         <h3>Bloodwork for @DateTime.Today</h3>
+
+        <div class="dropdown" id="dropdownMenu">
+            <label class="dropdown-label">Would you like us to notify you when</label>
+            <div></div>
+            <label class="dropdown-label"> it's time to upload your bloodwork?</label>
+            <div></div>
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownButton" onclick="toggleDropdown()">
+                Select Reminders:
+            </button>
+            <div class="dropdown-content" id="dropdownContent">
+                <label><input type="checkbox" id="daily-checkbox"> Daily</label><br>
+                <label><input type="checkbox" id="weekly-checkbox"> Weekly</label><br>
+                <label><input type="checkbox" id="monthly-checkbox"> Monthly</label><br>
+                <label><input type="checkbox" id="yearly-checkbox"> Yearly</label><br>
+                <button class="btn btn-primary" id="saveChangesButton">Save Changes</button>
+            </div>
+        </div>
 
         <div class="chat-container">
             <div id="chatOutput" class="output"></div>
@@ -38,8 +98,6 @@
                 </button>
             </div>
         </div>
-
-
 
         <form id="uploadForm" enctype="multipart/form-data">
             <h2>Upload Bloodwork</h2>
@@ -87,7 +145,73 @@
         </div>
     </div>
 </div>
+
 <script>
+    function toggleDropdown() {
+        const dropdownContent = document.getElementById('dropdownContent');
+        dropdownContent.classList.toggle('show');
+    }
+
+    // Close the dropdown if the user clicks outside of it
+    window.onclick = function (event) {
+        if (!event.target.closest('.dropdown-content') && !event.target.closest('.dropdown-toggle')) {
+            document.getElementById('dropdownContent').classList.remove('show');
+        }
+    }
+
+    document.getElementById('saveChangesButton').addEventListener('click', function () {
+
+        const daily = document.getElementById('daily-checkbox').checked;
+        const weekly = document.getElementById('weekly-checkbox').checked;
+        const monthly = document.getElementById('monthly-checkbox').checked;
+        const yearly = document.getElementById('yearly-checkbox').checked;
+
+        const data = {
+            Daily: daily,
+            Weekly: weekly,
+            Monthly: monthly,
+            Yearly: yearly 
+        };
+
+        fetch('/api/SubmitBloodwork/SaveReminders', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then(response => response.json())
+            .then(result => {
+                alert(result.message || 'Reminders saved!');
+            }).catch(error => {
+                console.error('Error:', error);
+            });
+
+        // Save the state to local storage
+        const checkboxes = document.querySelectorAll('.dropdown-content input[type="checkbox"]');
+        checkboxes.forEach((checkbox, index) => {
+            localStorage.setItem(`checkbox-${index}`, checkbox.checked);
+        });
+    });
+
+
+    // Load saved checkbox states when the page loads
+    document.addEventListener("DOMContentLoaded", function () {
+        const checkboxes = document.querySelectorAll('.dropdown-content input[type="checkbox"]');
+
+        // Reset checkboxes
+        checkboxes.forEach((checkbox, index) => {
+            checkbox.checked = false;
+        });
+
+        // Load saved state from local storage after resetting the checkboxes
+        checkboxes.forEach((checkbox, index) => {
+            const isChecked = localStorage.getItem(`checkbox-${index}`) === 'true';
+            if (isChecked) {
+                checkbox.checked = true;
+            }
+        });
+    });
+
 
     function displayUploadPDF() {
         const pdfForm = document.getElementById('uploadForm');
@@ -124,11 +248,6 @@
         const outputField = document.getElementById('chatOutput');
         outputField.style.display = 'none';
 
-        const inputBtn = document.getElementById('input-bloodwork-btn');
-        const uploadBtn = document.getElementById('upload-bloodwork-btn');
-
-
-
         $('#uploadForm').submit(function (e) {
             e.preventDefault();
 
@@ -145,8 +264,6 @@
 
             formData.append('pdfFile', fileInput);
 
-            const inputField = document.getElementById('uploadForm');
-            const prompt = inputField.value;
             const spinner = document.getElementById('spinner');
             const buttonText = document.getElementById('buttonText');
             const sendButton = document.getElementById('sendButton');
@@ -175,11 +292,11 @@
                         var testCount = 0;
                         response.content.forEach(function (testResult, index) {
                             var newRow = `<tr>
-                                        <td><input type="text" name="TestResults[${index}].TestName" value="${testResult.TestName}" class="form-control test-name" placeholder="Test Name" /></td>
-                                        <td><input type="text" name="TestResults[${index}].Result" value="${testResult.Result}" class="form-control test-result" placeholder="Test Result" /></td>
-                                        <td><input type="text" name="TestResults[${index}].Grade" value="${testResult.Grade}" class="form-control test-grade" placeholder="Test Grade (L, M, H)" /></td>
-                                    <td><button type="button" class="btn btn-danger remove-row">X</button></td>
-                                  </tr>`;
+                                                <td><input type="text" name="TestResults[${index}].TestName" value="${testResult.TestName}" class="form-control test-name" placeholder="Test Name" /></td>
+                                                <td><input type="text" name="TestResults[${index}].Result" value="${testResult.Result}" class="form-control test-result" placeholder="Test Result" /></td>
+                                                <td><input type="text" name="TestResults[${index}].Grade" value="${testResult.Grade}" class="form-control test-grade" placeholder="Test Grade (L, M, H)" /></td>
+                                            <td><button type="button" class="btn btn-danger remove-row">X</button></td>
+                                          </tr>`;
                             $('#results-table tbody').append(newRow);
                             testCount++;
                         });
@@ -198,6 +315,10 @@
 
     function resetUI() {
         const inputField = document.getElementById('promptInput');
+
+        const buttonText = document.getElementById('buttonText');
+        const sendButton = document.getElementById('sendButton');
+
         spinner.style.display = 'none';
         buttonText.textContent = 'Submit';
         sendButton.disabled = false;
@@ -210,21 +331,18 @@
 
         const pdfForm = document.getElementById('uploadForm');
         pdfForm.style.display = 'none';
-
-        // TODO: Continue chat
     }
 
     $(document).ready(function () {
         $('#add-row').click(function () {
             var rowCount = $('#results-table tbody tr').length;
 
-            var rowCount = $('#results-table tbody tr').length;
             var newRow = `<tr>
-                                    <td><input type="text" name="TestResults[${rowCount}].TestName" class="form-control" /></td>
-                                    <td><input type="text" name="TestResults[${rowCount}].Result" class="form-control" /></td>
-                                    <td><input type="text" name="TestResults[${rowCount}].Grade" class="form-control" /></td>
-                                    <td><button type="button" class="btn btn-danger remove-row">X</button></td>
-                                    </tr>`;
+                                            <td><input type="text" name="TestResults[${rowCount}].TestName" class="form-control" /></td>
+                                            <td><input type="text" name="TestResults[${rowCount}].Result" class="form-control" /></td>
+                                            <td><input type="text" name="TestResults[${rowCount}].Grade" class="form-control" /></td>
+                                            <td><button type="button" class="btn btn-danger remove-row">X</button></td>
+                                            </tr>`;
             $('#results-table tbody').append(newRow);
             $('#testCount').html(`<p>Number of results: ${rowCount + 1}</p>`);
         });
@@ -285,9 +403,7 @@
         particles(); // Reinitialize the particle system
     }
 
-
     window.addEventListener('DOMContentLoaded', (event) => {
-        
         particlesJS("particles-js", {
             "particles": {
                 "number": {
@@ -399,5 +515,4 @@
             "retina_detect": true
         });
     });
-
 </script>

@@ -84,9 +84,9 @@ namespace VitalVues.Controllers
             // Schedule the halfway reminder
             var halfwayJobId = BackgroundJob.Schedule(() =>
                 _sendGridEmailService.SendEmail(userInfo.Email,
-                    "Halfway to Achieving Your Goal!",
-                    "You’re halfway through your goal timeline. Keep pushing!",
-                    "<strong>You’re halfway through your goal timeline. Keep pushing!</strong>"),
+                "Halfway to Achieving Your Goal!",
+                "You’re halfway through your goal. Keep pushing!\nGoal Description: " + goalInfo.Description,
+                "You’re halfway through your goal. Keep pushing!\nGoal Description: " + goalInfo.Description),
                 halfwayPoint);
 
 
@@ -94,9 +94,9 @@ namespace VitalVues.Controllers
             var notifyDate = goalInfo.endGoalDate.AddDays(-1);
             var jobId = BackgroundJob.Schedule(() =>
                 _sendGridEmailService.SendEmail(userInfo.Email,
-                    "1 Day Left to Achieve Your Goal",
-                    "Your goal is about to end in 1 day. Keep pushing!",
-                    "<strong>Your goal is about to end in 1 day. Keep pushing!</strong>"),
+                "One Day to Go!",
+                "You're almost there! Just one day left to reach your goal. Stay focused!\nGoal Description: " + goalInfo.Description,
+                "You're almost there! Just one day left to reach your goal. Stay focused!\nGoal Description: " + goalInfo.Description),
                 notifyDate);
 
             // Now update the goal with both Hangfire job IDs
@@ -161,18 +161,18 @@ namespace VitalVues.Controllers
 
             var halfwayJobId = BackgroundJob.Schedule(() =>
                 _sendGridEmailService.SendEmail(userInfo.Email,
-                    "Halfway to Achieving Your Goal!",
-                    "You’re halfway through your goal timeline. Keep pushing!",
-                    "<strong>You’re halfway through your goal timeline. Keep pushing!</strong>"),
+                "Halfway to Achieving Your Goal!",
+                "You’re halfway through your goal. Keep pushing!\n\nGoal Description: " + goalInfo.Description,
+                "You’re halfway through your goal. Keep pushing!\n\nGoal Description: " + goalInfo.Description),
                 halfwayPoint);
 
 
             var notifyDate = goalInfo.endGoalDate.AddDays(-1);
             var newJobId = BackgroundJob.Schedule(() =>
                 _sendGridEmailService.SendEmail(userInfo.Email,
-                    "1 Day Left to Achieve Your Goal",
-                    "Your goal is about to end in 1 day. Keep pushing!",
-                    "<strong>Your goal is about to end in 1 day. Keep pushing!</strong>"),
+                "One Day to Go!",
+                "You're almost there! Just one day left to reach your goal. Stay focused!\nGoal Description: " + goalInfo.Description,
+                "You're almost there! Just one day left to reach your goal. Stay focused!\nGoal Description: " + goalInfo.Description),
                 notifyDate);
 
             _goalService.UpdateGoalHangfireJobIds(goalInfo.GoalId, halfwayJobId, newJobId);

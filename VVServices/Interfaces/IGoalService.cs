@@ -15,5 +15,5 @@ public interface IGoalService
     public int CreateGoal(GoalViewModel goalViewModel);
     public void UpdateGoal(GoalViewModel goalViewModel);
     public void ResolveGoal(int goalId);
-    void UpdateGoalHangfireJobIds(int goalId, string halfwayJobId, string oneDayJobId);
+    public void UpdateGoalHangfireJobIds(int goalId, string halfwayJobId, string oneDayJobId);
 }
