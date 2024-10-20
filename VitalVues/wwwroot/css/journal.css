@@ -126,3 +126,15 @@
 .btn-secondary:hover {
   background-color: #5a6268;
 }
+
+#modal-journal-content {
+  margin-bottom: 20px;
+}
+
+#modal-journal-date {
+  padding-bottom: 100px;
+}
+
+#modal-journal-title {
+  text-align: center;
+}
