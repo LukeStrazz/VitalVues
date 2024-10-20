@@ -1,5 +1,6 @@
 using VVData.Data;
 using System;
+using Data.Data.Models;
 namespace VVData.Data.Models;
 
 public class Workout : TrackableEntry
@@ -12,5 +13,5 @@ public class Workout : TrackableEntry
   public required string Day { set; get; }
   public bool resolved { get; set; }
   public int Duration { get; set; }
-
+  public List<Journal> Journals { get; set; } = new List<Journal>();
 }

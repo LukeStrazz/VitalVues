@@ -1,5 +1,6 @@
 ﻿using VVData.Data;
 using System;
+using Data.Data.Models;
 namespace VVData.Data.Models;
 
 public class Goal : TrackableEntry
@@ -10,5 +11,6 @@ public class Goal : TrackableEntry
     public DateTime startingGoalDate { get; set; }
     public DateTime endGoalDate { get; set; }
     public required string Description { get; set; }
+    public List<Journal> Journals { get; set; } = new List<Journal>();
 }
 

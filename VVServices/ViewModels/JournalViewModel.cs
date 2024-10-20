@@ -4,18 +4,33 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Rendering;
+
 
 namespace Services.ViewModels;
 
 public class JournalViewModel
 {
-    public string JournalId { get; set; }
-    public string UserId { get; set; }
-    public DateTime JournalDate { get; set; }
-    public string Title { get; set; }
-    public string? Content { get; set; }
-    public List<BloodTestViewModel>? BloodtestOfThisWeek { get; set; }
-    public List<WorkoutViewModel>? WorkoutsOfThisWeek { get; set; }
-    public List<GoalViewModel>? GoalsInProgress { get; set; }
-    public List<ChatViewModel>? ChatsThisWeek { get; set; }
+  
+    public int JournalId { get; set; }
+    public required string UserID { get; set; }
+    public DateTime JournalDate { get; set; } = DateTime.Now;
+    public required string Title { get; set; }
+    public required string Content { get; set; }
+    public bool Resolved { get; set; }
+
+
+    public List<int>? SelectedBloodTestIds { get; set; } = new List<int>();
+    public List<int>? SelectedWorkoutIds { get; set; } = new List<int>();
+    public List<int>? SelectedGoalIds { get; set; } = new List<int>();
+    public List<int>? SelectedChatIds { get; set; } = new List<int>();
+
+
+    public List<SelectListItem>? BloodTestOptions { get; set; } = new List<SelectListItem>();
+    public List<SelectListItem>? WorkoutOptions { get; set; } = new List<SelectListItem>();
+    public List<SelectListItem>? GoalOptions { get; set; } = new List<SelectListItem>();
+    public List<SelectListItem>? ChatOptions { get; set; } = new List<SelectListItem>();
 }
+
+
+
