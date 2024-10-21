@@ -424,8 +424,13 @@
             return;
         }
 
-        if(!title){
+        if (!title) {
             alert("Title cannot be empty.");
+            return;
+        }
+
+        if (title.length > 25) {
+            alert("Title cannot be more than 25 characters.");
             return;
         }
 
@@ -451,7 +456,7 @@
             body: JSON.stringify(journal),
         })
             .then(response => response.ok ? response.json() : Promise.reject(response.text()))
-            .then(data => alert("Success: " + data))
+            .then(data => alert("Journal has been created."))
             .then(data => window.location.reload())
             .catch(response => response.then(errorMessage => alert("Error: " + errorMessage)));
     });

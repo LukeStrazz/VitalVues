@@ -50,7 +50,7 @@ namespace VitalVues.Controllers;
             var workouts = _workoutService.GetWorkouts(userUniqueIdentifier).ToList();
 
             var userInfo = new UserInfoViewModel
-            {
+            {   
                 Sid = userUniqueIdentifier,
                 Journals = journals,
                 Goals = goals,

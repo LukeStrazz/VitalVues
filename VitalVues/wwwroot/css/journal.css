@@ -38,7 +38,7 @@
 }
 
 .image-and-journals {
-  padding-left: 125px;
+  padding-left: 255px;
   margin-top: 25px;
 }
 
@@ -47,6 +47,7 @@
   height: 150px;
   border-radius: 50%;
   transition: transform 0.3s ease;
+  margin-left: 10px;
 }
 
 .round-image:hover {
@@ -137,4 +138,8 @@
 
 #modal-journal-title {
   text-align: center;
+}
+
+.journal-item {
+align-items: center;
 }
