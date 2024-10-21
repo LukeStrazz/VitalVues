@@ -86,11 +86,11 @@ public class LetsChatController : Controller
 
     [HttpPost]
     [Route("SaveChats")]
-    public async Task<IActionResult> SaveChats(int? chatId, [FromBody] ChatViewModel messages)
+    public async Task<IActionResult> SaveChats([FromBody] ChatViewModel messages)
     {
         var userUniqueIdentifier = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
 
-        var thisChatId = _chatService.SaveChat(chatId, userUniqueIdentifier, messages);
+        var thisChatId = _chatService.SaveChat((int?)messages.Id, userUniqueIdentifier, messages);
         return Json(new { thisChatId });
     }
 
