@@ -9,7 +9,163 @@
 
 <div id="particles-js"></div>
 
-<div style="transform: translate(5%, 50%); font-size: 8rem;">Under Construction</div>
+<div class="container my-5">
+    
+    <div class="bmi-background p-5 shadow-lg" style="border-radius: 20px; background: linear-gradient(145deg, #222831, #2e343b); box-shadow: 6px 6px 12px #1c1c1e, -6px -6px 12px #343a40;">
+        <div class="card-body p-4">
+
+            <h2 class="text-center mb-4" style="font-family: 'Poppins', sans-serif; color: #f8f9fa; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;">BMI Tracker</h2>
+
+            <div class="card-body p-4">
+
+            
+            <ul class="nav nav-tabs mb-3" id="bmiTabs" role="tablist" style="border-bottom: 2px solid #38b000;">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" id="imperial-tab" data-bs-toggle="tab" href="#imperial" role="tab" aria-controls="imperial" aria-selected="true" style="color: #38b000; font-weight: 600; letter-spacing: 1px;">Imperial (ft, in, lbs)</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="metric-tab" data-bs-toggle="tab" href="#metric" role="tab" aria-controls="metric" aria-selected="false" style="color: #38b000; font-weight: 600; letter-spacing: 1px;">Metric (cm, kg)</a>
+                </li>
+            </ul>
+
+           
+            <div class="tab-content p-4" id="bmiTabsContent">
+
+               
+                <div class="tab-pane fade show active" id="imperial" role="tabpanel" aria-labelledby="imperial-tab">
+                    <form asp-controller="BMI" asp-action="CalculateBMIImperial" method="post" class="needs-validation" novalidate>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="weightImperial" class="form-label" style="color: #a8dadc; font-weight: 600;">Weight (lbs):</label>
+                                <input type="number" step="any" id="weightImperial" name="weightImperial" class="form-control form-control-lg" required min="50" max="1000" style="border-radius: 10px; border: none; background: rgba(255, 255, 255, 0.1); color: #f1faee; box-shadow: inset 2px 2px 5px #1c1c1e, inset -2px -2px 5px #2c2e30;">
+                                <div class="invalid-feedback">Please enter a valid weight between 50 and 1000 lbs.</div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="feetImperial" class="form-label" style="color: #a8dadc; font-weight: 600;">Height (feet):</label>
+                                <input type="number" id="feetImperial" name="feetImperial" class="form-control form-control-lg" required min="1" max="8" style="border-radius: 10px; border: none; background: rgba(255, 255, 255, 0.1); color: #f1faee; box-shadow: inset 2px 2px 5px #1c1c1e, inset -2px -2px 5px #2c2e30;">
+                                <div class="invalid-feedback">Please enter a valid number of feet between 1 and 8.</div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="inchesImperial" class="form-label" style="color: #a8dadc; font-weight: 600;">Height (inches):</label>
+                                <input type="number" id="inchesImperial" name="inchesImperial" class="form-control form-control-lg" required min="0" max="11" style="border-radius: 10px; border: none; background: rgba(255, 255, 255, 0.1); color: #f1faee; box-shadow: inset 2px 2px 5px #1c1c1e, inset -2px -2px 5px #2c2e30;">
+                                <div class="invalid-feedback">Please enter a valid number of inches between 0 and 11.</div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-lg w-100 text-white mt-4" style="background-color: #38b000; border-radius: 12px; box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3); transition: transform 0.3s ease;">Calculate BMI</button>
+                    </form>
+                </div>
+
+               
+                <div class="tab-pane fade" id="metric" role="tabpanel" aria-labelledby="metric-tab">
+                    <form asp-controller="BMI" asp-action="CalculateBMIMetric" method="post" class="needs-validation" novalidate>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="weightMetric" class="form-label" style="color: #a8dadc; font-weight: 600;">Weight (kg):</label>
+                                <input type="number" step="any" id="weightMetric" name="weightMetric" class="form-control form-control-lg" required min="20" max="450" style="border-radius: 10px; border: none; background: rgba(255, 255, 255, 0.1); color: #f1faee; box-shadow: inset 2px 2px 5px #1c1c1e, inset -2px -2px 5px #2c2e30;">
+                                <div class="invalid-feedback">Please enter a valid weight between 20 and 450 kg.</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="heightMetric" class="form-label" style="color: #a8dadc; font-weight: 600;">Height (cm):</label>
+                                <input type="number" step="any" id="heightMetric" name="heightMetric" class="form-control form-control-lg" required min="50" max="250" style="border-radius: 10px; border: none; background: rgba(255, 255, 255, 0.1); color: #f1faee; box-shadow: inset 2px 2px 5px #1c1c1e, inset -2px -2px 5px #2c2e30;">
+                                <div class="invalid-feedback">Please enter a valid height between 50 and 250 cm.</div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-lg w-100 text-white mt-4" style="background-color: #38b000; border-radius: 12px; box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3); transition: transform 0.3s ease;">Calculate BMI</button>
+                    </form>
+                </div>
+            </div>
+
+            
+            @if (ViewData["BMI"] != null)
+            {
+                <div class="result-container text-center my-4">
+                    <div class="bmi-result">
+                        <h4 style="color: #f1faee;">Your BMI:</h4>
+                        <span class="bmi-value">@ViewData["BMI"]</span>
+                    </div>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>
+
+<style>
+    
+    .result-container {
+        background-color: #1c1e24; 
+        border-radius: 12px;
+        padding: 25px;
+        margin-top: 20px;
+        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.5); 
+        transition: all 0.3s ease;
+    }
+
+    .bmi-result {
+        color: #f1faee; 
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.6rem;
+        font-weight: 500;
+    }
+
+        .bmi-result h4 {
+            font-size: 1.4rem;
+            color: #a8dadc; 
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+    .bmi-value {
+        font-size: 3rem; 
+        font-weight: 600;
+        color: #38b000; 
+        padding: 10px 20px;
+        border-radius: 10px;
+        background-color: #282c35; 
+        box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.5), inset -2px -2px 4px rgba(255, 255, 255, 0.05);
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+        .bmi-value:hover {
+            background-color: #2a2e37; 
+            transform: translateY(-2px); 
+        }
+</style>
+
+
+<script>
+    (function () {
+        'use strict';
+        window.addEventListener('load', function () {
+            var forms = document.getElementsByClassName('needs-validation');
+            var validation = Array.prototype.filter.call(forms, function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+
+            document.querySelectorAll('form').forEach(function (form) {
+                form.addEventListener('submit', function () {
+                    var activeTab = document.querySelector('.nav-tabs .active').getAttribute('href').substring(1);
+                    form.querySelector('input[name="activeTab"]').value = activeTab;
+                });
+            });
+
+            var activeTab = '@ViewData["ActiveTab"]';
+            if (activeTab) {
+                var tabElement = document.querySelector('#' + activeTab + '-tab');
+                if (tabElement) {
+                    new bootstrap.Tab(tabElement).show();
+                }
+            }
+        }, false);
+    })();
+</script>
+
 
 <script>
     function resetParticles() {
