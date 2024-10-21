@@ -2,7 +2,6 @@
 
 <head>
     <link rel="stylesheet" href="~/css/chat.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/chatstyles.scss" asp-append-version="true" />
     <script src="https://cdn.jsdelivr.net/npm/showdown/dist/showdown.min.js"></script>
 </head>
 
@@ -195,7 +194,15 @@
                         messageDiv.className = message.role === 'system' ? 'message bot-message' : 'message user-message';
                         messageDiv.innerHTML = message.content;
                         messages.push({ role: message.role, content: message.content });
-                        chatOutput.appendChild(messageDiv);
+                        const converter = new showdown.Converter();
+                        const htmlResponse = converter.makeHtml(message.content);
+
+                        const responseContainer = document.createElement('div');
+                        responseContainer.className = 'message bot-message';
+                        responseContainer.innerHTML = `<div class="response-content">${htmlResponse}</div>`;
+
+                        resetUI();
+                        document.getElementById('chatOutput').appendChild(responseContainer);
                     });
                     let contentDiv = document.getElementById('content');
 
@@ -273,8 +280,6 @@
                 .then(data => {
                     try {
                         messages.push({ role: 'system', content: data.message });
-                        debugger;
-                        const messages = [];
 
                         const chatMessages = document.querySelectorAll('#chatOutput .message');
                         chatMessages.forEach(messageElement => {
@@ -331,7 +336,7 @@
         .then(data => {
             console.log('Chat saved:', data); 
 
-            document.getElementById('currentChatId').value = data.chatId;
+            document.getElementById('currentChatId').value = data.thisChatId;
         })
         .catch(error => {
             console.error('Error saving chat:', error);
@@ -431,7 +436,6 @@
         if (isRunning) {
             var chatIdThis = document.getElementById('currentChatId').value;
             let topic = "bloodwork";
-            debugger;
             saveChat(chatIdThis, messages, topic);
         }
     }

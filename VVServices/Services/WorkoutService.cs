@@ -4,7 +4,7 @@ using VVData.Data.Models;
 using Microsoft.Extensions.Logging;
 using Services.Interfaces;
 using Services.ViewModels;
-
+using Data.Data.Models;
 namespace Services.Services;
 
 public class WorkoutService : IWorkoutService

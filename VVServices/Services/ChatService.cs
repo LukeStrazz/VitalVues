@@ -130,7 +130,7 @@ public class ChatService : IChatService
                     _context.Add(newMessage); 
                 }
             }
-            var today = DateTime.Today;
+            var today = DateTime.Now;
             var newChat = new Chat
             {
                 UserSID = userUniqueIdentifier,

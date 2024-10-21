@@ -18,4 +18,5 @@ public class Person : TrackableEntry
     public List<string>? Allergies { get; set; }
     public List<Goal>? Goals { get; set; }
     public List<Bloodwork>? BloodWorks { get; set; }
+    public List<Journal>? Journals { get; set; }
 }
