@@ -37,7 +37,13 @@ body {
 }
 
 [data-bs-theme="dark"] a {
+    color: white;
+}
+
+.nav-link, navbar-brand {
     color: white !important;
 }
 
-/**/
+.logo-nav{
+    width: 65px;
+}

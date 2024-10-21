@@ -87,11 +87,19 @@ span{
     }
 }
 
+.legend{
+    margin-top: 5rem;
+    margin-left: 10px;
+}
+
+.bloodwork-chat {
+    color: #ff7c7c !important;
+}
 
 
-    button:nth-of-type(odd) {
-        margin-right: 2px;
-    }
+button:nth-of-type(odd) {
+    margin-right: 2px;
+}
 
     button:nth-child(1) {
         margin-bottom: 2px;

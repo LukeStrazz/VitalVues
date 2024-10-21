@@ -2,6 +2,7 @@
 
 <head>
     <link rel="stylesheet" href="~/css/chat.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/chatstyles.scss" asp-append-version="true" />
     <script src="https://cdn.jsdelivr.net/npm/showdown/dist/showdown.min.js"></script>
 </head>
 
@@ -73,11 +74,14 @@
                 </button>
             </form>
         </div>
-        <button id="saveChatButton" class="btn btn-secondary">Save Chat</button>
+        <button style="display: none;" id="saveChatButton" class="btn btn-secondary">Save Chat</button>
     </body>
 </div>
 
 <div class="previous-chats">
+    <div class="legend">
+        <a class="bloodwork-chat">Red: Bloodwork Chat</a>
+    </div>
     @if (Model.Chats != null)
     {
         <div class="chats">
@@ -86,7 +90,7 @@
                 if (chat.ChatTopic == "bloodwork")
                 {
                     <div class="chat-title">
-                        <a style="color: red;" class="load-chat" data-chat-id="@chat.Id">
+                        <a style="color: red;" class="load-chat bloodwork-chat" data-chat-id="@chat.Id">
                             @chat.ChatDate, @chat.ChatTopic
                         </a>
                     </div>
