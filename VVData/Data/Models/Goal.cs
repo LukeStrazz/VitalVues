@@ -11,6 +11,8 @@ public class Goal : TrackableEntry
     public DateTime startingGoalDate { get; set; }
     public DateTime endGoalDate { get; set; }
     public required string Description { get; set; }
+    public string? HangfireJobId { get; set; }
+    public string? HangfireHalfwayJobId { get; set; }
     public List<Journal> Journals { get; set; } = new List<Journal>();
 }
 
