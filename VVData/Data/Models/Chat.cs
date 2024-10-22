@@ -13,4 +13,5 @@ public class Chat : TrackableEntry
     public DateTime ChatDate { get; set; }
     public string ChatTopic { get; set; }
     public virtual required List<Message> Messages { get; set; }
+    public List<Journal> Journals { get; set; } = new List<Journal>();
 }

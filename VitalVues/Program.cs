@@ -13,6 +13,7 @@ using VVData.Data;
 using Microsoft.Extensions.DependencyInjection;
 using VitalVues;
 using Hangfire; // Add Hangfire namespace
+using Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -42,6 +43,7 @@ builder.Services.AddScoped<IGoalService, GoalService>();
 builder.Services.AddScoped<IWorkoutService, WorkoutService>();
 builder.Services.AddScoped<IBloodworkService, BloodworkService>();
 builder.Services.AddScoped<IFastingService, FastService>();
+builder.Services.AddScoped<IJournalService, JournalService>();
 
 builder.Services.AddScoped<IMailService, MailService>(); // Register the MailService
 

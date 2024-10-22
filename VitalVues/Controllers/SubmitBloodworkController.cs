@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
+using Hangfire;
 
 namespace VitalVues.Controllers;
 
@@ -20,14 +21,25 @@ public class SubmitBloodworkController : Controller
     private readonly IConfiguration _configuration;
     private readonly IChatService _chatService;
     private readonly IBloodworkService _bloodworkService;
+    private readonly IUserService _userService;
+    private readonly SendGridEmailService _sendGridEmailService;
 
-    public SubmitBloodworkController(ILogger<SubmitBloodworkController> logger, IHttpClientFactory clientFactory, IConfiguration configuration, IChatService chatService, IBloodworkService bloodworkService)
+    public SubmitBloodworkController(
+        ILogger<SubmitBloodworkController> logger,
+        IHttpClientFactory clientFactory,
+        IConfiguration configuration,
+        IChatService chatService,
+        IBloodworkService bloodworkService,
+        IUserService userService,
+        SendGridEmailService sendGridEmailService)
     {
         _logger = logger;
         _clientFactory = clientFactory;
         _configuration = configuration;
         _chatService = chatService;
         _bloodworkService = bloodworkService;
+        _userService = userService;
+        _sendGridEmailService = sendGridEmailService;
     }
 
     [NoCacheHeaders]
@@ -131,7 +143,7 @@ public class SubmitBloodworkController : Controller
 
         var response = _chatService.GetChatResponse(apiKey, content);
 
-        if(response == null)
+        if (response == null)
         {
             string errorResponse = "Unable to get response.";
             return Json(new { success = false, message = errorResponse });
@@ -139,4 +151,83 @@ public class SubmitBloodworkController : Controller
 
         return Json(new { success = false, message = response });
     }
+
+    [HttpPost("SaveReminders")]
+    public async Task<IActionResult> SaveReminders([FromBody] Dictionary<string, bool> reminderSelections)
+    {
+        var userUniqueIdentifier = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+
+        // Get user email from the UserService
+        var user = _userService.FindUser(userUniqueIdentifier);
+        if (user == null || string.IsNullOrEmpty(user.Email))
+        {
+            return BadRequest("User email not found.");
+        }
+
+        var userEmail = user.Email;
+
+        // Get the current date 
+        var currentDate = DateTime.Now.AddHours(4);
+
+        // Daily reminder
+        if (reminderSelections.ContainsKey("Daily") && reminderSelections["Daily"])
+        {
+
+            RecurringJob.AddOrUpdate($"daily-email-{userUniqueIdentifier}",
+                () => _sendGridEmailService.SendEmail(userEmail, "Daily Reminder", "This is your daily reminder to upload your bloodwork.",
+                "This is your daily reminder to upload your bloodwork."),
+                Cron.Daily(currentDate.Hour, currentDate.Minute)); 
+        }
+        else
+        {
+            RecurringJob.RemoveIfExists($"daily-email-{userUniqueIdentifier}");
+        }
+
+        // Weekly reminder
+        if (reminderSelections.ContainsKey("Weekly") && reminderSelections["Weekly"])
+        {
+
+            RecurringJob.AddOrUpdate($"weekly-email-{userUniqueIdentifier}",
+                () => _sendGridEmailService.SendEmail(userEmail, "Weekly Reminder", "This is your weekly reminder to upload your bloodwork.",
+                "This is your weekly reminder to upload your bloodwork."),
+                Cron.Weekly(currentDate.DayOfWeek, currentDate.Hour, currentDate.Minute)); 
+        }
+        else
+        {
+            RecurringJob.RemoveIfExists($"weekly-email-{userUniqueIdentifier}");
+        }
+
+        // Monthly reminder
+        if (reminderSelections.ContainsKey("Monthly") && reminderSelections["Monthly"])
+        {
+
+            RecurringJob.AddOrUpdate($"monthly-email-{userUniqueIdentifier}",
+                () => _sendGridEmailService.SendEmail(userEmail, "Monthly Reminder", "This is your monthly reminder to upload your bloodwork.",
+                "This is your monthly reminder to upload your bloodwork."),
+                Cron.Monthly(currentDate.Day, currentDate.Hour, currentDate.Minute)); 
+        }
+        else
+        {
+            RecurringJob.RemoveIfExists($"monthly-email-{userUniqueIdentifier}");
+        }
+
+        // Yearly reminder
+        if (reminderSelections.ContainsKey("Yearly") && reminderSelections["Yearly"])
+        {
+
+            RecurringJob.AddOrUpdate($"yearly-email-{userUniqueIdentifier}",
+                () => _sendGridEmailService.SendEmail(userEmail, "Yearly Reminder", "This is your yearly reminder to upload your bloodwork.",
+                "This is your yearly reminder to upload your bloodwork."),
+                Cron.Yearly(currentDate.Month, currentDate.Day, currentDate.Hour, currentDate.Minute)); 
+        }
+        else
+        {
+            RecurringJob.RemoveIfExists($"yearly-email-{userUniqueIdentifier}");
+        }
+
+        return Ok(new { message = "Reminders updated successfully." });
+    }
+
+
+
 }

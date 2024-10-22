@@ -10,8 +10,14 @@ namespace Services.ViewModels;
 public class ChatViewModel
 {
     public long Id { get; set; }
-    public string UserSID { get; set; }
+    public string? UserSID { get; set; }
     public DateTime ChatDate { get; set; }
     public string ChatTopic { get; set; }
-    public virtual required List<Message> Messages { get; set; }
+    public List<MessageViewModel>? Messages { get; set; }
+}
+
+public class MessageViewModel
+{
+    public string role { get; set; }
+    public string content { get; set; }
 }

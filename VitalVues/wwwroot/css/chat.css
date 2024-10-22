@@ -32,7 +32,7 @@ span{
 
 .chats {
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     align-items: flex-start;
     margin-top: 5rem;
     margin-left: 10px;
@@ -87,11 +87,19 @@ span{
     }
 }
 
+.legend{
+    margin-top: 5rem;
+    margin-left: 10px;
+}
+
+.bloodwork-chat {
+    color: #ff7c7c !important;
+}
 
 
-    button:nth-of-type(odd) {
-        margin-right: 2px;
-    }
+button:nth-of-type(odd) {
+    margin-right: 2px;
+}
 
     button:nth-child(1) {
         margin-bottom: 2px;
@@ -265,6 +273,8 @@ header {
 /*Blood work*/
 .previous-bloodworks {
     position: absolute;
+    display: flex;
+    flex-direction: row-reverse;
     width: 50vw;
     overflow-x: scroll;
     overflow-y: hidden;

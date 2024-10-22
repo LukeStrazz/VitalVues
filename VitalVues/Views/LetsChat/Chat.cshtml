@@ -45,6 +45,10 @@
     }
 </div>
 
+<div style="display: none;">
+    Chats #:
+    <input id="currentChatId" value="0" />
+</div>
 
 <div id="content">
     <div class="input-group" style="display: none;">
@@ -54,7 +58,6 @@
                id="submissionDate"
                placeholder="Date of Test" />
     </div>
-    <input type="hidden" id="currentChatId" value="0" />
 </div>
 <div class="chat-holder">
     <body>
@@ -75,15 +78,18 @@
 </div>
 
 <div class="previous-chats">
+    <div class="legend">
+        <a class="bloodwork-chat">Red: Bloodwork Chat</a>
+    </div>
     @if (Model.Chats != null)
     {
         <div class="chats">
             @foreach (var chat in Model.Chats)
             {
-                if (chat.ChatTopic == "Bloodwork")
+                if (chat.ChatTopic == "bloodwork")
                 {
                     <div class="chat-title">
-                        <a style="color: red;" class="load-chat" data-chat-id="@chat.Id">
+                        <a style="color: red;" class="load-chat bloodwork-chat" data-chat-id="@chat.Id">
                             @chat.ChatDate, @chat.ChatTopic
                         </a>
                     </div>
@@ -118,6 +124,8 @@
     var colors = ["#1abc9c", "#2ecc71", "#3498db", "#9b59b6", "#9b59b6", "#f1c40f", "#e67e22", "#e74c3c"];
 
     let currentChatType = '';
+
+    let isRunning = false;
 
     document.querySelectorAll('.chat-holder-buttons button').forEach(button => {
         button.addEventListener('click', function () {
@@ -163,20 +171,50 @@
     document.querySelectorAll('.load-chat').forEach(link => {
         link.addEventListener('click', function () {
             const chatId = this.getAttribute('data-chat-id');
+            let chatOptionButton = document.getElementById('Button');
+            chatOptionButton.style.transition = 'top 0.5s ease, left 0.5s ease';
+            chatOptionButton.style.position = 'absolute';
+            chatOptionButton.style.top = '15%';
+            chatOptionButton.style.left = '10%';
 
-            fetch(`/api/Chats/${chatId}`)
+
+            fetch(`/api/LetsChat/${chatId}`)
                 .then(response => response.json())
                 .then(chat => {
                     const chatOutput = document.getElementById('chatOutput');
 
+                    // Clear the existing messages
                     chatOutput.innerHTML = '';
+                    messages = [];
 
+                    document.getElementById('currentChatId').value = chat.Id;
+                    // Loop through and display the messages
                     chat.Messages.forEach(message => {
                         const messageDiv = document.createElement('div');
                         messageDiv.className = message.role === 'system' ? 'message bot-message' : 'message user-message';
                         messageDiv.innerHTML = message.content;
-                        chatOutput.appendChild(messageDiv);
+                        messages.push({ role: message.role, content: message.content });
+                        const converter = new showdown.Converter();
+                        const htmlResponse = converter.makeHtml(message.content);
+
+                        const responseContainer = document.createElement('div');
+                        responseContainer.className = 'message bot-message';
+                        responseContainer.innerHTML = `<div class="response-content">${htmlResponse}</div>`;
+
+                        resetUI();
+                        document.getElementById('chatOutput').appendChild(responseContainer);
                     });
+                    let contentDiv = document.getElementById('content');
+
+                    contentDiv.innerHTML = '';
+
+                    let newDiv = document.createElement('div');
+
+                    contentDiv.appendChild(newDiv);
+                    const userChatForm = document.getElementById('promptForm');
+                    userChatForm.style.display = 'flex';
+                    const outputForm = document.getElementById('chatOutput');
+                    outputForm.style.overflow = 'scroll';
                 })
                 .catch(error => {
                     console.error('Error loading chat:', error);
@@ -185,8 +223,19 @@
     });
 
 
+
+    let currentChatId = 0;  // Use 'let' to allow reassignment
+    document.addEventListener('DOMContentLoaded', function () {
+        currentChatId = document.getElementById('currentChatId').value;
+        console.log(currentChatId);
+        setInterval(runSaveChat, 10000);
+    });
+
+
+
     document.querySelectorAll('.talk-bloodwork-btn').forEach(button => {
         button.addEventListener('click', function () {
+            isRunning = true;
             document.querySelector('.previous-bloodworks').style.display = 'none';
             const inputField = document.getElementById('promptInput');
             const spinner = document.getElementById('spinner');
@@ -232,8 +281,12 @@
                     try {
                         messages.push({ role: 'system', content: data.message });
 
-                        // const currentChatId = document.getElementById('currentChatId').value;
-                        // saveChat(currentChatId, messages.concat({ role: 'system', content: data.message }));
+                        const chatMessages = document.querySelectorAll('#chatOutput .message');
+                        chatMessages.forEach(messageElement => {
+                            const role = messageElement.classList.contains('bot-message') ? 'system' : 'user';
+                            const content = messageElement.textContent;
+                            messages.push({ role: role, content: content });
+                        });
 
                         const converter = new showdown.Converter();
                         const htmlResponse = converter.makeHtml(data.message);
@@ -244,11 +297,12 @@
 
                         resetUI();
                         document.getElementById('chatOutput').appendChild(responseContainer);
+                     
 
                     } catch (synchronousError) {
                         displayErrorMessage(`Error: <strong>${synchronousError.message}</strong>`);
                         resetUI();
-                    }
+                    } 
                 })
                 .catch(error => {
                     console.error('Error:', error); 
@@ -257,37 +311,37 @@
         });
     });
 
-    // document.getElementById('saveChatButton').addEventListener('click', function () {
-    //     const currentChatId = document.getElementById('currentChatId').value;
-    //     const messages = [];
+    document.getElementById('saveChatButton').addEventListener('click', function () {
+        debugger;
+        const messages = [];
 
-    //     const chatMessages = document.querySelectorAll('#chatOutput .message');
-    //     chatMessages.forEach(messageElement => {
-    //         const role = messageElement.classList.contains('bot-message') ? 'system' : 'user';
-    //         const content = messageElement.textContent;
-    //         messages.push({ role: role, content: content });
-    //     });
+        const chatMessages = document.querySelectorAll('#chatOutput .message');
+        chatMessages.forEach(messageElement => {
+            const role = messageElement.classList.contains('bot-message') ? 'system' : 'user';
+            const content = messageElement.textContent;
+            messages.push({ role: role, content: content });
+        });
+        let topic = "bloodwork";
+        saveChat(currentChatId, messages, topic);
+    });
 
-    //     saveChat(currentChatId, messages);
-    // });
+    function saveChat(chatId, messages, topic) {
+        messages.Id = chatId;
+        fetch(`/api/LetsChat/SaveChats`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ Id: chatId, ChatTopic: topic, messages: messages })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Chat saved:', data); 
 
-    // function saveChat(chatId, messages) {
-    //     fetch(`/api/LetsChat/SaveChat`, {
-    //         method: 'POST',
-    //         headers: { 'Content-Type': 'application/json' },
-    //         body: JSON.stringify({ chatId: chatId , messages: messages })
-    //     })
-    //     .then(response => response.json())
-    //     .then(data => {
-    //         console.log('Chat saved:', data); 
-    //         const currentChatId = document.getElementById('currentChatId').value;
-
-    //         document.getElementById('currentChatId').value = data.chatId;
-    //     })
-    //     .catch(error => {
-    //         console.error('Error saving chat:', error);
-    //     });
-    // }
+            document.getElementById('currentChatId').value = data.thisChatId;
+        })
+        .catch(error => {
+            console.error('Error saving chat:', error);
+        });
+    }
 
     $(document).ready(function () {
         const userChatForm = document.getElementById('promptForm');
@@ -300,6 +354,8 @@
     });
 
     document.getElementById('promptForm').addEventListener('submit', function (event) {
+
+        isRunning = true;
         event.preventDefault();
         const inputField = document.getElementById('promptInput');
         const prompt = inputField.value;
@@ -375,6 +431,15 @@
             });
     });
 
+
+    function runSaveChat() {
+        if (isRunning) {
+            var chatIdThis = document.getElementById('currentChatId').value;
+            let topic = "bloodwork";
+            saveChat(chatIdThis, messages, topic);
+        }
+    }
+
     function displayMealsWithButtons(data) {
         const chatOutput = document.getElementById('chatOutput');
         const lines = data.message.split(',');
@@ -449,3 +514,9 @@
         inputField.disabled = false;
     }
 </script>
+
+        <style>
+            .load-chat{
+                cursor: pointer;
+            }
+        </style>

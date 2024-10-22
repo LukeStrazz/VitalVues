@@ -17,7 +17,7 @@
         {
             <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
                 <div class="container-fluid">
-                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">VitalVues</a>
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img class="logo-nav" src="~/images/VVpictures/VVCircularLogo.png" /></a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                             aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
@@ -25,28 +25,31 @@
                     <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                         <ul class="navbar-nav flex-grow-1">
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="UserUpdate">Profile</a>
+                                <a class="nav-link" asp-area="" asp-controller="User" asp-action="UserUpdate">Profile</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Goal" asp-action="Goal">Goals</a>
+                                <a class="nav-link" asp-area="" asp-controller="Goal" asp-action="Goal">Goals</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Workout" asp-action="Workout">Workouts</a>
+                                <a class="nav-link" asp-area="" asp-controller="Workout" asp-action="Workout">Workouts</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="SubmitBloodwork" asp-action="SubmitBloodwork">Submit Bloodwork</a>
+                                <a class="nav-link" asp-area="" asp-controller="SubmitBloodwork" asp-action="SubmitBloodwork">Submit Bloodwork</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Fasting" asp-action="Fasting">Fasting Timer</a>
+                                <a class="nav-link" asp-area="" asp-controller="Fasting" asp-action="Fasting">Fasting Timer</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="LetsChat" asp-action="Chat">Chat</a>
+                                <a class="nav-link" asp-area="" asp-controller="LetsChat" asp-action="Chat">Chat</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="About" asp-action="Contact">Customer Support</a>
+                                <a class="nav-link" asp-area="" asp-controller="Journals" asp-action="Journal">Journals</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="About" asp-action="Contact">Customer Support</a>
                             </li>
 
                         </ul>
@@ -62,12 +65,12 @@
         {
             <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
                 <div class="container-fluid">
-                    <a asp-area="" asp-controller="Account" asp-action="SignIn" class="navbar-brand">VitalVues</a>
+                    <a class="navbar-brand" asp-area="" asp-controller="Account" asp-action="SignIn"><img class="logo-nav" src="~/images/VVpictures/VVCircularLogo.png" /></a>
                 </div>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="About" asp-action="Index">About Us</a>
+                            <a class="nav-link" asp-area="" asp-controller="About" asp-action="Index">About Us</a>
                         </li>
                     </ul>
                 </div>

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VVData.Data;
 
@@ -11,9 +12,11 @@ using VVData.Data;
 namespace Data.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20241013141240_AddHangfireHalfwayJobIdToGoals")]
+    partial class AddHangfireHalfwayJobIdToGoals
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,36 +24,6 @@ namespace Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("BloodTestJournal", b =>
-                {
-                    b.Property<int>("BloodTestsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("JournalsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("BloodTestsId", "JournalsId");
-
-                    b.HasIndex("JournalsId");
-
-                    b.ToTable("BloodTestJournal");
-                });
-
-            modelBuilder.Entity("ChatJournal", b =>
-                {
-                    b.Property<int>("ChatsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("JournalsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ChatsId", "JournalsId");
-
-                    b.HasIndex("JournalsId");
-
-                    b.ToTable("ChatJournal");
-                });
 
             modelBuilder.Entity("Data.Data.Models.Bloodwork", b =>
                 {
@@ -122,55 +95,6 @@ namespace Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Chats");
-                });
-
-            modelBuilder.Entity("Data.Data.Models.Journal", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("JournalDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("PersonId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("Resolved")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserID")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PersonId");
-
-                    b.ToTable("Journals");
                 });
 
             modelBuilder.Entity("Data.Data.Models.Message", b =>
@@ -252,36 +176,6 @@ namespace Data.Migrations
                     b.HasIndex("BloodTestId");
 
                     b.ToTable("Tests");
-                });
-
-            modelBuilder.Entity("GoalJournal", b =>
-                {
-                    b.Property<int>("GoalsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("JournalsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("GoalsId", "JournalsId");
-
-                    b.HasIndex("JournalsId");
-
-                    b.ToTable("GoalJournal");
-                });
-
-            modelBuilder.Entity("JournalWorkout", b =>
-                {
-                    b.Property<int>("JournalsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WorkoutsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("JournalsId", "WorkoutsId");
-
-                    b.HasIndex("WorkoutsId");
-
-                    b.ToTable("JournalWorkout");
                 });
 
             modelBuilder.Entity("VVData.Data.Models.BloodTest", b =>
@@ -531,47 +425,10 @@ namespace Data.Migrations
                     b.ToTable("Workouts");
                 });
 
-            modelBuilder.Entity("BloodTestJournal", b =>
-                {
-                    b.HasOne("VVData.Data.Models.BloodTest", null)
-                        .WithMany()
-                        .HasForeignKey("BloodTestsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Data.Data.Models.Journal", null)
-                        .WithMany()
-                        .HasForeignKey("JournalsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ChatJournal", b =>
-                {
-                    b.HasOne("Data.Data.Models.Chat", null)
-                        .WithMany()
-                        .HasForeignKey("ChatsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Data.Data.Models.Journal", null)
-                        .WithMany()
-                        .HasForeignKey("JournalsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Data.Data.Models.Bloodwork", b =>
                 {
                     b.HasOne("VVData.Data.Models.Person", null)
                         .WithMany("BloodWorks")
-                        .HasForeignKey("PersonId");
-                });
-
-            modelBuilder.Entity("Data.Data.Models.Journal", b =>
-                {
-                    b.HasOne("VVData.Data.Models.Person", null)
-                        .WithMany("Journals")
                         .HasForeignKey("PersonId");
                 });
 
@@ -587,36 +444,6 @@ namespace Data.Migrations
                     b.HasOne("VVData.Data.Models.BloodTest", null)
                         .WithMany("Test")
                         .HasForeignKey("BloodTestId");
-                });
-
-            modelBuilder.Entity("GoalJournal", b =>
-                {
-                    b.HasOne("VVData.Data.Models.Goal", null)
-                        .WithMany()
-                        .HasForeignKey("GoalsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Data.Data.Models.Journal", null)
-                        .WithMany()
-                        .HasForeignKey("JournalsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("JournalWorkout", b =>
-                {
-                    b.HasOne("Data.Data.Models.Journal", null)
-                        .WithMany()
-                        .HasForeignKey("JournalsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("VVData.Data.Models.Workout", null)
-                        .WithMany()
-                        .HasForeignKey("WorkoutsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("VVData.Data.Models.BloodTest", b =>
@@ -653,8 +480,6 @@ namespace Data.Migrations
                     b.Navigation("BloodWorks");
 
                     b.Navigation("Goals");
-
-                    b.Navigation("Journals");
                 });
 #pragma warning restore 612, 618
         }
