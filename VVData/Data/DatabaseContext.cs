@@ -27,6 +27,7 @@ public class DatabaseContext : DbContext
     public DbSet<Chat> Chats { get; set; }
     public DbSet<Message> Messages { get; set; }
     public DbSet<Journal> Journals { get; set; }
+    public DbSet<Meal> Meals { get; set; }
 
 
     public override int SaveChanges()

@@ -46,6 +46,7 @@ builder.Services.AddScoped<IFastingService, FastService>();
 builder.Services.AddScoped<IJournalService, JournalService>();
 
 builder.Services.AddScoped<IMailService, MailService>(); // Register the MailService
+builder.Services.AddScoped<IMealService, MealService>(); 
 
 // Configure Hangfire services
 builder.Services.AddHangfire(configuration => configuration

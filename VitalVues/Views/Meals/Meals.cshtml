@@ -1,0 +1,194 @@
+﻿@{
+    ViewData["Title"] = "Create Meal Plan";
+    var userID = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+}
+
+<h2>Create a Meal Plan</h2>
+
+<form id="mealForm">
+    <input type="hidden" id="MealPlanId" />
+
+    <div class="form-group">
+        <label for="MealName">Meal Name</label>
+        <input id="MealName" name="MealName" type="text" class="form-control" placeholder="Enter the meal name" required />
+    </div>
+
+    <div class="form-group mt-3">
+        <label for="DayOfWeek">Day of the Week</label>
+        <select id="DayOfWeek" name="DayOfWeek" class="form-control" required>
+            <option value="">Select a day</option>
+            <option value="Monday">Monday</option>
+            <option value="Tuesday">Tuesday</option>
+            <option value="Wednesday">Wednesday</option>
+            <option value="Thursday">Thursday</option>
+            <option value="Friday">Friday</option>
+            <option value="Saturday">Saturday</option>
+            <option value="Sunday">Sunday</option>
+        </select>
+    </div>
+
+    <div class="form-group mt-3">
+        <label for="MealType">Meal Type</label>
+        <select id="MealType" name="MealType" class="form-control" required>
+            <option value="">Select a type</option>
+            <option value="Breakfast">Breakfast</option>
+            <option value="Snack">Snack</option>
+            <option value="Lunch">Lunch</option>
+            <option value="Dinner">Dinner</option>
+        </select>
+    </div>
+
+    <div class="form-group mt-3">
+        <label for="MealDescription">Meal Description</label>
+        <textarea id="MealDescription" name="MealDescription" class="form-control" rows="3" required></textarea>
+    </div>
+
+    <div class="form-group mt-3">
+        <label for="Ingredients">Ingredients (comma separated)</label>
+        <textarea id="Ingredients" name="Ingredients" class="form-control" rows="3" required></textarea>
+    </div>
+
+    <div class="form-group mt-3">
+        <label for="PrepTime">Prep Time (minutes)</label>
+        <input id="PrepTime" name="PrepTime" type="number" class="form-control" required min="1" />
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-4">Submit</button>
+</form>
+
+<div id="successMessage" style="display:none;" class="alert alert-success mt-3">
+    Meal created/updated successfully!
+</div>
+
+<h3>Your Meals</h3>
+<div id="mealsList"></div>
+
+<script>
+    const userId = '@userID';
+    let editingMealId = null;
+
+    function loadMeals() {
+        fetch(`/api/MealController/GetMeals?userId=${userId}`)
+            .then(response => response.ok ? response.json() : Promise.reject(response))
+            .then(meals => {
+                const mealsList = document.getElementById("mealsList");
+                mealsList.innerHTML = "";
+
+                if (meals.length === 0) {
+                    mealsList.innerHTML = "<p>No meals found.</p>";
+                } else {
+                    meals.forEach(meal => {
+                        const mealItem = `
+                                <div class="meal-item border p-3 mb-3" id="meal-${meal.MealPlanId}">
+                                    <h4>${meal.MealName} (${meal.MealType})</h4>
+                                    <p><strong>Day:</strong> ${meal.DayOfWeek}</p>
+                                    <p><strong>Description:</strong> ${meal.MealDescription}</p>
+                                    <p><strong>Ingredients:</strong></p>
+                                    <ul>
+                                        ${meal.Ingredients.map(ingredient => `<li>${ingredient}</li>`).join('')}
+                                    </ul>
+                                    <p><strong>Prep Time:</strong> ${meal.PrepTime} minutes</p>
+                                    <button class="btn btn-danger" onclick="deleteMeal(${meal.MealPlanId})">Delete</button>
+                                    <button class="btn btn-warning" onclick="populateEditForm(${meal.MealPlanId})">Edit</button>
+                                </div>
+                            `;
+                        mealsList.innerHTML += mealItem;
+                    });
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    window.onload = loadMeals;
+
+    function populateEditForm(mealId) {
+        fetch(`/api/MealController/GetMeals?userId=${userId}`)
+            .then(response => response.json())
+            .then(meals => {
+                const meal = meals.find(m => m.MealPlanId === mealId);
+                if (meal) {
+                    document.getElementById("MealPlanId").value = meal.MealPlanId;
+                    document.getElementById("MealName").value = meal.MealName;
+                    document.getElementById("DayOfWeek").value = meal.DayOfWeek;
+                    document.getElementById("MealType").value = meal.MealType;
+                    document.getElementById("MealDescription").value = meal.MealDescription;
+                    document.getElementById("Ingredients").value = meal.Ingredients.join(", ");
+                    document.getElementById("PrepTime").value = meal.PrepTime;
+
+                    editingMealId = mealId;
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    document.getElementById("mealForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const mealData = {
+            MealPlanId: document.getElementById("MealPlanId").value || 0,
+            MealName: document.getElementById("MealName").value,
+            DayOfWeek: document.getElementById("DayOfWeek").value,
+            MealType: document.getElementById("MealType").value,
+            MealDescription: document.getElementById("MealDescription").value,
+            Ingredients: document.getElementById("Ingredients").value.split(",").map(item => item.trim()),
+            PrepTime: document.getElementById("PrepTime").value,
+            userID: userId
+        };
+
+        if (editingMealId) {
+            fetch('/api/MealController/UpdateMeal', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(mealData)
+            })
+                .then(response => response.ok ? response.json() : Promise.reject(response))
+                .then(data => {
+                    document.getElementById("successMessage").style.display = "block";
+                    loadMeals();
+                    editingMealId = null;
+                    document.getElementById("mealForm").reset();
+                })
+                .catch(error => console.error('Error:', error));
+
+
+
+        } else {
+            fetch('/api/MealController/CreateMeal', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(mealData)
+            })
+                .then(response => response.ok ? response.json() : Promise.reject(response))
+                .then(data => {
+                    document.getElementById("successMessage").style.display = "block";
+                    loadMeals();
+                    document.getElementById("mealForm").reset();
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    });
+
+    function deleteMeal(mealId) {
+        fetch('/api/MealController/DeleteMeal', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(mealId)
+        })
+            .then(response => {
+                if (response.ok) {
+                    const mealElement = document.getElementById(`meal-${mealId}`);
+                    mealElement.remove();
+                    console.log('Meal deleted successfully!');
+                } else {
+                    console.error('Failed to delete meal.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+</script>
