@@ -44,6 +44,19 @@
         }
     }
 </div>
+<div class="diet-interactions chat-section" style="display:none;">
+    <button id="generateMealsButton">Generate Meals</button>
+    <div id="generatedMeals" class="generated-meals-list"></div>
+    <div>
+        @if(Model.Allergies != null)
+        {
+            foreach(var all in Model.Allergies)
+            {
+                <div>@all</div>
+            }
+        }
+    </div>
+</div>
 
 <div style="display: none;">
     Chats #:
@@ -62,6 +75,7 @@
 <div class="chat-holder">
     <body>
         <script rel="javascript" src="~/js/chatbuttons.js" asp-append-version="true"></script>
+        <script rel="javascript" src="~/js/mealchat.js" asp-append-version="true"></script>
 
         <div class="chat-container">
             <div id="chatOutput" class="output"></div>

@@ -9,8 +9,8 @@ namespace Services.ViewModels
     public class MealViewModel
     {
 
-        public string userID { get; set; }
-        public int MealPlanId { get; set; }
+        public string? userID { get; set; }
+        public int? MealPlanId { get; set; }
 
         public string MealName { get; set; }
 

@@ -103,6 +103,9 @@ span{
     color: #3498db !important;
 }
 
+#generateMelasButton{
+    z-index: 1000;
+}
 
 button:nth-of-type(odd) {
     margin-right: 2px;
