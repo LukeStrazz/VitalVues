@@ -11,7 +11,7 @@
 <div class="chat-holder-buttons">
     <button href="#"><span class="fas fa-heart"></span></button>
     <button disabled href="#"><span class="fas fa-hourglass-half"></span></button>
-    <button disabled href="#"><span class="fas fa-spoon"></span></button>
+    <button href="#"><span class="fas fa-spoon"></span></button>
     <button disabled href="#"><span class="fas fa-asterisk"></span></button>
 </div>
 
@@ -80,6 +80,7 @@
 <div class="previous-chats">
     <div class="legend">
         <a class="bloodwork-chat">Red: Bloodwork Chat</a>
+        <a class="diet-chat">Blue: Diet Chat</a>
     </div>
     @if (Model.Chats != null)
     {
@@ -90,6 +91,15 @@
                 {
                     <div class="chat-title">
                         <a style="color: red;" class="load-chat bloodwork-chat" data-chat-id="@chat.Id">
+                            @chat.ChatDate, @chat.ChatTopic
+                        </a>
+                    </div>
+                }
+
+                if (chat.ChatTopic == "diet")
+                {
+                    <div class="chat-title">
+                        <a style="color: #3498db;" class="load-chat diet-chat" data-chat-id="@chat.Id">
                             @chat.ChatDate, @chat.ChatTopic
                         </a>
                     </div>
@@ -140,19 +150,20 @@
                 case buttonType.contains('fa-heart'):
                     newDiv.innerHTML = `<h2>Bloodwork Chat</h2><p></p>`;
                     document.querySelector('.previous-bloodworks').style.display = 'flex';
-                    currentChatType = 'Bloodwork';
+                    currentChatType = 'bloodwork';
                     break;
                 case buttonType.contains('fa-hourglass-half'):
                     newDiv.innerHTML = `<h2>Fasting Chat</h2><p></p>`;
-                    currentChatType = 'Fasting';
+                    currentChatType = 'fasting';
                     break;
                 case buttonType.contains('fa-spoon'):
                     newDiv.innerHTML = `<h2>Diet Chat</h2><p></p>`;
-                    currentChatType = 'Diet';
+                    document.querySelector('.diet-interactions').style.display = 'flex';
+                    currentChatType = 'diet';
                     break;
                 case buttonType.contains('fa-asterisk'):
                     newDiv.innerHTML = `<h2>Workout Chat</h2><p></p>`;
-                    currentChatType = 'Workout';
+                    currentChatType = 'workout';
                     break;
                 default:
                     newDiv.innerHTML = `<h2>Error</h2><p>Unhandled</p>`;
@@ -311,19 +322,6 @@
         });
     });
 
-    document.getElementById('saveChatButton').addEventListener('click', function () {
-        debugger;
-        const messages = [];
-
-        const chatMessages = document.querySelectorAll('#chatOutput .message');
-        chatMessages.forEach(messageElement => {
-            const role = messageElement.classList.contains('bot-message') ? 'system' : 'user';
-            const content = messageElement.textContent;
-            messages.push({ role: role, content: content });
-        });
-        let topic = "bloodwork";
-        saveChat(currentChatId, messages, topic);
-    });
 
     function saveChat(chatId, messages, topic) {
         messages.Id = chatId;
@@ -435,7 +433,7 @@
     function runSaveChat() {
         if (isRunning) {
             var chatIdThis = document.getElementById('currentChatId').value;
-            let topic = "bloodwork";
+            let topic = currentChatType;
             saveChat(chatIdThis, messages, topic);
         }
     }
