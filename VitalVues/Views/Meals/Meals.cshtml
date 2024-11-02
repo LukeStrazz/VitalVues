@@ -5,99 +5,228 @@
 
 <h2>Create a Meal Plan</h2>
 
-<form id="mealForm">
-    <input type="hidden" id="MealPlanId" />
+<button id="toggleFormButton" class="btn btn-success mb-3" onclick="toggleForm()">Add a Meal</button>
 
-    <div class="form-group">
-        <label for="MealName">Meal Name</label>
-        <input id="MealName" name="MealName" type="text" class="form-control" placeholder="Enter the meal name" required />
+<div id="mealFormModal" class="modal-overlay" style="display: none;" onclick="closeModal(event)">
+    <div class="modal-content">
+        <form id="mealForm">
+            <input type="hidden" id="MealPlanId" />
+
+            <div class="form-group">
+                <label for="MealName">Meal Name</label>
+                <input id="MealName" name="MealName" type="text" class="form-control" placeholder="Enter the meal name" required />
+            </div>
+
+            <div class="form-group mt-3">
+                <label for="DayOfWeek">Day of the Week</label>
+                <select id="DayOfWeek" name="DayOfWeek" class="form-control" required>
+                    <option value="">Select a day</option>
+                    <option value="Monday">Monday</option>
+                    <option value="Tuesday">Tuesday</option>
+                    <option value="Wednesday">Wednesday</option>
+                    <option value="Thursday">Thursday</option>
+                    <option value="Friday">Friday</option>
+                    <option value="Saturday">Saturday</option>
+                    <option value="Sunday">Sunday</option>
+                </select>
+            </div>
+
+            <div class="form-group mt-3">
+                <label for="MealType">Meal Type</label>
+                <select id="MealType" name="MealType" class="form-control" required>
+                    <option value="">Select a type</option>
+                    <option value="Breakfast">Breakfast</option>
+                    <option value="Snack">Snack</option>
+                    <option value="Lunch">Lunch</option>
+                    <option value="Dinner">Dinner</option>
+                </select>
+            </div>
+
+            <div class="form-group mt-3">
+                <label for="MealDescription">Meal Description</label>
+                <textarea id="MealDescription" name="MealDescription" class="form-control" rows="3" required></textarea>
+            </div>
+
+            <div class="form-group mt-3">
+                <label for="Ingredients">Ingredients (comma separated)</label>
+                <textarea id="Ingredients" name="Ingredients" class="form-control" rows="3" required></textarea>
+            </div>
+
+            <div class="form-group mt-3">
+                <label for="PrepTime">Prep Time (minutes)</label>
+                <input id="PrepTime" name="PrepTime" type="number" class="form-control" required min="1" />
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-4">Submit</button>
+        </form>
     </div>
-
-    <div class="form-group mt-3">
-        <label for="DayOfWeek">Day of the Week</label>
-        <select id="DayOfWeek" name="DayOfWeek" class="form-control" required>
-            <option value="">Select a day</option>
-            <option value="Monday">Monday</option>
-            <option value="Tuesday">Tuesday</option>
-            <option value="Wednesday">Wednesday</option>
-            <option value="Thursday">Thursday</option>
-            <option value="Friday">Friday</option>
-            <option value="Saturday">Saturday</option>
-            <option value="Sunday">Sunday</option>
-        </select>
-    </div>
-
-    <div class="form-group mt-3">
-        <label for="MealType">Meal Type</label>
-        <select id="MealType" name="MealType" class="form-control" required>
-            <option value="">Select a type</option>
-            <option value="Breakfast">Breakfast</option>
-            <option value="Snack">Snack</option>
-            <option value="Lunch">Lunch</option>
-            <option value="Dinner">Dinner</option>
-        </select>
-    </div>
-
-    <div class="form-group mt-3">
-        <label for="MealDescription">Meal Description</label>
-        <textarea id="MealDescription" name="MealDescription" class="form-control" rows="3" required></textarea>
-    </div>
-
-    <div class="form-group mt-3">
-        <label for="Ingredients">Ingredients (comma separated)</label>
-        <textarea id="Ingredients" name="Ingredients" class="form-control" rows="3" required></textarea>
-    </div>
-
-    <div class="form-group mt-3">
-        <label for="PrepTime">Prep Time (minutes)</label>
-        <input id="PrepTime" name="PrepTime" type="number" class="form-control" required min="1" />
-    </div>
-
-    <button type="submit" class="btn btn-primary mt-4">Submit</button>
-</form>
-
-<div id="successMessage" style="display:none;" class="alert alert-success mt-3">
-    Meal created/updated successfully!
 </div>
 
-<h3>Your Meals</h3>
-<div id="mealsList"></div>
+<h3>Your Weekly Meal Plan</h3>
+<div id="weeklyCalendar" class="calendar-container mt-4" style="position: relative;">
+    <p id="noMealsMessage" class="no-meals-message">No current meals.</p>
+</div>
+
+
+<style>
+    body {
+        background-color: #212529;
+        color: white;
+    }
+
+    .calendar-container {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 10px;
+        background-color: #1a1e21;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+    }
+
+    .day-column {
+        background-color: #343a40; 
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+        color: #e2e6ea; 
+        transition: transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    }
+
+        .day-column h4 {
+            margin-bottom: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+
+
+    .meal-item {
+        background-color: #495057; 
+        padding: 8px;
+        margin-top: 10px;
+        border-radius: 5px;
+        color: #f8f9fa;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        transition: background-color 0.2s;
+    }
+
+        .meal-item:hover {
+            background-color: #3c4248; 
+        }
+
+
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-content {
+        background-color: #343a40; 
+        padding: 20px;
+        border-radius: 8px;
+        max-width: 500px;
+        width: 100%;
+        position: relative;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.6);
+    }
+
+    .no-meals-message {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 1.5em;
+        color: #e2e6ea;
+        font-weight: bold;
+        text-align: center;
+        z-index: 1; 
+    }
+
+    .modal-overlay {
+        z-index: 10;
+    }
+
+
+</style>
+
+
 
 <script>
     const userId = '@userID';
     let editingMealId = null;
 
+    function toggleForm() {
+        const modal = document.getElementById("mealFormModal");
+        modal.style.display = modal.style.display === "none" ? "flex" : "none";
+        if (modal.style.display === "none") {
+            document.getElementById("mealForm").reset();
+            editingMealId = null;
+        }
+    }
+
+    function closeModal(event) {
+        if (event.target === document.getElementById("mealFormModal")) {
+            toggleForm();
+        }
+    }
+
     function loadMeals() {
         fetch(`/api/MealController/GetMeals?userId=${userId}`)
             .then(response => response.ok ? response.json() : Promise.reject(response))
             .then(meals => {
-                const mealsList = document.getElementById("mealsList");
-                mealsList.innerHTML = "";
+                const weeklyCalendar = document.getElementById("weeklyCalendar");
+                const noMealsMessage = document.getElementById("noMealsMessage");
+
+
+                weeklyCalendar.innerHTML = "";
+                weeklyCalendar.appendChild(noMealsMessage);
 
                 if (meals.length === 0) {
-                    mealsList.innerHTML = "<p>No meals found.</p>";
+                    noMealsMessage.style.display = "block";  
+                    return;
                 } else {
-                    meals.forEach(meal => {
-                        const mealItem = `
-                                <div class="meal-item border p-3 mb-3" id="meal-${meal.MealPlanId}">
-                                    <h4>${meal.MealName} (${meal.MealType})</h4>
-                                    <p><strong>Day:</strong> ${meal.DayOfWeek}</p>
-                                    <p><strong>Description:</strong> ${meal.MealDescription}</p>
-                                    <p><strong>Ingredients:</strong></p>
-                                    <ul>
-                                        ${meal.Ingredients.map(ingredient => `<li>${ingredient}</li>`).join('')}
-                                    </ul>
-                                    <p><strong>Prep Time:</strong> ${meal.PrepTime} minutes</p>
-                                    <button class="btn btn-danger" onclick="deleteMeal(${meal.MealPlanId})">Delete</button>
-                                    <button class="btn btn-warning" onclick="populateEditForm(${meal.MealPlanId})">Edit</button>
-                                </div>
-                            `;
-                        mealsList.innerHTML += mealItem;
-                    });
+                    noMealsMessage.style.display = "none";  
                 }
+
+                const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+                const mealTypes = ["Breakfast", "Snack", "Lunch", "Dinner"];
+
+                daysOfWeek.forEach(day => {
+                    const dayColumn = document.createElement("div");
+                    dayColumn.classList.add("day-column");
+                    dayColumn.innerHTML = `<h4>${day}</h4>`;
+
+                    mealTypes.forEach(type => {
+                        const filteredMeals = meals.filter(meal => meal.DayOfWeek === day && meal.MealType === type);
+                        filteredMeals.forEach(meal => {
+                            const mealItem = document.createElement("div");
+                            mealItem.classList.add("meal-item");
+                            mealItem.innerHTML = `
+                                <p><strong>${type}:</strong> ${meal.MealName} - ${meal.PrepTime} min</p>
+                                <p><strong>Description:</strong> ${meal.MealDescription}</p>
+                                <p><strong>Ingredients:</strong> ${meal.Ingredients.join(", ")}</p>
+                                <button class="btn btn-danger btn-sm" onclick="deleteMeal(${meal.MealPlanId})">Delete</button>
+                                <button class="btn btn-warning btn-sm" onclick="populateEditForm(${meal.MealPlanId})">Edit</button>
+                            `;
+                            dayColumn.appendChild(mealItem);
+                        });
+                    });
+
+                    weeklyCalendar.appendChild(dayColumn);
+                });
             })
             .catch(error => console.error('Error:', error));
     }
+
 
     window.onload = loadMeals;
 
@@ -116,6 +245,7 @@
                     document.getElementById("PrepTime").value = meal.PrepTime;
 
                     editingMealId = mealId;
+                    toggleForm();
                 }
             })
             .catch(error => console.error('Error:', error));
@@ -135,41 +265,23 @@
             userID: userId
         };
 
-        if (editingMealId) {
-            fetch('/api/MealController/UpdateMeal', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(mealData)
+        const url = editingMealId ? '/api/MealController/UpdateMeal' : '/api/MealController/CreateMeal';
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(mealData)
+        })
+            .then(response => response.ok ? response.json() : Promise.reject(response))
+            .then(data => {
+                document.getElementById("mealFormModal").style.display = "none";
+                loadMeals();
+                editingMealId = null;
+                document.getElementById("mealForm").reset();
             })
-                .then(response => response.ok ? response.json() : Promise.reject(response))
-                .then(data => {
-                    document.getElementById("successMessage").style.display = "block";
-                    loadMeals();
-                    editingMealId = null;
-                    document.getElementById("mealForm").reset();
-                })
-                .catch(error => console.error('Error:', error));
-
-
-
-        } else {
-            fetch('/api/MealController/CreateMeal', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(mealData)
-            })
-                .then(response => response.ok ? response.json() : Promise.reject(response))
-                .then(data => {
-                    document.getElementById("successMessage").style.display = "block";
-                    loadMeals();
-                    document.getElementById("mealForm").reset();
-                })
-                .catch(error => console.error('Error:', error));
-        }
+            .catch(error => console.error('Error:', error));
     });
 
     function deleteMeal(mealId) {
@@ -182,13 +294,13 @@
         })
             .then(response => {
                 if (response.ok) {
-                    const mealElement = document.getElementById(`meal-${mealId}`);
-                    mealElement.remove();
-                    console.log('Meal deleted successfully!');
+
+                    window.location.reload();
                 } else {
                     console.error('Failed to delete meal.');
                 }
             })
             .catch(error => console.error('Error:', error));
     }
+
 </script>
