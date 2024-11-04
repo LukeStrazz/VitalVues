@@ -1,4 +1,6 @@
 document.getElementById('generateMealsButton').addEventListener('click', function () {
+    isRunning = true;
+
     const generateMealsButton = document.getElementById('generateMealsButton');
     generateMealsButton.disabled = true;
 
@@ -20,9 +22,10 @@ document.getElementById('generateMealsButton').addEventListener('click', functio
         "DayOfWeek": "",
         "MealType": "",
         "MealDescription": "",
-        "Ingredients": "",
+        "Ingredients": ["", ""],
         "PrepTime": (int)
-    } for each meal.`;
+    } for each meal. This is an expected output for a meal: Here are some meal suggestions that consider your allergies:\n\n\u0060\u0060\u0060json\n[\n    {\n        \u0022MealName\u0022: \u0022Grilled Lemon Herb Chicken\u0022,\n        \u0022DayOfWeek\u0022: \u0022Monday\u0022,\n        \u0022MealType\u0022: \u0022Dinner\u0022,\n        \u0022MealDescription\u0022: \u0022Succulent grilled chicken marinated in lemon and mixed herbs, served with a side of roasted vegetables.\u0022,\n        \u0022Ingredients\u0022: [\u0022Chicken breast\u0022, \u0022Lemon juice\u0022, \u0022Olive oil\u0022, \u0022Garlic\u0022, \u0022Thyme\u0022, \u0022Vegetables (zucchini, bell peppers, carrots)\u0022],\n        \u0022PrepTime\u0022: 30\n    },...`;
+
 
     inputField.value = '';
     inputField.style.height = '50px';
@@ -45,15 +48,28 @@ document.getElementById('generateMealsButton').addEventListener('click', functio
         },
         body: JSON.stringify({ messages: messages })
     })
-        .then(response => response.json())
-        .then(data => {
+        .then(response => response.text())
+        .then(text => {
+            let data = [];
+            console.log('Full response text:', text);
+
             try {
+                const jsonMatch = text.match(/\[.*\]/s);
+
+                if (jsonMatch) {
+                    const jsonString = jsonMatch[0]
+                        .replace(/\\u0022/g, '"') 
+                        .replace(/\\n/g, '');
+
+                    data = JSON.parse(jsonString);
+                } else {
+                    throw new Error("No valid JSON found in response");
+                }
+
                 const chatMessages = document.getElementById('generatedMeals');
-                chatMessages.innerHTML = ''; 
+                chatMessages.innerHTML = '';
 
-                const meals = JSON.parse(data.message);
-
-                meals.forEach(meal => {
+                data.forEach(meal => {
                     const mealDiv = document.createElement('div');
                     mealDiv.className = 'meal-suggestion';
 
@@ -76,30 +92,49 @@ document.getElementById('generateMealsButton').addEventListener('click', functio
                     };
 
                     mealDiv.appendChild(addButton);
-
                     chatMessages.appendChild(mealDiv);
+                    messages.push({ role: 'system', content: mealContent });
+                    const converter = new showdown.Converter();
+                    const htmlResponse = converter.makeHtml(mealContent);
+
+                    const responseContainer = document.createElement('div');
+                    responseContainer.className = 'message bot-message';
+                    responseContainer.innerHTML = `<div class="response-content">${htmlResponse}</div>`;
+
+                    resetUI();
                 });
 
                 resetUI();
             } catch (error) {
                 console.error('Error processing response:', error);
+                displayErrorMessage("Error parsing meal suggestions. Please try again.");
+                resetUI();
             } finally {
                 generateMealsButton.disabled = false;
             }
         })
         .catch(error => {
             console.error('Error:', error);
+            displayErrorMessage("Error fetching meal suggestions. Please try again.");
             resetUI();
         });
 });
 
+
 function addToMealsTable(meal) {
-    fetch('/Meal/CreateMeal', {
+    fetch('/api/MealController/CreateMeal', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(meal)
+        body: JSON.stringify({
+            MealName: meal.MealName,
+            DayOfWeek: meal.DayOfWeek,
+            MealType: meal.MealType,
+            MealDescription: meal.MealDescription,
+            Ingredients: meal.Ingredients,
+            PrepTime: meal.PrepTime
+        })
     })
         .then(response => response.json())
         .then(data => {

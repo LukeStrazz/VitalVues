@@ -24,6 +24,13 @@ public class MealsController : Controller
     [HttpGet("Meals")]
     public IActionResult Meals()
     {
+        var userUniqueIdentifier = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+
+        if (string.IsNullOrEmpty(userUniqueIdentifier))
+        {
+            return RedirectToAction("Error", "Home");
+        }
+
         return View(); 
     }
 
@@ -35,6 +42,11 @@ public class MealsController : Controller
         {
             return BadRequest(ModelState);
         }
+
+        var userUniqueIdentifier = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+
+        mealViewModel.userID = userUniqueIdentifier;
+
         _mealService.CreateMeal(mealViewModel);
 
         return Ok(new

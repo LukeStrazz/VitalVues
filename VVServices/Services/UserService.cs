@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace Services.Services;
 
@@ -137,4 +138,17 @@ public class UserService : IUserService
             }
         }
     }
+
+    public List<string> GetAllergies(string userSID)
+    {
+        if (!string.IsNullOrEmpty(userSID))
+        {
+            var allergies = _context.People.Where(w => w.Sid == userSID).Select(s => s.Allergies).FirstOrDefault();
+
+            return allergies ?? new List<string>();
+        }
+
+        return new List<string>();
+    }
+
 }

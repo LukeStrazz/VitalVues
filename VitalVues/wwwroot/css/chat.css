@@ -16,6 +16,10 @@ span{
     transform: translate(25%, 100%);
 }
 
+#generateMealsButton{
+    z-index: 1000;
+}
+
 .previous-chats {
     background-color: #4a4a55;
     position: absolute;
@@ -158,6 +162,7 @@ header {
     bottom: 5rem;
     position: absolute;
     min-width: -webkit-fill-available;
+    align-items: center;
 }
 
 .output {
