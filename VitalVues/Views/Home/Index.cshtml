@@ -4,21 +4,19 @@
 <head>
     <link rel="stylesheet" href="~/css/SubmitBloodwork.css" asp-append-version="true" />
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js" defer data-deferred="1"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 
 </head>
 
 <div id="particles-js"></div>
 
 <div class="container my-5">
-    
     <div class="bmi-background p-5 shadow-lg" style="border-radius: 20px; background: linear-gradient(145deg, #222831, #2e343b); box-shadow: 6px 6px 12px #1c1c1e, -6px -6px 12px #343a40;">
         <div class="card-body p-4">
-
             <h2 class="text-center mb-4" style="font-family: 'Poppins', sans-serif; color: #f8f9fa; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;">BMI Tracker</h2>
 
-            <div class="card-body p-4">
-
-            
+            <!-- Tabs for Imperial and Metric -->
             <ul class="nav nav-tabs mb-3" id="bmiTabs" role="tablist" style="border-bottom: 2px solid #38b000;">
                 <li class="nav-item" role="presentation">
                     <a class="nav-link active" id="imperial-tab" data-bs-toggle="tab" href="#imperial" role="tab" aria-controls="imperial" aria-selected="true" style="color: #38b000; font-weight: 600; letter-spacing: 1px;">Imperial (ft, in, lbs)</a>
@@ -30,140 +28,222 @@
 
            
             <div class="tab-content p-4" id="bmiTabsContent">
-
-               
+                <!-- Imperial Form -->
                 <div class="tab-pane fade show active" id="imperial" role="tabpanel" aria-labelledby="imperial-tab">
-                    <form asp-controller="BMI" asp-action="CalculateBMIImperial" method="post" class="needs-validation" novalidate>
+                    <form id="imperialForm" method="post" class="needs-validation">
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="weightImperial" class="form-label" style="color: #a8dadc; font-weight: 600;">Weight (lbs):</label>
-                                <input type="number" step="any" id="weightImperial" name="weightImperial" class="form-control form-control-lg" required min="50" max="1000" style="border-radius: 10px; border: none; background: rgba(255, 255, 255, 0.1); color: #f1faee; box-shadow: inset 2px 2px 5px #1c1c1e, inset -2px -2px 5px #2c2e30;">
+                                <input type="number" step="any" id="weightImperial" name="weightImperial" class="form-control form-control-lg" required min="50" max="1000"
+                                       style="border-radius: 10px; border: none; background: rgba(255, 255, 255, 0.1); color: #f1faee;">
                                 <div class="invalid-feedback">Please enter a valid weight between 50 and 1000 lbs.</div>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="feetImperial" class="form-label" style="color: #a8dadc; font-weight: 600;">Height (feet):</label>
-                                <input type="number" id="feetImperial" name="feetImperial" class="form-control form-control-lg" required min="1" max="8" style="border-radius: 10px; border: none; background: rgba(255, 255, 255, 0.1); color: #f1faee; box-shadow: inset 2px 2px 5px #1c1c1e, inset -2px -2px 5px #2c2e30;">
+                                <input type="number" id="feetImperial" name="feetImperial" class="form-control form-control-lg" required min="1" max="8"
+                                       style="border-radius: 10px; border: none; background: rgba(255, 255, 255, 0.1); color: #f1faee;">
                                 <div class="invalid-feedback">Please enter a valid number of feet between 1 and 8.</div>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="inchesImperial" class="form-label" style="color: #a8dadc; font-weight: 600;">Height (inches):</label>
-                                <input type="number" id="inchesImperial" name="inchesImperial" class="form-control form-control-lg" required min="0" max="11" style="border-radius: 10px; border: none; background: rgba(255, 255, 255, 0.1); color: #f1faee; box-shadow: inset 2px 2px 5px #1c1c1e, inset -2px -2px 5px #2c2e30;">
+                                <input type="number" id="inchesImperial" name="inchesImperial" class="form-control form-control-lg" required min="0" max="11"
+                                       style="border-radius: 10px; border: none; background: rgba(255, 255, 255, 0.1); color: #f1faee;">
                                 <div class="invalid-feedback">Please enter a valid number of inches between 0 and 11.</div>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-lg w-100 text-white mt-4" style="background-color: #38b000; border-radius: 12px; box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3); transition: transform 0.3s ease;">Calculate BMI</button>
+                        <button type="submit" class="btn btn-lg w-100 text-white mt-4" style="background-color: #38b000; border-radius: 12px;">Calculate BMI</button>
                     </form>
                 </div>
 
-               
+                <!-- Metric Form -->
                 <div class="tab-pane fade" id="metric" role="tabpanel" aria-labelledby="metric-tab">
-                    <form asp-controller="BMI" asp-action="CalculateBMIMetric" method="post" class="needs-validation" novalidate>
+                    <form id="metricForm" method="post" class="needs-validation">
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="weightMetric" class="form-label" style="color: #a8dadc; font-weight: 600;">Weight (kg):</label>
-                                <input type="number" step="any" id="weightMetric" name="weightMetric" class="form-control form-control-lg" required min="20" max="450" style="border-radius: 10px; border: none; background: rgba(255, 255, 255, 0.1); color: #f1faee; box-shadow: inset 2px 2px 5px #1c1c1e, inset -2px -2px 5px #2c2e30;">
+                                <input type="number" step="any" id="weightMetric" name="weightMetric" class="form-control form-control-lg" required min="20" max="450"
+                                       style="border-radius: 10px; border: none; background: rgba(255, 255, 255, 0.1); color: #f1faee;">
                                 <div class="invalid-feedback">Please enter a valid weight between 20 and 450 kg.</div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="heightMetric" class="form-label" style="color: #a8dadc; font-weight: 600;">Height (cm):</label>
-                                <input type="number" step="any" id="heightMetric" name="heightMetric" class="form-control form-control-lg" required min="50" max="250" style="border-radius: 10px; border: none; background: rgba(255, 255, 255, 0.1); color: #f1faee; box-shadow: inset 2px 2px 5px #1c1c1e, inset -2px -2px 5px #2c2e30;">
+                                <input type="number" step="any" id="heightMetric" name="heightMetric" class="form-control form-control-lg" required min="50" max="250"
+                                       style="border-radius: 10px; border: none; background: rgba(255, 255, 255, 0.1); color: #f1faee;">
                                 <div class="invalid-feedback">Please enter a valid height between 50 and 250 cm.</div>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-lg w-100 text-white mt-4" style="background-color: #38b000; border-radius: 12px; box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3); transition: transform 0.3s ease;">Calculate BMI</button>
+                        <button type="submit" class="btn btn-lg w-100 text-white mt-4" style="background-color: #38b000; border-radius: 12px;">Calculate BMI</button>
                     </form>
                 </div>
             </div>
 
-            
-            @if (ViewData["BMI"] != null)
-            {
-                <div class="result-container text-center my-4">
-                    <div class="bmi-result">
-                        <h4 style="color: #f1faee;">Your BMI:</h4>
-                        <span class="bmi-value">@ViewData["BMI"]</span>
-                    </div>
-                </div>
-            }
+            <!-- Display the BMI value -->
+            <div id="bmiResult"></div>
 
+            <!-- Display the BMI Progress -->
+            <div id="bmiProgressTable"></div>
+
+            <canvas id="bmiProgressChart" width="400" height="200"></canvas>
         </div>
     </div>
 </div>
 
-<style>
-    
-    .result-container {
-        background-color: #1c1e24; 
-        border-radius: 12px;
-        padding: 25px;
-        margin-top: 20px;
-        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.5); 
-        transition: all 0.3s ease;
-    }
-
-    .bmi-result {
-        color: #f1faee; 
-        font-family: 'Poppins', sans-serif;
-        font-size: 1.6rem;
-        font-weight: 500;
-    }
-
-        .bmi-result h4 {
-            font-size: 1.4rem;
-            color: #a8dadc; 
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-
-    .bmi-value {
-        font-size: 3rem; 
-        font-weight: 600;
-        color: #38b000; 
-        padding: 10px 20px;
-        border-radius: 10px;
-        background-color: #282c35; 
-        box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.5), inset -2px -2px 4px rgba(255, 255, 255, 0.05);
-        transition: background-color 0.3s ease, transform 0.3s ease;
-    }
-
-        .bmi-value:hover {
-            background-color: #2a2e37; 
-            transform: translateY(-2px); 
-        }
-</style>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    (function () {
-        'use strict';
-        window.addEventListener('load', function () {
-            var forms = document.getElementsByClassName('needs-validation');
-            var validation = Array.prototype.filter.call(forms, function (form) {
-                form.addEventListener('submit', function (event) {
-                    if (form.checkValidity() === false) {
-                        event.preventDefault();
-                        event.stopPropagation();
+    var bmiChart;
+
+    function initializeChart() {
+        var ctx = document.getElementById('bmiProgressChart').getContext('2d');
+        bmiChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'BMI Progress',
+                    data: [],
+                    backgroundColor: 'rgba(56, 176, 0, 0.2)',
+                    borderColor: 'rgba(56, 176, 0, 1)',
+                    borderWidth: 2,
+                    fill: true
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        ticks: {
+                            color: '#f1faee'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#f1faee'
+                        }
                     }
-                    form.classList.add('was-validated');
-                }, false);
-            });
-
-            document.querySelectorAll('form').forEach(function (form) {
-                form.addEventListener('submit', function () {
-                    var activeTab = document.querySelector('.nav-tabs .active').getAttribute('href').substring(1);
-                    form.querySelector('input[name="activeTab"]').value = activeTab;
-                });
-            });
-
-            var activeTab = '@ViewData["ActiveTab"]';
-            if (activeTab) {
-                var tabElement = document.querySelector('#' + activeTab + '-tab');
-                if (tabElement) {
-                    new bootstrap.Tab(tabElement).show();
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#f1faee'
+                        }
+                    }
                 }
             }
-        }, false);
-    })();
+        });
+    }
+
+    function updateChart(bmiProgress) {
+        var recordedDates = bmiProgress.map(item => item.RecordedAt);
+        var bmiValues = bmiProgress.map(item => item.BMIValue);
+
+        bmiChart.data.labels = recordedDates;
+        bmiChart.data.datasets[0].data = bmiValues;
+        bmiChart.update();
+    }
+
+    function setupDeleteButtons() {
+        $('.delete-bmi-btn').off('click').on('click', function () {
+            var bmiId = $(this).data('id');
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#38b000',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("DeleteBMIRecord", "BMI")',
+                        data: { id: bmiId },
+                        success: function (response) {
+                            if (response.success) {
+                                $(`button[data-id="${bmiId}"]`).closest('tr').remove();
+
+                                
+                                $.ajax({
+                                    type: 'GET',
+                                    url: '@Url.Action("GetAllBMIProgress", "BMI")',
+                                    success: function (bmiResponse) {
+                                        updateChart(bmiResponse.bmiProgress);
+                                    }
+                                });
+
+                                Swal.fire(
+                                    'Deleted!',
+                                    'Your BMI record has been deleted.',
+                                    'success'
+                                );
+                            } else {
+                                Swal.fire(
+                                    'Error!',
+                                    response.message,
+                                    'error'
+                                );
+                            }
+                        }
+                    });
+                }
+            });
+        });
+    }
+
+    $(document).ready(function () {
+        initializeChart();
+
+        $('#imperialForm').submit(function (event) {
+            event.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("CalculateBMIImperial", "BMI")',
+                data: $(this).serialize(),
+                success: function (response) {
+                    updateUI(response);
+                }
+            });
+        });
+
+        $('#metricForm').submit(function (event) {
+            event.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("CalculateBMIMetric", "BMI")',
+                data: $(this).serialize(),
+                success: function (response) {
+                    updateUI(response);
+                }
+            });
+        });
+
+        function updateUI(response) {
+            if (response.success) {
+                $('#bmiResult').html(
+                    '<div class="result-container text-center my-4">' +
+                    '<div class="bmi-result">' +
+                    '<h4 style="color: #f1faee;">Your BMI:</h4>' +
+                    '<span class="bmi-value">' + response.bmi + '</span>' +
+                    '</div></div>'
+                );
+
+                var tableHtml = '<h3 class="text-center mt-5" style="color: #f1faee;">Your BMI Progress</h3>';
+                tableHtml += '<div class="table-responsive mt-4"><table class="table table-dark table-striped"><thead><tr><th>Date</th><th>BMI</th><th>Actions</th></tr></thead><tbody>';
+                response.bmiProgress.forEach(function (item) {
+                    tableHtml += '<tr><td>' + item.RecordedAt + '</td><td>' + item.BMIValue + '</td>' +
+                        '<td><button class="btn btn-danger delete-bmi-btn" data-id="' + item.Id + '">Delete</button></td></tr>';
+                });
+                tableHtml += '</tbody></table></div>';
+                $('#bmiProgressTable').html(tableHtml);
+
+                updateChart(response.bmiProgress);
+                setupDeleteButtons();
+            }
+        }
+
+        setupDeleteButtons();
+    });
 </script>
 
 
