@@ -49,19 +49,6 @@
         }
     }
 </div>
-<div class="diet-interactions chat-section" style="display:none;">
-    <button id="generateMealsButton">Generate Meals</button>
-    <div id="generatedMeals" class="generated-meals-list"></div>
-    <div>
-        @if(Model.Allergies != null)
-        {
-            foreach(var all in Model.Allergies)
-            {
-                <div style="display: none;">@all.ToString()</div>
-            }
-        }
-    </div>
-</div>
 
 <div style="display: none;">
     Chats #:
@@ -85,7 +72,29 @@
         <script rel="javascript" src="~/js/bloodworkchat.js" asp-append-version="true"></script>
 
         <div class="chat-container">
-            <div id="chatOutput" class="output"></div>
+            <div id="chatOutput" class="output">
+                <div class="diet-interactions chat-section" style="display:none;">
+                    <button id="generateMealsButton" onclick="generateMeals()">Generate Meals</button>
+                    <div id="generatedMeals" class="generated-meals-list"></div>
+                    <div>
+                        @if (Model.Allergies != null)
+                        {
+                            foreach (var all in Model.Allergies)
+                            {
+                                <div style="display: none;">@all.ToString()</div>
+                            }
+                        }
+                        @if (Model.Bloodworks != null)
+                        {
+                            foreach (var bw in Model.Bloodworks)
+                            {
+                                <div style="display: none;">@bw.BloodTests.ToString()</div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+           
             <form id="promptForm" class="input-form">
                 <textarea id="promptInput" placeholder="Ask 'TODO: Type of {question}' a Question..." required></textarea>
                 <button type="submit" id="sendButton" class="btn btn-primary">

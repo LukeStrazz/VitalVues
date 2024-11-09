@@ -1,4 +1,4 @@
-document.getElementById('generateMealsButton').addEventListener('click', function () {
+function generateMeals() {
     isRunning = true;
 
     const generateMealsButton = document.getElementById('generateMealsButton');
@@ -37,7 +37,6 @@ document.getElementById('generateMealsButton').addEventListener('click', functio
     const userMessage = document.createElement('div');
     userMessage.className = 'message user-message';
     userMessage.textContent = prompt;
-    document.getElementById('chatOutput').appendChild(userMessage);
 
     messages.push({ role: 'user', content: prompt });
 
@@ -100,6 +99,7 @@ document.getElementById('generateMealsButton').addEventListener('click', functio
                     const responseContainer = document.createElement('div');
                     responseContainer.className = 'message bot-message';
                     responseContainer.innerHTML = `<div class="response-content">${htmlResponse}</div>`;
+                    
 
                     resetUI();
                 });
@@ -118,7 +118,7 @@ document.getElementById('generateMealsButton').addEventListener('click', functio
             displayErrorMessage("Error fetching meal suggestions. Please try again.");
             resetUI();
         });
-});
+}
 
 
 function addToMealsTable(meal) {

@@ -16,9 +16,27 @@ span{
     transform: translate(25%, 100%);
 }
 
-#generateMealsButton{
+#generateMealsButton {
     z-index: 1000;
+    position: absolute;
+    bottom: -1%;
+    left: 23%;
+    width: 53%;
+    height: 10%;
+    background: #1a88bc;
 }
+
+.meal-suggestion {
+    border: 2px solid black;
+    background-color: blue;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 50%;
+    text-align: center;
+}
+
 
 .previous-chats {
     background-color: #4a4a55;
