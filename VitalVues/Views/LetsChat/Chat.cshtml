@@ -4,6 +4,7 @@
     <link rel="stylesheet" href="~/css/chat.css" asp-append-version="true" />
     <script src="https://cdn.jsdelivr.net/npm/showdown/dist/showdown.min.js"></script>
     <link rel="stylesheet" href="~/css/signup.css" asp-append-version="true" />
+    <input type="hidden" id="userSecretId" value="@Model.Sid" />
 </head>
 
 <section style="z-index: -100;">
@@ -17,7 +18,7 @@
     <button href="#"><span class="fas fa-heart"></span></button>
     <button disabled href="#"><span class="fas fa-hourglass-half"></span></button>
     <button href="#"><span class="fas fa-spoon"></span></button>
-    <button disabled href="#"><span class="fas fa-asterisk"></span></button>
+    <button  href="#"><span class="fas fa-asterisk"></span></button>
 </div>
 
 <canvas></canvas>
@@ -70,6 +71,7 @@
         <script rel="javascript" src="~/js/chat.js" asp-append-version="true"></script>
         <script rel="javascript" src="~/js/mealchat.js" asp-append-version="true"></script>
         <script rel="javascript" src="~/js/bloodworkchat.js" asp-append-version="true"></script>
+        <script rel="javascript" src="~/js/workoutchat.js" asp-append-version="true"></script>
 
         <div class="chat-container">
             <div id="chatOutput" class="output">
@@ -92,6 +94,11 @@
                             }
                         }
                     </div>
+                </div>
+
+                <div class="workout-interactions chat-section" style="display:none;">
+                    <button id="generateWorkoutsButton" onclick="generateWorkouts()">Generate Workouts</button>
+                    <div id="generatedWorkouts" class="generated-workouts-list"></div>
                 </div>
             </div>
            

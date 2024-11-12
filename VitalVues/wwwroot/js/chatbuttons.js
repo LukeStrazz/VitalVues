@@ -44,6 +44,7 @@ document.querySelectorAll('.chat-holder-buttons button').forEach(button => {
                 break;
             case buttonType.contains('fa-asterisk'):
                 newDiv.innerHTML = `<h2>Workout Chat</h2><p></p>`;
+                document.querySelector('.workout-interactions').style.display = 'flex';
                 currentChatType = 'workout';
                 break;
             default:
