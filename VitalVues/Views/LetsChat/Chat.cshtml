@@ -88,7 +88,7 @@
                         {
                             foreach (var bw in Model.Bloodworks)
                             {
-                                <div style="display: none;">@bw.BloodTests.ToString()</div>
+                                <div style="display: none;">@bw.BloodTests.Last().ToString()</div>
                             }
                         }
                     </div>
