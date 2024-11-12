@@ -6,6 +6,7 @@ using System;
 using System.Security.Claims;
 using Data.Data.Models;
 
+
 namespace VVData.Data;
 
 public class DatabaseContext : DbContext
@@ -26,6 +27,7 @@ public class DatabaseContext : DbContext
     public DbSet<Test> Tests { get; set; }
     public DbSet<Chat> Chats { get; set; }
     public DbSet<Message> Messages { get; set; }
+    public DbSet<BMIProgress> BMIProgress { get; set; }
     public DbSet<Journal> Journals { get; set; }
     public DbSet<Meal> Meals { get; set; }
 
