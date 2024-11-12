@@ -22,8 +22,9 @@ public class LetsChatController : Controller
     private readonly IBloodworkService _bloodworkService;
     private readonly IGoalService _goalService;
     private readonly IFastingService _fastingService;
+    private readonly IUserService _userService;
 
-    public LetsChatController(ILogger<LetsChatController> logger, IHttpClientFactory clientFactory, IConfiguration configuration, IChatService chatService, IBloodworkService bloodworkService, IGoalService goalService, IFastingService fastingService)
+    public LetsChatController(ILogger<LetsChatController> logger, IHttpClientFactory clientFactory, IConfiguration configuration, IChatService chatService, IBloodworkService bloodworkService, IGoalService goalService, IFastingService fastingService, IUserService userService)
     {
         _logger = logger;
         _clientFactory = clientFactory;
@@ -32,6 +33,8 @@ public class LetsChatController : Controller
         _bloodworkService = bloodworkService;
         _goalService = goalService;
         _fastingService = fastingService;
+        _userService = userService;
+        _userService = userService;
     }
 
     [NoCacheHeaders]
@@ -46,12 +49,14 @@ public class LetsChatController : Controller
         }
 
         var chats = _chatService.GetChats(userUniqueIdentifier).ToList();
+        var allergies = _userService.GetAllergies(userUniqueIdentifier).ToList();
         var bloodworks = _bloodworkService.GetBloodworks(userUniqueIdentifier).ToList();
         var userInfo = new UserInfoViewModel
         {
             Sid = userUniqueIdentifier,
             Chats = chats,
-            Bloodworks = bloodworks
+            Bloodworks = bloodworks,
+            Allergies = allergies
         };
 
         return View(userInfo);

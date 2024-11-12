@@ -15,4 +15,5 @@ public interface IUserService
 	public UserInfoViewModel FindUser(string uniqueToken);
 	public Task CreateUser(UserInfoViewModel info);
     public void UpdateUser(UserInfoViewModel info);
+    public List<String> GetAllergies(string userSID);
 }
