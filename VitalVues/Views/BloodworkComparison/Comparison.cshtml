@@ -1,0 +1,160 @@
+﻿@model List<Data.Data.Models.BloodworkComparisonViewModel>
+
+@{
+    ViewData["Title"] = "Bloodwork Comparison";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4" style="color: #1b3a57; font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 2.5em;">Bloodwork Comparison</h2>
+    <p class="text-center mb-4" style="color: #636e72; font-family: 'Poppins', sans-serif; font-size: 1.1em;">
+        Monitor your bloodwork progress with a clear comparison of values over time.
+    </p>
+    <canvas id="bloodworkComparisonChart" width="800" height="400"></canvas>
+</div>
+
+<!-- Footer prompting for bloodwork submission -->
+<div class="text-center mt-5 p-4" style="color: #636e72; font-family: 'Poppins', sans-serif;">
+    <p style="font-size: 1.1em; color: #1b3a57; font-weight: 500;">No bloodwork data available for comparison.</p>
+    <p style="font-size: 0.9em; color: #7f8c8d;">
+        Start tracking your health journey by submitting your first bloodwork.
+    </p>
+    <a href="@Url.Action("SubmitBloodwork", "SubmitBloodwork")" class="btn btn-primary" style="background-color: #1b6ca8; border-color: #1b6ca8;">
+        Submit Bloodwork
+    </a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var ctx = document.getElementById('bloodworkComparisonChart').getContext('2d');
+
+        var testNames = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(m => m.TestName).ToList()));
+        var previousValues = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(m => m.PreviousValue).ToList()));
+        var currentValues = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(m => m.CurrentValue).ToList()));
+
+        var bloodworkChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: testNames,
+                datasets: [
+                    {
+                        label: 'Previous Bloodwork',
+                        data: previousValues,
+                        borderColor: 'rgba(255, 99, 132, 0.85)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.15)',
+                        borderWidth: 3,
+                        pointStyle: 'circle',
+                        pointRadius: 5,
+                        pointHoverRadius: 8,
+                        pointBackgroundColor: 'rgba(255, 99, 132, 0.85)',
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Current Bloodwork',
+                        data: currentValues,
+                        borderColor: 'rgba(54, 162, 235, 0.85)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.15)',
+                        borderWidth: 3,
+                        pointStyle: 'rectRot',
+                        pointRadius: 5,
+                        pointHoverRadius: 8,
+                        pointBackgroundColor: 'rgba(54, 162, 235, 0.85)',
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                layout: {
+                    padding: { top: 20, bottom: 20, left: 20, right: 20 }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        title: {
+                            display: true,
+                            text: 'Bloodwork Value',
+                            color: '#7f8c8d',  // Lighter color for Y-axis title
+                            font: { size: 14, weight: '500', family: 'Poppins' }
+                        },
+                        grid: { color: 'rgba(200, 200, 200, 0.1)', lineWidth: 1 },
+                        ticks: {
+                            color: '#7f8c8d',
+                            font: { size: 12, family: 'Poppins' }
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Test Name',
+                            color: '#7f8c8d',  // Lighter color for X-axis title
+                            font: { size: 14, weight: '500', family: 'Poppins' }
+                        },
+                        grid: { display: false },
+                        ticks: {
+                            color: '#7f8c8d',
+                            font: { size: 12, family: 'Poppins' }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            font: { size: 13, family: 'Poppins' },
+                            color: '#34495e', // Light color for legend text
+                            padding: 20
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: '#2d3436',
+                        titleFont: { size: 13, weight: 'bold', family: 'Poppins' },
+                        bodyFont: { size: 12, family: 'Poppins' },
+                        padding: 12,
+                        cornerRadius: 6,
+                        caretSize: 6,
+                        callbacks: {
+                            label: function (context) {
+                                return `${context.dataset.label}: ${context.raw}`;
+                            },
+                            afterLabel: function (context) {
+                                const prevValue = previousValues[context.dataIndex];
+                                const currValue = currentValues[context.dataIndex];
+                                const diff = currValue - prevValue;
+                                return diff > 0
+                                    ? `⬆ Increase of ${diff}`
+                                    : diff < 0
+                                        ? `⬇ Decrease of ${Math.abs(diff)}`
+                                        : '→ No Change';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

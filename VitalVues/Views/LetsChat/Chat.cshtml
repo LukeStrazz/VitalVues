@@ -3,15 +3,20 @@
 <head>
     <link rel="stylesheet" href="~/css/chat.css" asp-append-version="true" />
     <script src="https://cdn.jsdelivr.net/npm/showdown/dist/showdown.min.js"></script>
+    <link rel="stylesheet" href="~/css/signup.css" asp-append-version="true" />
 </head>
 
-<div class="container">
+<section style="z-index: -100;">
+    <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span>
+</section>
+
+    <div class="container">
     <div id="Button" class="fas fa-fire"></div>
 </div>
 <div class="chat-holder-buttons">
     <button href="#"><span class="fas fa-heart"></span></button>
     <button disabled href="#"><span class="fas fa-hourglass-half"></span></button>
-    <button disabled href="#"><span class="fas fa-spoon"></span></button>
+    <button href="#"><span class="fas fa-spoon"></span></button>
     <button disabled href="#"><span class="fas fa-asterisk"></span></button>
 </div>
 
@@ -62,9 +67,34 @@
 <div class="chat-holder">
     <body>
         <script rel="javascript" src="~/js/chatbuttons.js" asp-append-version="true"></script>
+        <script rel="javascript" src="~/js/chat.js" asp-append-version="true"></script>
+        <script rel="javascript" src="~/js/mealchat.js" asp-append-version="true"></script>
+        <script rel="javascript" src="~/js/bloodworkchat.js" asp-append-version="true"></script>
 
         <div class="chat-container">
-            <div id="chatOutput" class="output"></div>
+            <div id="chatOutput" class="output">
+                <div class="diet-interactions chat-section" style="display:none;">
+                    <button id="generateMealsButton" onclick="generateMeals()">Generate Meals</button>
+                    <div id="generatedMeals" class="generated-meals-list"></div>
+                    <div>
+                        @if (Model.Allergies != null)
+                        {
+                            foreach (var all in Model.Allergies)
+                            {
+                                <div style="display: none;">@all.ToString()</div>
+                            }
+                        }
+                        @if (Model.Bloodworks != null)
+                        {
+                            foreach (var bw in Model.Bloodworks)
+                            {
+                                <div style="display: none;">@bw.BloodTests.Last().ToString()</div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+           
             <form id="promptForm" class="input-form">
                 <textarea id="promptInput" placeholder="Ask 'TODO: Type of {question}' a Question..." required></textarea>
                 <button type="submit" id="sendButton" class="btn btn-primary">
@@ -80,6 +110,7 @@
 <div class="previous-chats">
     <div class="legend">
         <a class="bloodwork-chat">Red: Bloodwork Chat</a>
+        <a class="diet-chat">Blue: Diet Chat</a>
     </div>
     @if (Model.Chats != null)
     {
@@ -90,6 +121,15 @@
                 {
                     <div class="chat-title">
                         <a style="color: red;" class="load-chat bloodwork-chat" data-chat-id="@chat.Id">
+                            @chat.ChatDate, @chat.ChatTopic
+                        </a>
+                    </div>
+                }
+
+                if (chat.ChatTopic == "diet")
+                {
+                    <div class="chat-title">
+                        <a style="color: #3498db;" class="load-chat diet-chat" data-chat-id="@chat.Id">
                             @chat.ChatDate, @chat.ChatTopic
                         </a>
                     </div>
@@ -107,223 +147,23 @@
            placeholder="Date of Test" />
 </div>
 <script>
-    var canvas = $('canvas')[0];
-    var context = canvas.getContext('2d');
+    function displayErrorMessage(message) {
+        const errorMessage = document.createElement('div');
+        errorMessage.className = 'alert alert-danger';
+        errorMessage.setAttribute('role', 'alert');
+        errorMessage.innerHTML = message;
+        document.getElementById('chatOutput').appendChild(errorMessage);
+    }
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    function resetUI() {
+        const inputField = document.getElementById('promptInput');
 
-    var Projectile;
-    var State = false;
-    var Explode = false;
-    var Collapse = false;
-    var Particles = [];
-
-    let messages = []; // Store chat history here
-
-    var colors = ["#1abc9c", "#2ecc71", "#3498db", "#9b59b6", "#9b59b6", "#f1c40f", "#e67e22", "#e74c3c"];
-
-    let currentChatType = '';
-
-    let isRunning = false;
-
-    document.querySelectorAll('.chat-holder-buttons button').forEach(button => {
-        button.addEventListener('click', function () {
-            let buttonType = this.querySelector('span').classList;
-            let contentDiv = document.getElementById('content');
-
-            contentDiv.innerHTML = '';
-
-            let newDiv = document.createElement('div');
-
-            switch (true) {
-                case buttonType.contains('fa-heart'):
-                    newDiv.innerHTML = `<h2>Bloodwork Chat</h2><p></p>`;
-                    document.querySelector('.previous-bloodworks').style.display = 'flex';
-                    currentChatType = 'Bloodwork';
-                    break;
-                case buttonType.contains('fa-hourglass-half'):
-                    newDiv.innerHTML = `<h2>Fasting Chat</h2><p></p>`;
-                    currentChatType = 'Fasting';
-                    break;
-                case buttonType.contains('fa-spoon'):
-                    newDiv.innerHTML = `<h2>Diet Chat</h2><p></p>`;
-                    currentChatType = 'Diet';
-                    break;
-                case buttonType.contains('fa-asterisk'):
-                    newDiv.innerHTML = `<h2>Workout Chat</h2><p></p>`;
-                    currentChatType = 'Workout';
-                    break;
-                default:
-                    newDiv.innerHTML = `<h2>Error</h2><p>Unhandled</p>`;
-            }
-
-            $('#Button').click();
-
-            contentDiv.appendChild(newDiv);
-            const userChatForm = document.getElementById('promptForm');
-            userChatForm.style.display = 'flex';
-            const outputForm = document.getElementById('chatOutput');
-            outputForm.style.overflow = 'scroll';
-        });
-    });
-
-    document.querySelectorAll('.load-chat').forEach(link => {
-        link.addEventListener('click', function () {
-            const chatId = this.getAttribute('data-chat-id');
-            let chatOptionButton = document.getElementById('Button');
-            chatOptionButton.style.transition = 'top 0.5s ease, left 0.5s ease';
-            chatOptionButton.style.position = 'absolute';
-            chatOptionButton.style.top = '15%';
-            chatOptionButton.style.left = '10%';
-
-
-            fetch(`/api/LetsChat/${chatId}`)
-                .then(response => response.json())
-                .then(chat => {
-                    const chatOutput = document.getElementById('chatOutput');
-
-                    // Clear the existing messages
-                    chatOutput.innerHTML = '';
-                    messages = [];
-
-                    document.getElementById('currentChatId').value = chat.Id;
-                    // Loop through and display the messages
-                    chat.Messages.forEach(message => {
-                        const messageDiv = document.createElement('div');
-                        messageDiv.className = message.role === 'system' ? 'message bot-message' : 'message user-message';
-                        messageDiv.innerHTML = message.content;
-                        messages.push({ role: message.role, content: message.content });
-                        const converter = new showdown.Converter();
-                        const htmlResponse = converter.makeHtml(message.content);
-
-                        const responseContainer = document.createElement('div');
-                        responseContainer.className = 'message bot-message';
-                        responseContainer.innerHTML = `<div class="response-content">${htmlResponse}</div>`;
-
-                        resetUI();
-                        document.getElementById('chatOutput').appendChild(responseContainer);
-                    });
-                    let contentDiv = document.getElementById('content');
-
-                    contentDiv.innerHTML = '';
-
-                    let newDiv = document.createElement('div');
-
-                    contentDiv.appendChild(newDiv);
-                    const userChatForm = document.getElementById('promptForm');
-                    userChatForm.style.display = 'flex';
-                    const outputForm = document.getElementById('chatOutput');
-                    outputForm.style.overflow = 'scroll';
-                })
-                .catch(error => {
-                    console.error('Error loading chat:', error);
-                });
-        });
-    });
-
-
-
-    let currentChatId = 0;  // Use 'let' to allow reassignment
-    document.addEventListener('DOMContentLoaded', function () {
-        currentChatId = document.getElementById('currentChatId').value;
-        console.log(currentChatId);
-        setInterval(runSaveChat, 10000);
-    });
-
-
-
-    document.querySelectorAll('.talk-bloodwork-btn').forEach(button => {
-        button.addEventListener('click', function () {
-            isRunning = true;
-            document.querySelector('.previous-bloodworks').style.display = 'none';
-            const inputField = document.getElementById('promptInput');
-            const spinner = document.getElementById('spinner');
-            const buttonText = document.getElementById('buttonText');
-            const sendButton = document.getElementById('sendButton');
-
-            inputField.value = '';
-            inputField.style.height = '50px';
-            inputField.disabled = true;
-            spinner.style.display = 'inline-block';
-            spinner.style.color = 'darkgoldenrod';
-            sendButton.style.backgroundColor = 'goldenrod';
-            buttonText.textContent = 'Loading...';
-            sendButton.disabled = true;
-            const bloodworkId = this.getAttribute('data-bloodwork-id');
-
-            let allTestResults = "";
-            const bloodworkItem = this.closest('.bloodwork-item');
-
-            bloodworkItem.querySelectorAll('div').forEach(testDiv => {
-                const testDetails = testDiv.textContent.trim();
-                if (testDetails) {
-                    allTestResults += testDetails + "\n"; 
-                }
-            });
-            const prompt = `Let's talk about bloodwork. Here is a list of all test results, separated by new lines. Now provide a detailed report on the bloodwork:\n${allTestResults}`;
-            const userMessage = document.createElement('div');
-            userMessage.className = 'message user-message';
-            userMessage.textContent = prompt;
-            document.getElementById('chatOutput').appendChild(userMessage);
-
-            messages.push({ role: 'user', content: prompt });
-
-            fetch('/api/LetsChat/GetChatResponse', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ messages: messages })
-            })
-                .then(response => response.json())
-                .then(data => {
-                    try {
-                        messages.push({ role: 'system', content: data.message });
-
-                        const chatMessages = document.querySelectorAll('#chatOutput .message');
-                        chatMessages.forEach(messageElement => {
-                            const role = messageElement.classList.contains('bot-message') ? 'system' : 'user';
-                            const content = messageElement.textContent;
-                            messages.push({ role: role, content: content });
-                        });
-
-                        const converter = new showdown.Converter();
-                        const htmlResponse = converter.makeHtml(data.message);
-
-                        const responseContainer = document.createElement('div');
-                        responseContainer.className = 'message bot-message';
-                        responseContainer.innerHTML = `<div class="response-content">${htmlResponse}</div>`;
-
-                        resetUI();
-                        document.getElementById('chatOutput').appendChild(responseContainer);
-                     
-
-                    } catch (synchronousError) {
-                        displayErrorMessage(`Error: <strong>${synchronousError.message}</strong>`);
-                        resetUI();
-                    } 
-                })
-                .catch(error => {
-                    console.error('Error:', error); 
-                    resetUI();
-                });
-        });
-    });
-
-    document.getElementById('saveChatButton').addEventListener('click', function () {
-        debugger;
-        const messages = [];
-
-        const chatMessages = document.querySelectorAll('#chatOutput .message');
-        chatMessages.forEach(messageElement => {
-            const role = messageElement.classList.contains('bot-message') ? 'system' : 'user';
-            const content = messageElement.textContent;
-            messages.push({ role: role, content: content });
-        });
-        let topic = "bloodwork";
-        saveChat(currentChatId, messages, topic);
-    });
+        spinner.style.display = 'none';
+        buttonText.textContent = 'Send';
+        sendButton.disabled = false;
+        sendButton.style.backgroundColor = 'gold';
+        inputField.disabled = false;
+    }
 
     function saveChat(chatId, messages, topic) {
         messages.Id = chatId;
@@ -332,25 +172,20 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ Id: chatId, ChatTopic: topic, messages: messages })
         })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Chat saved:', data); 
+            .then(response => response.json())
+            .then(data => {
+                console.log('Chat saved:', data);
 
-            document.getElementById('currentChatId').value = data.thisChatId;
-        })
-        .catch(error => {
-            console.error('Error saving chat:', error);
-        });
+                document.getElementById('currentChatId').value = data.thisChatId;
+            })
+            .catch(error => {
+                console.error('Error saving chat:', error);
+            });
     }
 
     $(document).ready(function () {
         const userChatForm = document.getElementById('promptForm');
         userChatForm.style.display = 'none';
-    });
-
-    document.getElementById('promptInput').addEventListener('input', function () {
-        this.style.height = 'auto'; // Reset the height
-        this.style.height = Math.min(this.scrollHeight, 150) + 'px'; // Set height based on content, up to a max
     });
 
     document.getElementById('promptForm').addEventListener('submit', function (event) {
@@ -431,88 +266,74 @@
             });
     });
 
-
     function runSaveChat() {
         if (isRunning) {
             var chatIdThis = document.getElementById('currentChatId').value;
-            let topic = "bloodwork";
+            let topic = currentChatType;
             saveChat(chatIdThis, messages, topic);
         }
     }
 
-    function displayMealsWithButtons(data) {
-        const chatOutput = document.getElementById('chatOutput');
-        const lines = data.message.split(',');
+    document.querySelectorAll('.load-chat').forEach(link => {
+        link.addEventListener('click', function () {
+            const chatId = this.getAttribute('data-chat-id');
+            let chatOptionButton = document.getElementById('Button');
+            chatOptionButton.style.transition = 'top 0.5s ease, left 0.5s ease';
+            chatOptionButton.style.position = 'absolute';
+            chatOptionButton.style.top = '15%';
+            chatOptionButton.style.left = '10%';
 
-        lines.forEach(line => {
-            const div = document.createElement('div');
-            div.classList.add('meal-line');
-            div.classList.add('message');
-            div.classList.add('bot-message');
 
-            if (line.includes('Breakfast') || line.includes('Lunch') || line.includes('Dinner') || line.includes('Snack')) {
-                div.textContent = line;
+            fetch(`/api/LetsChat/${chatId}`)
+                .then(response => response.json())
+                .then(chat => {
+                    const chatOutput = document.getElementById('chatOutput');
 
-                const addButton = document.createElement('button');
-                addButton.textContent = 'Add to meals';
-                addButton.onclick = function () {
-                    if (currentChatType === 'Diet') { 
-                        addToMealsTable(line);
-                    } else {
-                        alert('You can only add meals while in the Diet Chat.');
-                    }
-                };
+                    // Clear the existing messages
+                    chatOutput.innerHTML = '';
+                    messages = [];
 
-                div.appendChild(addButton);
-            } else {
-                div.textContent = line;
-            }
+                    document.getElementById('currentChatId').value = chat.Id;
+                    // Loop through and display the messages
+                    chat.Messages.forEach(message => {
+                        const messageDiv = document.createElement('div');
+                        messageDiv.className = message.role === 'system' ? 'message bot-message' : 'message user-message';
+                        messageDiv.innerHTML = message.content;
+                        messages.push({ role: message.role, content: message.content });
+                        const converter = new showdown.Converter();
+                        const htmlResponse = converter.makeHtml(message.content);
 
-            chatOutput.appendChild(div);
+                        const responseContainer = document.createElement('div');
+                        responseContainer.className = 'message bot-message';
+                        responseContainer.innerHTML = `<div class="response-content">${htmlResponse}</div>`;
+
+                        resetUI();
+                        document.getElementById('chatOutput').appendChild(responseContainer);
+                    });
+                    let contentDiv = document.getElementById('content');
+
+                    contentDiv.innerHTML = '';
+
+                    let newDiv = document.createElement('div');
+
+                    contentDiv.appendChild(newDiv);
+                    const userChatForm = document.getElementById('promptForm');
+                    userChatForm.style.display = 'flex';
+                    const outputForm = document.getElementById('chatOutput');
+                    outputForm.style.overflow = 'scroll';
+                })
+                .catch(error => {
+                    console.error('Error loading chat:', error);
+                });
         });
-    }
+    });
 
-    function addToMealsTable(mealText) {
-        const mealParts = mealText.split(':');
-        const mealType = mealParts[0].trim();
-        const mealDescription = mealParts[1].trim();
-
-        const mealData = {
-            mealType: mealType,
-            mealDescription: mealDescription
-        };
-
-        $.ajax({
-            url: '/api/Meals/AddMeal',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(mealData),
-            success: function (response) {
-                alert('Meal added successfully!');
-            },
-            error: function (error) {
-                alert('Error adding meal.');
-            }
-        });
-    }
-
-    function displayErrorMessage(message) {
-        const errorMessage = document.createElement('div');
-        errorMessage.className = 'alert alert-danger';
-        errorMessage.setAttribute('role', 'alert');
-        errorMessage.innerHTML = message;
-        document.getElementById('chatOutput').appendChild(errorMessage);
-    }
-
-    function resetUI() {
-        const inputField = document.getElementById('promptInput');
-
-        spinner.style.display = 'none';
-        buttonText.textContent = 'Send';
-        sendButton.disabled = false;
-        sendButton.style.backgroundColor = 'gold';
-        inputField.disabled = false;
-    }
+    let currentChatId = 0;  // Use 'let' to allow reassignment
+    document.addEventListener('DOMContentLoaded', function () {
+        currentChatId = document.getElementById('currentChatId').value;
+        console.log(currentChatId);
+        setInterval(runSaveChat, 10000);
+    });
 </script>
 
         <style>
