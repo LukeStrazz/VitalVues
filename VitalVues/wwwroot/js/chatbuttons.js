@@ -32,6 +32,9 @@ document.querySelectorAll('.chat-holder-buttons button').forEach(button => {
                 newDiv.innerHTML = `<h2>Bloodwork Chat</h2><p></p>`;
                 document.querySelector('.previous-bloodworks').style.display = 'flex';
                 currentChatType = 'bloodwork';
+
+                const scrollContainer = document.querySelector(".previous-bloodworks");
+                scrollContainer.scrollLeft = 0;
                 break;
             case buttonType.contains('fa-hourglass-half'):
                 newDiv.innerHTML = `<h2>Fasting Chat</h2><p></p>`;

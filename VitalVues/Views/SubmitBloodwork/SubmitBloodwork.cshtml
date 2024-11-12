@@ -269,9 +269,8 @@
             const sendButton = document.getElementById('sendButton');
 
             spinner.style.display = 'inline-block';
-            spinner.style.color = 'darkgoldenrod';
-
-            sendButton.style.backgroundColor = 'goldenrod';
+            spinner.style.color = '#349d34';
+            sendButton.style.backgroundColor = '#0f540f';
             buttonText.textContent = 'Loading...';
             sendButton.disabled = true;
 
@@ -322,7 +321,6 @@
         spinner.style.display = 'none';
         buttonText.textContent = 'Submit';
         sendButton.disabled = false;
-        sendButton.style.backgroundColor = 'gold';
     }
 
     function displayUserChat() {
