@@ -100,12 +100,11 @@ footer {
 
     .input-form textarea {
         flex-grow: 1;
-        border: 1px solid gold;
+        border: 1px solid;
         border-radius: 5px;
         padding: 10px;
         margin-right: 10px;
         background-color: #333;
-        color: gold;
         resize: none; /* Prevents manual resizing */
         overflow-x: hidden; /* Hide horizontal overflow */
         overflow-y: auto; /* Automatically add vertical scrollbar when needed */
