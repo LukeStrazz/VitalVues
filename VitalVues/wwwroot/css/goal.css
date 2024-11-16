@@ -7,14 +7,15 @@
   background-color: #67b2eb;
 }
 
-.card-header {
-  height: 50px;
-  text-align: center;
-  border-radius: 15%;
+.form-control.d-inline-block {
+  font-size: 0.875rem; /* Make the text smaller */
 }
 
 .goalTitle {
   color: #ff6363;
+  text-align: center; /* Center the text horizontally */
+  margin-top: -10px;
+  margin-bottom: 10px;
 }
 
 .scrollable-container {
@@ -22,6 +23,25 @@
   overflow-x: auto; /* Enable horizontal scrolling */
   padding: 1rem; /* Add padding around the container */
   gap: 1rem; /* Add spacing between cards */
+  
+  scrollbar-width: thin; /* For Firefox */
+  scrollbar-color: #3d4348 #6b6a6a; /* Thumb and track colors */
+
+  /* For WebKit browsers */
+  &::-webkit-scrollbar {
+    width: 12px; /* Scrollbar width */
+    height: 12px; /* Scrollbar height (for horizontal scrollbars) */
+    border-radius: 20px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #3d4348; /* Scrollbar thumb color */
+    border-radius: 10px; /* Rounded corners */
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #d82626; /* Scrollbar track color */
+  }
 }
 .scrollable-container .card {
   flex: 0 0 auto; /* Ensure cards do not shrink and maintain their size */
@@ -35,10 +55,10 @@
   object-fit: cover;
   border-bottom-left-radius: 10%;
   border-bottom-right-radius: 10%;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
+  border-top-left-radius: 10%;
+  border-top-right-radius: 10%;
   align-items: center;
-  background-color: #3d4348;
+  
 }
 .card-label {
   color: #ff6363;
@@ -151,8 +171,9 @@
   position: relative;
   width: 100px;
   height: 100px;
-  margin-top: 10px; /* Space from the top */
-  margin-left: 15px; /* Space from the left */
+  margin-top: 30px; /* Space from the top */
+  margin-bottom: -10px;
+  margin-left: 20px; /* Space from the left */
   margin-right: 10px; /* Space from the right */
 }
 
@@ -184,6 +205,6 @@ img.round-image {
   font-size: 2rem; /* Set font size */
   color: #ddfee6; /* Set text color */
   font-weight: bold; /* Make text bold */
-  font-family: Arial, Helvetica, sans-serif; /* Set font family */
+  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
   
 }

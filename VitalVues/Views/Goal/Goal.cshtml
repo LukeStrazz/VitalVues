@@ -49,7 +49,7 @@
 
 
 <section class="top" >
-        <h2 class="add-image-title">Add Goal</h2>
+        @*<h2 class="add-image-title">Add Goal</h2>*@
         <div class="add-image">
             <img src="~/images/goals/plus-sign.png" 
                 class="round-image" 
@@ -104,11 +104,10 @@
             if (!goal.resolved)
             {
                 <div class="card text-white bg-dark mb-3">
-                    <div class="card-header">
-                        <h4 class="goalTitle" >@goal.title</h4>
-                    </div>
+                    
                     <div class="card-body">
-                        
+                        <h4 class="goalTitle" >@goal.title</h4>
+                        <hr class="rounded">
                          <div class="form-group mb-2">
                             <label class="card-label">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Target Ibs:</label>
                             <input type="number" id="targetWeight-@goal.GoalId" class="form-control d-inline-block" style="width: 140px"  value="@goal.targetWeight" />
