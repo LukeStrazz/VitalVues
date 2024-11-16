@@ -97,8 +97,10 @@
 @if (Model.Goals?.Any() == true)
 {
     <ul>
+        <div class="scrollable-container d-flex flex-row overflow-auto">
         @foreach (var goal in Model.Goals)
         {
+            
             if (!goal.resolved)
             {
                 <div class="card text-white bg-dark mb-3">
@@ -163,6 +165,7 @@
             <p style="margin-left: -15px;">You don't have any goals yet. Create one above!</p>
         }
         }
+        </div>
     </ul>
 }
 
