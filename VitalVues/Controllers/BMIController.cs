@@ -127,6 +127,8 @@ namespace VitalVues.Controllers
             return Json(new { bmiProgress });
         }
 
+
+
     }
 }
 
