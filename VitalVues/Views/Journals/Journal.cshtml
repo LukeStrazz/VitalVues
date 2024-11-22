@@ -110,11 +110,13 @@
                         {
                             foreach (var journal in Model.Journals)
                             {
+                                @if(!journal.Resolved) {
                                 <div class="stack-item mb-3 journal-item" data-journal-id="@journal.JournalId" onclick="viewJournalDetails(@journal.JournalId)">
                                     <h5 id="journal-view-title-h5">@journal.Title</h5>
                                     <input type="hidden" id="" value="">
                                     <small id="journal-view-date-small">@journal.JournalDate.ToString("MM/dd/yyyy")</small>
                                 </div>
+                                }
                             }
                         }
                         else
@@ -143,7 +145,7 @@
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-
+           
             <div class="modal-body">
 
                 <h5>Workouts</h5>
@@ -163,6 +165,7 @@
             </div>                  
             
             <div class="modal-footer">
+                <button type="button" id="deleteButton" value="0" class="btn btn-primary">Delete</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
@@ -319,7 +322,7 @@
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button id="createJournalButton" type="button" class="btn btn-primary">Create Journal</button>
+                        <button id="createJournalButton" type="button" class="btn btn-secondary">Create Journal</button>
                     </div>
 
                 </div>
@@ -371,7 +374,7 @@
             document.getElementById('modal-journal-workouts').innerHTML = generateWorkoutsHtml(data.workouts);
             document.getElementById('modal-journal-bloodtests').innerHTML = generateBloodTestsHtml(data.bloodTests);
             document.getElementById('modal-journal-goals').innerHTML = generateGoalsHtml(data.goals);
-
+            document.getElementById('deleteButton').value = journalId;
 
             showJournalModal.show();
         })
@@ -392,7 +395,6 @@
                   ans.push(`<li>${w.type}: ${w.date}, Duration: ${w.dur} min</li>`);
                 }
             });
-            
             return ans.join('');
         }
 
@@ -481,4 +483,38 @@
             .then(data => window.location.reload())
             .catch(response => response.then(errorMessage => alert("Error: " + errorMessage)));
     });
+
+    document.querySelectorAll('.btn-primary').forEach(button => {
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
+            
+            if (!confirm("Are you sure you want to delete this journal?")) {
+             return; 
+            }
+
+            const journalId = document.getElementById(`deleteButton`).value;
+            
+            //alert(journalId);
+
+            fetch('/api/JournalController/DeleteJournal', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ Id: journalId })
+              
+        
+            })
+            .then(response => {
+                if(response.ok){
+                    window.location.reload();
+                }
+                return response.ok ? response.json() : Promise.reject(response.text());
+            })
+            .then(data => alert("Journal has been deleted"))
+            .catch(errorMessage => alert("Error: " + errorMessage));
+        });
+    });
+
+
 </script>

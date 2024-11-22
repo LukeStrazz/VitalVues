@@ -84,17 +84,20 @@ namespace VitalVues.Controllers;
             });
         }
 
-
+        public class DeleteJournalRequest
+    {
+        public int Id { get; set; }
+    }
 
         [HttpPost("DeleteJournal")]
-        public IActionResult DeleteJournal(int id)
+        public IActionResult DeleteJournal([FromBody] DeleteJournalRequest id)
         {
             if(!ModelState.IsValid)
             {
             return BadRequest(ModelState);
             }
             
-            _journalService.DeleteJournal(id);
+            _journalService.DeleteJournal(id.Id);
 
         return Ok(new
         {
