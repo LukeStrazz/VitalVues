@@ -124,9 +124,9 @@ namespace VitalVues.Controllers;
             content = journal.Content,
             title = journal.Title,
             journalDate = journal.JournalDate.ToString("MM/dd/yyyy"),
-            workouts = journal.Workouts.Select(w => new { type = w.SubType, date = w.Day }).ToList(),
+            workouts = journal.Workouts.Select(w => new { type = w.SubType, date = w.Day, rep = w.Rep, set = w.Set, dur = w.Duration }).ToList(),
             bloodTests = journal.BloodTests.Select(bt => new { date = bt.CreatedDate.ToString("MM/dd/yyyy") }).ToList(),
-            goals = journal.Goals.Select(g => new { targetWeight = g.targetWeight, endDate = g.endGoalDate.ToString("MM/dd/yyyy") }).ToList()
+            goals = journal.Goals.Select(g => new {resolved = g.resolved, targetWeight = g.targetWeight, endDate = g.endGoalDate.ToString("MM/dd/yyyy") }).ToList()
         };
 
         return Json(response);  

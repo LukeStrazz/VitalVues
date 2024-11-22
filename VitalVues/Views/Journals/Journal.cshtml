@@ -383,7 +383,17 @@
 
         function generateWorkoutsHtml(workouts) {
             if (workouts.length === 0) return '<p>No workouts available.</p>';
-            return workouts.map(workout => `<li>${workout.type}: ${workout.date}</li>`).join('');
+
+            var ans = [];
+            workouts.forEach(function(w) {
+                if(w.rep !== 0) {
+                  ans.push(`<li>${w.type}: ${w.date}, Set: ${w.set}, Rep: ${w.rep}</li>`);
+                } else {
+                  ans.push(`<li>${w.type}: ${w.date}, Duration: ${w.dur} min</li>`);
+                }
+            });
+            
+            return ans.join('');
         }
 
         function generateBloodTestsHtml(bloodTests) {
@@ -393,7 +403,18 @@
 
         function generateGoalsHtml(goals) {
             if (goals.length === 0) return '<p>No goals available.</p>';
-            return goals.map(goal => `<li>Target Weight: ${goal.targetWeight}, End Date: ${goal.endDate}</li>`).join('');
+
+            var ans = [];
+            goals.forEach(function(g) {
+                if(g.resolved === 0) {
+                    ans.push(`<li>Target Weight: ${g.targetWeight} Ibs, End Date: ${g.endDate} (active)</li>`);
+                } else {
+                    ans.push(`<li>Target Weight: ${g.targetWeight} (inactive)</li>`);
+                    //Ibs, End Date: ${g.endDate}
+                }
+            });
+
+            return ans.join('');
         }
 
 
