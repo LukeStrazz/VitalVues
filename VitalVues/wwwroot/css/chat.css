@@ -179,6 +179,10 @@ span{
     color: #3498db !important;
 }
 
+.workout-chat {
+    color: #c901c9 !important;
+}
+
 #generateMelasButton{
     z-index: 1000;
 }
