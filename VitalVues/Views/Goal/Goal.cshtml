@@ -263,6 +263,9 @@
                 targetWeight: targetWeight,
                 title: goalTitle
             };
+            if (!confirm("Are you sure you want to delete this goal?")) {
+             return; 
+            }
 
             fetch("/api/GoalController/ResolveGoal", {
                 method: "POST",
@@ -324,6 +327,10 @@
             if (goalDataEdit.targetWeight < 50 || goalDataEdit.targetWeight > 700) {
                 alert("The target weight must be between 50 and 700.");
                 return;
+            }
+
+            if (!confirm("Are you sure you want to edit this goal?")) {
+             return; 
             }
 
             fetch("/api/GoalController/UpdateGoal", {
