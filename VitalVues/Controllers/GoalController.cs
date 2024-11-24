@@ -85,8 +85,8 @@ namespace VitalVues.Controllers
             var halfwayJobId = BackgroundJob.Schedule(() =>
                 _sendGridEmailService.SendEmail(userInfo.Email,
                 "Halfway to Achieving Your Goal!",
-                "You’re halfway through your goal. Keep pushing!\nGoal Description: " + goalInfo.Description,
-                "You’re halfway through your goal. Keep pushing!\nGoal Description: " + goalInfo.Description),
+                "You're halfway through your goal. Keep pushing!\nGoal Description: " + goalInfo.Description,
+                "You're halfway through your goal. Keep pushing!\nGoal Description: " + goalInfo.Description),
                 halfwayPoint);
 
 
@@ -162,8 +162,8 @@ namespace VitalVues.Controllers
             var halfwayJobId = BackgroundJob.Schedule(() =>
                 _sendGridEmailService.SendEmail(userInfo.Email,
                 "Halfway to Achieving Your Goal!",
-                "You’re halfway through your goal. Keep pushing!\n\nGoal Description: " + goalInfo.Description,
-                "You’re halfway through your goal. Keep pushing!\n\nGoal Description: " + goalInfo.Description),
+                "You're halfway through your goal. Keep pushing!\n\nGoal Description: " + goalInfo.Description,
+                "You're halfway through your goal. Keep pushing!\n\nGoal Description: " + goalInfo.Description),
                 halfwayPoint);
 
 

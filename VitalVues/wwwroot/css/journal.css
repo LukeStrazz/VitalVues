@@ -15,7 +15,7 @@
 }
 
 .stack-item {
-  background-color: #57abff;
+  background-color: #75d183;
   padding: 10px;
   margin-bottom: 10px;
   border-radius: 5px;
@@ -35,10 +35,11 @@
   padding-right: 3px; /* Adjust the padding as needed */
   font-family: 'Arial', sans-serif; /* Change to a nice font */
   color: #000; /* Set the color to black */
+  font-size: .8em;
 }
 
 .image-and-journals {
-  padding-left: 180px;
+  padding-left: 125px;
   margin-top: 25px;
 }
 
@@ -72,15 +73,17 @@
 .modal-header {
   border-bottom: none;
   padding: 1rem 1.5rem;
-  background-color: #007bff;
-  color: white;
+  background-color: #3fc75a;
+  color: rgb(0, 0, 0);
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
+  font-size: 1rem;
 }
 
 .modal-title {
   margin: 0;
   font-size: 1.5rem;
+  color: rgb(0, 0, 0);
 }
 
 .modal-body {
@@ -143,3 +146,9 @@
 .journal-item {
 align-items: center;
 }
+
+button {
+  width: 75px;
+}
+
+
