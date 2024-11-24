@@ -54,9 +54,9 @@
   height: 100%;
   object-fit: cover;
   border-bottom-left-radius: 10%;
-  border-bottom-right-radius: 10%;
-  border-top-left-radius: 10%;
-  border-top-right-radius: 10%;
+  border-bottom-right-radius: 0%;
+  border-top-left-radius: 0%;
+  border-top-right-radius: 0%;
   align-items: center;
   
 }
@@ -103,35 +103,37 @@
 
 .modal-content {
   background-color: #ffffff; /* White background for the modal content */
-  border-radius: 10px; /* Rounded corners */
+  border-radius: 0px; /* Rounded corners */
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Subtle shadow for depth */
 }
 
 .modal-header {
-  border-bottom: none; /* Remove the default border */
-  padding: 1rem 1.5rem; /* Add padding */
-  background-color: #007bff; /* Bootstrap primary color */
-  color: white; /* White text color */
-  border-top-left-radius: 10px; /* Rounded corners for the top */
-  border-top-right-radius: 10px; /* Rounded corners for the top */
+  border-bottom: none;
+  padding: 1rem 1.5rem;
+  background-color: #2C2C2C;
+  color: white;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
 }
 
 .modal-title {
-  margin: 0; /* Remove default margin */
-  font-size: 1.5rem; /* Increase font size */
+  margin: 0;
+  font-size: 1.5rem;
 }
 
 .modal-body {
-  padding: 1.5rem; /* Add padding */
+  padding: 1.5rem;
+  background-color: #3A3A3A;
 }
 
 .modal-footer {
-  border-top: none; /* Remove the default border */
-  padding: 1rem 1.5rem; /* Add padding */
-  background-color: #f1f1f1; /* Light grey background */
-  border-bottom-left-radius: 10px; /* Rounded corners for the bottom */
-  border-bottom-right-radius: 10px; /* Rounded corners for the bottom */
+  border-top: none;
+  padding: 1rem 1.5rem;
+  background-color: #2C2C2C;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
 }
+
 
 .btn-close {
   background-color: white; /* White background for the close button */
