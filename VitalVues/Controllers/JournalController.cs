@@ -184,6 +184,7 @@ namespace VitalVues.Controllers;
                               .Include(j => j.BloodTests)
                               .ThenInclude(bt => bt.Test)
                               .Include(j => j.Goals)
+                              .Include(j => j.Chats) 
                               .FirstOrDefault(j => j.Id == journalId);
 
             if (journal == null)
@@ -232,6 +233,12 @@ namespace VitalVues.Controllers;
                     endDate = g.endGoalDate.ToString("MM/dd/yyyy"), 
                     startDate = g.startingGoalDate.ToString("MM/dd/yyyy"), 
                     description = g.Description 
+                }).ToList()
+                ,
+                chats = journal.Chats.Select(c => new 
+                { 
+                    chatDate = c.ChatDate.ToString("MM/dd/yyyy"),
+                    chatTopic = c.ChatTopic,
                 }).ToList()
             };
 

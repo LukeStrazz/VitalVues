@@ -273,7 +273,7 @@
                                                     <li style="padding-left: 15px;">
                                                         <div class="form-check px-3">
                                                             <input class="fo</div>rm-check-input" type="checkbox" value="@g.GoalId" id="goal-@g.GoalId">
-                                                            <label class="form-check-label" for="goal-@g.GoalId">@g.endGoalDate.ToString("MM/dd/yyyy") - @g.targetWeight Ibs</label>
+                                                            <label class="form-check-label" for="goal-@g.GoalId">@g.endGoalDate.ToString("MM/dd/yyyy")  @g.targetWeight Ibs</label>
                                                         </div>
                                                     </li>
                                                 }
@@ -300,7 +300,7 @@
                                                     <li style="padding-left: 15px;">
                                                         <div class="form-check px-3">
                                                             <input class="form-check-input" type="checkbox" value="@c.Id" id="chat-@c.Id">
-                                                            <label class="form-check-label" for="chat-@c.Id">@c.ChatDate</label>
+                                                            <label class="form-check-label" for="chat-@c.Id">@c.ChatTopic @c.ChatDate.ToString("MM/dd/yyyy")</label>
                                                         </div>
                                                     </li>
                                                 }
@@ -357,6 +357,9 @@
 
                 <h4 style="font-size: .45rem; color: #3498db; font-family: 'Helvetica Neue', sans-serif; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #e0e0e0; padding-bottom: 3px; margin-top: 10px;">Workouts</h4>
                 <ul id="modal-journalpdf-workouts"></ul>
+
+                <h4 style="font-size: .45rem; color: #dc7e26; font-family: 'Helvetica Neue', sans-serif; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #e0e0e0; padding-bottom: 3px; margin-top: 10px;">Chats</h4>
+                <ul id="modal-journalpdf-chats"></ul>
 
                 <h4 style="font-size: .45rem; color: #16a085; font-family: 'Helvetica Neue', sans-serif; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #e0e0e0; padding-bottom: 3px; margin-top: 10px;">Summary</h4>
                 <div id="modal-journalpdf-content">
@@ -478,7 +481,10 @@
 }
 
     function generateUserInfo(data) {
-        return `<div><strong>${data.lastName}</strong>, <strong>${data.firstName}</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Journal: ${data.title}</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Age: ${data.age}</strong>, &nbsp;&nbsp;&nbsp;<strong>DOB: ${data.birthday}&nbsp;&nbsp;&nbsp;${data.email}</strong></div>`;
+        return `
+            <div style="font-weight: bold; margin-bottom: 5px;">VITAL VUES - ${data.title}</div>
+            <div>• ${data.firstName} ${data.lastName}.&nbsp;&nbsp;&nbsp; • ${data.age} years old • DOB: ${data.birthday} • Email: ${data.email}&nbsp;&nbsp;&nbsp; • Start Weight: ${data.startWeight}, Current Weight: ${data.currWeight}</div>
+        `;
     }
 
     function generateWorkoutsHtml(workouts) {
@@ -491,6 +497,16 @@
             } else {
                 ans.push(`<li>${w.type}: ${w.date}, Duration: ${w.dur} min</li>`);
             }
+        });
+        return ans.join('');
+    }
+
+    function generateChatsHtmlPdf(chats) {
+        if (chats.length === 0) return '<p>No chats available.</p>';
+
+        var ans = [];
+        chats.forEach(function(c) {
+            ans.push(`<li>Chat Topic: ${c.chatTopic}, Date: ${c.chatDate}</li>`);
         });
         return ans.join('');
     }
@@ -676,6 +692,7 @@
         return response.json();
         })
         .then(data => {
+        document.getElementById('modal-journalpdf-chats').innerHTML = generateChatsHtmlPdf(data.chats);
         document.getElementById('modal-journalpdf-top-title').innerHTML = generateUserInfo(data);
         document.getElementById('generatePdfButton').value = journalId;
         document.getElementById('modal-journalpdf-title').innerText = data.title;
