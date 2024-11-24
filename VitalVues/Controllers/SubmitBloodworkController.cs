@@ -46,11 +46,23 @@ public class SubmitBloodworkController : Controller
     [HttpGet("SubmitBloodwork")]
     public IActionResult SubmitBloodwork()
     {
+        if (!User.Identity.IsAuthenticated)
+        {
+            return RedirectToAction("SignIn", "Account");
+        }
+
         var userUniqueIdentifier = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
 
         if (string.IsNullOrEmpty(userUniqueIdentifier))
         {
             return RedirectToAction("Error", "Home");
+        }
+
+        var user = _userService.FindUser(userUniqueIdentifier);
+
+        if (user.SubscriptionEndDate == null || user.SubscriptionEndDate <= DateTime.Now.Date)
+        {
+            return RedirectToAction("PaymentRequired", "Home");
         }
 
         return View();

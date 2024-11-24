@@ -4,6 +4,7 @@ using Services.ViewModels;
 using VVData.Data;
 using Data.Data.Models;
 using Microsoft.EntityFrameworkCore;
+using Services.Services;
 
 namespace VitalVues.Controllers;
 
@@ -18,25 +19,41 @@ namespace VitalVues.Controllers;
         private readonly IBloodworkService _bloodworkService;
         private readonly IGoalService _goalService;
         private readonly IWorkoutService _workoutService;
+        private readonly IUserService _userService;
 
-        public JournalsController(IJournalService journalService, DatabaseContext context,
-         IChatService chatService, IBloodworkService bloodworkService, IGoalService goalService, IWorkoutService workoutService)
+        public JournalsController(IJournalService journalService, DatabaseContext context, IChatService chatService, IBloodworkService bloodworkService, IGoalService goalService, IWorkoutService workoutService, IUserService userService)
         {
-           
             _journalService = journalService;
             _chatService = chatService;
             _bloodworkService = bloodworkService;
             _goalService = goalService;
             _context = context;
             _workoutService = workoutService;
+            _userService = userService;
         }
 
         [NoCacheHeaders]
         [HttpGet("Journal")]
         public IActionResult Journal()
         {
-            var userUniqueIdentifier = User.Claims.FirstOrDefault(c => c.Type == 
-            "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("SignIn", "Account");
+            }
+
+            var userUniqueIdentifier = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+
+            if (string.IsNullOrEmpty(userUniqueIdentifier))
+            {
+                return RedirectToAction("Error", "Home");
+            }
+
+            var user = _userService.FindUser(userUniqueIdentifier);
+
+            if (user.SubscriptionEndDate == null || user.SubscriptionEndDate <= DateTime.Now.Date)
+            {
+                return RedirectToAction("PaymentRequired", "Home");
+            }
 
             if (string.IsNullOrEmpty(userUniqueIdentifier))
             {
