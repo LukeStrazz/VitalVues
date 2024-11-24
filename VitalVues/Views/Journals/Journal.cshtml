@@ -145,12 +145,6 @@
             </div>
 
             <div class="modal-body">
-                <h5>Description</h5>    
-                <div id="modal-journal-content">
-                    
-                    <p><strong>Content:</strong> <span id="modal-journal-description"></span></p>
-                </div>
-
 
                 <h5>Workouts</h5>
                 <ul id="modal-journal-workouts"></ul>
@@ -160,6 +154,12 @@
                 
                 <h5>Goals</h5>
                 <ul id="modal-journal-goals"></ul>
+                
+                <h5>Summary</h5>
+                <div id="modal-journal-content">
+                    
+                    <p><strong>Content:</strong> <span id="modal-journal-description"></span></p>
+                </div>
             </div>                  
             
             <div class="modal-footer">
@@ -310,7 +310,7 @@
 
                             <div>
                                 <div class="content-box">
-                                    <textarea class="form-control" id="description" placeholder="Please enter description for your Journal."></textarea>
+                                    <textarea class="form-control" id="description" placeholder="Please enter Summary for your Journal."></textarea>
                                 </div>
                             </div>
 
@@ -429,8 +429,8 @@
             return;
         }
 
-        if (title.length > 25) {
-            alert("Title cannot be more than 25 characters.");
+        if (title.length > 23) {
+            alert("Title cannot be more than 23 characters.");
             return;
         }
 

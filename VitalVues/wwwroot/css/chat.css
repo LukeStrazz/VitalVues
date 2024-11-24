@@ -205,7 +205,7 @@ button:nth-of-type(odd) {
     }
 
     button:nth-child(4) {
-        background: #838383; /* #9b59b6; */
+        background: #e1f168; /* #9b59b6; */
     }
 
 .active {
