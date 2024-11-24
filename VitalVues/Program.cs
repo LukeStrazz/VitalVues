@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using VitalVues;
 using Hangfire; // Add Hangfire namespace
 using Services;
+using Stripe;
 
 
 var builder = WebApplication.CreateBuilder(args);

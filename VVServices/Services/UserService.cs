@@ -47,7 +47,10 @@ public class UserService : IUserService
             Allergies = user.Allergies,
             Age = user.Age,
             Birthday = user.Birthday,
-            ProfileImage = user.ProfileImage
+            ProfileImage = user.ProfileImage,
+            SubscriptionEndDate = user.SubscriptionEndDate,
+            SubscriptionStartDate = user.SubscriptionStartDate,
+            IsSubscribed = user.IsSubscribed
         };
 
         return userViewModel;
@@ -112,6 +115,10 @@ public class UserService : IUserService
             user.CurrentWeight = info.StartingWeight;
             user.Allergies = info.Allergies;
             user.ProfileImage = info.ProfileImage;
+            user.SubscriptionEndDate = info.SubscriptionEndDate;
+            user.SubscriptionStartDate = info.SubscriptionStartDate;
+            user.IsSubscribed = info.IsSubscribed;
+            user.StripeCustomerId = info.StripeCustomerId;
             _context.SaveChanges();
         }
     }

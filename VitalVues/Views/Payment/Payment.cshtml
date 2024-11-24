@@ -1,0 +1,17 @@
+﻿@model Services.ViewModels.UserInfoViewModel
+
+<script async
+        src="https://js.stripe.com/v3/buy-button.js">
+</script>
+@if (Model.SubscriptionEndDate == null || Model.SubscriptionEndDate <= DateTime.Now.Date)
+{
+    <stripe-buy-button buy-button-id="buy_btn_1QOlIFD63rGgpPbXmkCsmTFo"
+    publishable-key="pk_test_51QNlatD63rGgpPbX6mm98K5jy6bkhnHgp6TvCLvaY08jyePNNuTUG1Wom0yrwVwMzgZraWw0JnNv4xLdZ6lQLMYM0090qmX4w1">
+        success-url="https://localhost:44384/api/PaymentController/SuccessMonthly?session_id={CHECKOUT_SESSION_ID}"
+        cancel-url="https://localhost:44384/api/PaymentController/SuccessMonthly/Cancel">
+    </stripe-buy-button>
+}
+else
+{
+    <h5>Subscription is still active.</h5>
+}
