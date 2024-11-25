@@ -529,8 +529,8 @@
         if (bloodTests.length === 0) return '<p>No blood tests available.</p>';
         
         var ans = [];
-        bloodTests.forEach(function(g) {
-            ans.push(`<li>Test Date: ${new Date(g.SubmissionDate).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}</li>`);
+        bloodTests.forEach(function(bt) {
+            ans.push(`<li>Test Date: ${new Date(bt.SubmissionDate).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}</li>`);
         });
         return ans.join('');
     }
@@ -539,14 +539,14 @@
         if (bloodTests.length === 0) return '<p>No blood tests available.</p>';
 
         var ans = [];
-        bloodTests.forEach(function(g) {
-            const formattedDate = new Date(g.DateTime).toLocaleDateString('en-US', {
+        bloodTests.forEach(function(bt) {
+            const formattedDate = new Date(bt.SubmissionDate).toLocaleDateString('en-US', {
             month: '2-digit',
             day: '2-digit',
             year: 'numeric'
             });
             ans.push(`<div><strong>Submission: ${formattedDate}</strong></div>`);
-            g.Test.forEach(function(t) {
+            bt.Test.forEach(function(t) {
             console.log(t.Grade);
             if(t.Grade === 0) {
                 ans.push(`<li>${t.TestName}, ${t.Result} (<strong>LOW</strong>)</li>`);
