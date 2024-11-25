@@ -44,6 +44,8 @@ builder.Services.AddScoped<IWorkoutService, WorkoutService>();
 builder.Services.AddScoped<IBloodworkService, BloodworkService>();
 builder.Services.AddScoped<IFastingService, FastService>();
 builder.Services.AddScoped<IJournalService, JournalService>();
+builder.Services.AddScoped<IBloodworkComparisonService, BloodworkComparisonService>();
+
 
 builder.Services.AddScoped<IMailService, MailService>(); // Register the MailService
 
