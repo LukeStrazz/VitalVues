@@ -112,6 +112,7 @@ namespace VitalVues.Controllers;
         [HttpGet("GetJournalDetails")]
          public IActionResult GetJournalDetails(int journalId)
         {
+
             var userUniqueIdentifier = User.Claims.FirstOrDefault(c => c.Type == 
             "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
             
@@ -121,131 +122,12 @@ namespace VitalVues.Controllers;
             }
 
             var user = _userService.FindUser(userUniqueIdentifier);
-                              
-  
-            var journal = _context.Journals
-                              .Include(j => j.Workouts)
-                              .Include(j => j.BloodTests)
-                              .ThenInclude(bt => bt.Test)
-                              .Include(j => j.Goals)
-                              .FirstOrDefault(j => j.Id == journalId);
 
-            if (journal == null)
-            {
-                return NotFound();  
-            }
-        
-            var response = new
-            {   
-                content = journal.Content,
-                title = journal.Title,
-                journalDate = journal.JournalDate.ToString("MM/dd/yyyy"),
-                workouts = journal.Workouts.Select(w => new 
-                { 
-                    type = w.SubType, 
-                    date = w.Day, 
-                    rep = w.Rep, 
-                    set = w.Set, 
-                    dur = w.Duration 
-                }).ToList(),
-                bloodTests = journal.BloodTests.Select(bt => new 
-                { 
-                    date = bt.CreatedDate.ToString("MM/dd/yyyy") 
-                }).ToList(),
-                goals = journal.Goals.Select(g => new 
-                { 
-                    resolved = g.resolved, 
-                    targetWeight = g.targetWeight, 
-                    endDate = g.endGoalDate.ToString("MM/dd/yyyy") 
-                }).ToList()
-            };
+            var response = _journalService.GetJournalDetails(journalId, userUniqueIdentifier);
 
-            return Json(response);  
+        return Json(response);
+           
         }
-
-
-
-         [HttpGet("GetJournalDetailss")]
-         public IActionResult GetJournalDetailss(int journalId)
-        {
-            var userUniqueIdentifier = User.Claims.FirstOrDefault(c => c.Type == 
-            "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
-            
-            if (string.IsNullOrEmpty(userUniqueIdentifier))
-            {
-                return RedirectToAction("Error", "Home");
-            }
-
-            var user = _userService.FindUser(userUniqueIdentifier);
-                              
-  
-           var journal = _context.Journals
-                              .Include(j => j.Workouts)
-                              .Include(j => j.BloodTests)
-                              .ThenInclude(bt => bt.Test)
-                              .Include(j => j.Goals)
-                              .Include(j => j.Chats) 
-                              .FirstOrDefault(j => j.Id == journalId);
-
-            if (journal == null)
-            {
-                return NotFound();  
-            }
-
-            var pdfAnswer = new
-            {   
-                id = journal.Id,
-                email = user.Email,
-                pic = user.ProfileImage,
-                firstName = user.FirstName,
-                lastName = user.LastName,
-                age = user.Age,
-                alergies = user.Allergies,
-                birthday = user.Birthday.ToString("MM/dd/yyyy"),
-                startWeight = user.StartingWeight,
-                currWeight = user.CurrentWeight,
-                title = journal.Title,
-                journalDate = journal.JournalDate.ToString("MM/dd/yyyy"),
-                content = journal.Content,
-                workouts = journal.Workouts.Select(w => new 
-                { 
-                    type = w.SubType, 
-                    date = w.Day, 
-                    rep = w.Rep, 
-                    set = w.Set, 
-                    dur = w.Duration, 
-                    res = w.resolved 
-                }).ToList(),
-                bloodTests = journal.BloodTests.Select(bt => new 
-                { 
-                    date = bt.CreatedDate.ToString("MM/dd/yyyy"),
-                    tests = bt.Test.Select(t => new 
-                    {
-                        testName = t.TestName,
-                        grade = t.Grade,
-                        result = t.Result
-                    }).ToList()
-                }).ToList(),
-                goals = journal.Goals.Select(g => new 
-                { 
-                    resolved = g.resolved, 
-                    targetWeight = g.targetWeight, 
-                    endDate = g.endGoalDate.ToString("MM/dd/yyyy"), 
-                    startDate = g.startingGoalDate.ToString("MM/dd/yyyy"), 
-                    description = g.Description 
-                }).ToList()
-                ,
-                chats = journal.Chats.Select(c => new 
-                { 
-                    chatDate = c.ChatDate.ToString("MM/dd/yyyy"),
-                    chatTopic = c.ChatTopic,
-                }).ToList()
-            };
-
-            return Json(pdfAnswer);  
-        }
-
-
 
         [HttpPost("EditJournal")]
         public IActionResult EditJournal(Journal journal)

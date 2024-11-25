@@ -32,5 +32,24 @@ public class JournalViewModel
     public List<SelectListItem>? ChatOptions { get; set; } = new List<SelectListItem>();
 }
 
+public class JournalDetailsViewModel
+{   
+    public int JournalID { get; set; }
+    public string Email { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public float Age { get; set; }
+    public string Birthday { get; set; }
+    public double StartWeight { get; set; }
+    public double CurrWeight { get; set; }
+    public string Title { get; set; }
+    public string Content { get; set; }
+    public string JournalDate { get; set; }
+    public List<WorkoutViewModel> Workouts { get; set; }
+    public List<BloodTestViewModel> BloodTests { get; set; }
+    public List<GoalViewModel> Goals { get; set; }
+    public List<ChatViewModel> Chats { get; set; }
+}
+
 
 

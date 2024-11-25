@@ -412,7 +412,7 @@
     
         let opt = {
             margin: 10,
-            filename: `${data.lastName}-${data.firstName}-Journal${data.id}.pdf`,
+            filename: `${data.LastName}-${data.FirstName}-Journal${data.JournalID}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { scale: 2, logging: true, dpi: 192, letterRendering: true },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
@@ -465,12 +465,12 @@
             return response.json();
         })
         .then(data => {
-            document.getElementById('modal-journal-content').innerText = data.content;
-            document.getElementById('modal-journal-title').innerText = data.title;
-            document.getElementById('modal-journal-date').innerText = data.journalDate;
-            document.getElementById('modal-journal-workouts').innerHTML = generateWorkoutsHtml(data.workouts);
-            document.getElementById('modal-journal-bloodtests').innerHTML = generateBloodTestsHtml(data.bloodTests);
-            document.getElementById('modal-journal-goals').innerHTML = generateGoalsHtml(data.goals);
+            document.getElementById('modal-journal-content').innerText = data.Content;
+            document.getElementById('modal-journal-title').innerText = data.Title;
+            document.getElementById('modal-journal-date').innerText = data.JournalDate;
+            document.getElementById('modal-journal-workouts').innerHTML = generateWorkoutsHtml(data.Workouts);
+            document.getElementById('modal-journal-bloodtests').innerHTML = generateBloodTestsHtml(data.BloodTests);
+            document.getElementById('modal-journal-goals').innerHTML = generateGoalsHtml(data.Goals);
             document.getElementById('deleteButton').value = journalId;
 
             showJournalModal.show();
@@ -482,8 +482,8 @@
 
     function generateUserInfo(data) {
         return `
-            <div style="font-weight: bold; margin-bottom: 5px;">VITAL VUES - ${data.title}</div>
-            <div>• ${data.firstName} ${data.lastName}.&nbsp;&nbsp;&nbsp; • ${data.age} years old • DOB: ${data.birthday} • Email: ${data.email}&nbsp;&nbsp;&nbsp; • Start Weight: ${data.startWeight}, Current Weight: ${data.currWeight}</div>
+            <div style="font-weight: bold; margin-bottom: 5px;">VITAL VUES - ${data.Title}</div>
+            <div>• ${data.FirstName} ${data.LastName}.&nbsp;&nbsp;&nbsp; • ${data.Age} years old • DOB: ${data.Birthday} • Email: ${data.Email}&nbsp;&nbsp;&nbsp; • Start Weight: ${data.StartWeight}, Current Weight: ${data.CurrWeight}</div>
         `;
     }
 
@@ -493,9 +493,9 @@
         var ans = [];
         workouts.forEach(function(w) {
             if(w.rep !== 0) {
-                ans.push(`<li>${w.type}: ${w.date}, Set: ${w.set}, Rep: ${w.rep}</li>`);
+                ans.push(`<li>${w.Type}: ${w.Day}, Set: ${w.Set}, Rep: ${w.Rep}</li>`);
             } else {
-                ans.push(`<li>${w.type}: ${w.date}, Duration: ${w.dur} min</li>`);
+                ans.push(`<li>${w.Type}: ${w.Day}, Duration: ${w.Duration} min</li>`);
             }
         });
         return ans.join('');
@@ -506,7 +506,7 @@
 
         var ans = [];
         chats.forEach(function(c) {
-            ans.push(`<li>Chat Topic: ${c.chatTopic}, Date: ${c.chatDate}</li>`);
+            ans.push(`<li>Chat Topic: ${c.ChatTopic}, Date: ${new Date(c.ChatDate).toLocaleDateString('en-US')}</li>`);
         });
         return ans.join('');
     }
@@ -516,10 +516,10 @@
 
         var ans = [];
         workouts.forEach(function(w) {
-            if(w.rep !== 0) {
-                ans.push(`<li>${w.type}: ${w.date}, Set: ${w.set}, Rep: ${w.rep}</li>`);
+            if(w.Rep !== 0) {
+                ans.push(`<li>${w.SubType}: ${w.Day}, Set: ${w.Set}, Rep: ${w.Rep}</li>`);
             } else {
-                ans.push(`<li>${w.type}: ${w.date}, Duration: ${w.dur} min</li>`);
+                ans.push(`<li>${w.SubType}: ${w.Day}, Duration: ${w.Duration} min</li>`);
             }
         });
         return ans.join('');
@@ -527,7 +527,12 @@
 
     function generateBloodTestsHtml(bloodTests) {
         if (bloodTests.length === 0) return '<p>No blood tests available.</p>';
-        return bloodTests.map(test => `<li>Test Date: ${test.date}</li>`).join('');
+        
+        var ans = [];
+        bloodTests.forEach(function(g) {
+            ans.push(`<li>Test Date: ${new Date(g.SubmissionDate).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}</li>`);
+        });
+        return ans.join('');
     }
 
     function generateBloodTestsHtmlpdf(bloodTests) {
@@ -535,20 +540,25 @@
 
         var ans = [];
         bloodTests.forEach(function(g) {
-            ans.push(`<div><strong>Submission: ${g.date}</strong></div>`);
-            g.tests.forEach(function(t) {
-                console.log(t.grade);
-                if(t.grade === 0) {
-                    ans.push(`<li>${t.testName}, ${t.result} (<strong>LOW</strong>)</li>`);
-                } else if (t.grade === 2){
-                    ans.push(`<li>${t.testName}: ${t.result} (<strong>HIGH</strong>)</li>`);
-                }
+            const formattedDate = new Date(g.DateTime).toLocaleDateString('en-US', {
+            month: '2-digit',
+            day: '2-digit',
+            year: 'numeric'
+            });
+            ans.push(`<div><strong>Submission: ${formattedDate}</strong></div>`);
+            g.Test.forEach(function(t) {
+            console.log(t.Grade);
+            if(t.Grade === 0) {
+                ans.push(`<li>${t.TestName}, ${t.Result} (<strong>LOW</strong>)</li>`);
+            } else if (t.Grade === 2){
+                ans.push(`<li>${t.TestName}: ${t.Result} (<strong>HIGH</strong>)</li>`);
+            }
             });
             ans.push(`<div style="margin: 10px 0;"></div>`);
         
-    });
-    return ans.join('');
-    }
+        });
+        return ans.join('');
+        }
 
     function generateGoalsHtml(goals) {
 
@@ -556,11 +566,16 @@
 
             var ans = [];
             goals.forEach(function(g) {
+                const formattedDate = new Date(g.endGoalDate).toLocaleDateString('en-US', { 
+                    day: 'numeric', 
+                    month: 'long', 
+                    year: 'numeric' 
+                });
+                
                 if(!g.resolved) {
-                    ans.push(`<li>Target Weight: ${g.targetWeight} Ibs, End Date: ${g.endDate} (active)</li>`);
+                    ans.push(`<li>Target Weight: ${g.targetWeight} Ibs, End Date: ${formattedDate} (active)</li>`);
                 } else {
-                    ans.push(`<li>Target Weight: ${g.targetWeight} Ibs, End Date: ${g.endDate} (inactive)</li>`);
-                    //Ibs, End Date: ${g.endDate}
+                    ans.push(`<li>Target Weight: ${g.targetWeight} Ibs, End Date: ${formattedDate} (inactive)</li>`);
                 }
             });
 
@@ -573,16 +588,17 @@
 
             var ans = [];
             goals.forEach(function(g) {
-                //alert(g.resolved);
+                const startDate = new Date(g.startingGoalDate).toLocaleDateString('en-US');
+                const endDate = new Date(g.endGoalDate).toLocaleDateString('en-US');
+                
                 if(!g.resolved) {
                     ans.push(`<li>Target Weight: ${g.targetWeight} Ibs, (active)</li>`);
                 } else {
                     ans.push(`<li>Target Weight: ${g.targetWeight} Ibs, (inactive)</li>`);
-                    //Ibs, End Date: ${g.endDate}
                 }
-                    ans.push(`<li>Start Date: ${g.startDate}, End Date: ${g.endDate}</li>`);
-                    ans.push(`<li>Description: ${g.description}</li>`);
-                    ans.push(`<div style="margin: 10px 0;"></div>`);
+                ans.push(`<li>Start Date: ${startDate}, End Date: ${endDate}</li>`);
+                ans.push(`<li>Description: ${g.Description}</li>`);
+                ans.push(`<div style="margin: 10px 0;"></div>`);
             });
 
             return ans.join('\n');
@@ -684,7 +700,7 @@
 
         const journalId = document.getElementById(`deleteButton`).value;
         
-        fetch(`/api/JournalController/GetJournalDetailss?journalId=${journalId}`)
+        fetch(`/api/JournalController/GetJournalDetails?journalId=${journalId}`)
         .then(response => {
         if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -692,14 +708,14 @@
         return response.json();
         })
         .then(data => {
-        document.getElementById('modal-journalpdf-chats').innerHTML = generateChatsHtmlPdf(data.chats);
+        document.getElementById('modal-journalpdf-chats').innerHTML = generateChatsHtmlPdf(data.Chats);
         document.getElementById('modal-journalpdf-top-title').innerHTML = generateUserInfo(data);
         document.getElementById('generatePdfButton').value = journalId;
-        document.getElementById('modal-journalpdf-title').innerText = data.title;
-        document.getElementById('modal-journalpdf-workouts').innerHTML = generateWorkoutsHtmlPdf(data.workouts);
-        document.getElementById('modal-journalpdf-goals').innerHTML = generateGoalsHtmlPdf(data.goals);
-        document.getElementById('modal-journalpdf-bloodtests').innerHTML = generateBloodTestsHtmlpdf(data.bloodTests);
-        document.getElementById('modal-journalpdf-summary').innerText = data.content;
+        document.getElementById('modal-journalpdf-title').innerText = data.Title;
+        document.getElementById('modal-journalpdf-workouts').innerHTML = generateWorkoutsHtmlPdf(data.Workouts);
+        document.getElementById('modal-journalpdf-goals').innerHTML = generateGoalsHtmlPdf(data.Goals);
+        document.getElementById('modal-journalpdf-bloodtests').innerHTML = generateBloodTestsHtmlpdf(data.BloodTests);
+        document.getElementById('modal-journalpdf-summary').innerText = data.Content;
 
         convertHTMLtoPDF(data);
         })
