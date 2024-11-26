@@ -99,47 +99,75 @@
             type: 'line',
             data: {
                 labels: [],
-                datasets: [{
-                    label: 'BMI Progress',
-                    data: [],
-                    backgroundColor: 'rgba(56, 176, 0, 0.2)',
-                    borderColor: 'rgba(56, 176, 0, 1)',
-                    borderWidth: 2,
-                    fill: true
-                }]
+                datasets: [
+                    {
+                        label: 'BMI Progress',
+                        data: [],
+                        backgroundColor: 'rgba(56, 176, 0, 0.2)',
+                        borderColor: 'rgba(56, 176, 0, 1)',
+                        borderWidth: 2,
+                        fill: true,
+                    },
+                ],
             },
             options: {
+                responsive: true,
                 scales: {
                     y: {
                         beginAtZero: false,
                         ticks: {
-                            color: '#f1faee'
-                        }
+                            color: '#f1faee',
+                        },
                     },
                     x: {
                         ticks: {
-                            color: '#f1faee'
-                        }
-                    }
+                            color: '#f1faee',
+                        },
+                    },
                 },
                 plugins: {
                     legend: {
                         labels: {
-                            color: '#f1faee'
-                        }
-                    }
-                }
-            }
+                            color: '#f1faee',
+                        },
+                    },
+                },
+            },
         });
     }
 
     function updateChart(bmiProgress) {
-        var recordedDates = bmiProgress.map(item => item.RecordedAt);
-        var bmiValues = bmiProgress.map(item => item.BMIValue);
+       
+        var reversedProgress = [...bmiProgress].reverse();
+
+        var recordedDates = reversedProgress.map((item) => item.RecordedAt);
+        var bmiValues = reversedProgress.map((item) => item.BMIValue);
 
         bmiChart.data.labels = recordedDates;
         bmiChart.data.datasets[0].data = bmiValues;
         bmiChart.update();
+    }
+
+
+    function updateTable(bmiProgress) {
+        var tableHtml =
+            '<h3 class="text-center mt-5" style="color: #f1faee;">Your BMI Progress</h3>';
+        tableHtml +=
+            '<div class="table-responsive mt-4"><table class="table table-dark table-striped"><thead><tr><th>Date</th><th>BMI</th><th>Actions</th></tr></thead><tbody>';
+        bmiProgress.forEach(function (item) {
+            tableHtml +=
+                '<tr><td>' +
+                item.RecordedAt +
+                '</td><td>' +
+                item.BMIValue +
+                '</td>' +
+                '<td><button class="btn btn-danger delete-bmi-btn" data-id="' +
+                item.Id +
+                '">Delete</button></td></tr>';
+        });
+        tableHtml += '</tbody></table></div>';
+        $('#bmiProgressTable').html(tableHtml);
+        setupDeleteButtons();
     }
 
     function setupDeleteButtons() {
@@ -152,7 +180,7 @@
                 showCancelButton: true,
                 confirmButtonColor: '#38b000',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
+                confirmButtonText: 'Yes, delete it!',
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
@@ -161,15 +189,13 @@
                         data: { id: bmiId },
                         success: function (response) {
                             if (response.success) {
-                                $(`button[data-id="${bmiId}"]`).closest('tr').remove();
-
-                                
                                 $.ajax({
                                     type: 'GET',
                                     url: '@Url.Action("GetAllBMIProgress", "BMI")',
                                     success: function (bmiResponse) {
                                         updateChart(bmiResponse.bmiProgress);
-                                    }
+                                        updateTable(bmiResponse.bmiProgress);
+                                    },
                                 });
 
                                 Swal.fire(
@@ -178,13 +204,9 @@
                                     'success'
                                 );
                             } else {
-                                Swal.fire(
-                                    'Error!',
-                                    response.message,
-                                    'error'
-                                );
+                                Swal.fire('Error!', response.message, 'error');
                             }
-                        }
+                        },
                     });
                 }
             });
@@ -194,6 +216,20 @@
     $(document).ready(function () {
         initializeChart();
 
+        $.ajax({
+            type: 'GET',
+            url: '@Url.Action("GetAllBMIProgress", "BMI")',
+            success: function (response) {
+                if (response.bmiProgress && response.bmiProgress.length > 0) {
+                    updateChart(response.bmiProgress);
+                    updateTable(response.bmiProgress);
+                }
+            },
+            error: function () {
+                console.error('Failed to fetch BMI progress data');
+            },
+        });
+
         $('#imperialForm').submit(function (event) {
             event.preventDefault();
             $.ajax({
@@ -201,8 +237,11 @@
                 url: '@Url.Action("CalculateBMIImperial", "BMI")',
                 data: $(this).serialize(),
                 success: function (response) {
-                    updateUI(response);
-                }
+                    if (response.success) {
+                        updateChart(response.bmiProgress);
+                        updateTable(response.bmiProgress);
+                    }
+                },
             });
         });
 
@@ -213,38 +252,16 @@
                 url: '@Url.Action("CalculateBMIMetric", "BMI")',
                 data: $(this).serialize(),
                 success: function (response) {
-                    updateUI(response);
-                }
+                    if (response.success) {
+                        updateChart(response.bmiProgress);
+                        updateTable(response.bmiProgress);
+                    }
+                },
             });
         });
-
-        function updateUI(response) {
-            if (response.success) {
-                $('#bmiResult').html(
-                    '<div class="result-container text-center my-4">' +
-                    '<div class="bmi-result">' +
-                    '<h4 style="color: #f1faee;">Your BMI:</h4>' +
-                    '<span class="bmi-value">' + response.bmi + '</span>' +
-                    '</div></div>'
-                );
-
-                var tableHtml = '<h3 class="text-center mt-5" style="color: #f1faee;">Your BMI Progress</h3>';
-                tableHtml += '<div class="table-responsive mt-4"><table class="table table-dark table-striped"><thead><tr><th>Date</th><th>BMI</th><th>Actions</th></tr></thead><tbody>';
-                response.bmiProgress.forEach(function (item) {
-                    tableHtml += '<tr><td>' + item.RecordedAt + '</td><td>' + item.BMIValue + '</td>' +
-                        '<td><button class="btn btn-danger delete-bmi-btn" data-id="' + item.Id + '">Delete</button></td></tr>';
-                });
-                tableHtml += '</tbody></table></div>';
-                $('#bmiProgressTable').html(tableHtml);
-
-                updateChart(response.bmiProgress);
-                setupDeleteButtons();
-            }
-        }
-
-        setupDeleteButtons();
     });
 </script>
+
 
 
 <script>
