@@ -38,7 +38,7 @@ namespace VitalVues.Controllers
         private readonly IBloodworkComparisonService _bloodworkComparisonService;
         private readonly IUserService _userService;
 
-        public BloodworkComparisonController(IBloodworkComparisonService bloodworkComparisonService)
+        public BloodworkComparisonController(IBloodworkComparisonService bloodworkComparisonService, IUserService userService)
         {
             _userService = userService;
             _bloodworkComparisonService = bloodworkComparisonService;
