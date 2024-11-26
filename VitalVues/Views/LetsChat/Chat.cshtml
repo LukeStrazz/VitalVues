@@ -128,6 +128,7 @@
     <div class="legend">
         <a class="bloodwork-chat">Red: Bloodwork Chat</a>
         <a class="diet-chat">Blue: Diet Chat</a>
+        <a class="workout-chat">Purple: Workout Chat</a>
     </div>
     @if (Model.Chats != null)
     {
@@ -151,6 +152,16 @@
                         </a>
                     </div>
                 }
+
+                if (chat.ChatTopic == "workout")
+                {
+                    <div class="chat-title">
+                        <a style="color: #c901c9;" class="load-chat workout-chat" data-chat-id="@chat.Id">
+                            @chat.ChatDate, @chat.ChatTopic
+                        </a>
+                    </div>
+                }
+
             }
         </div>
     }

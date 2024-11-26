@@ -459,6 +459,10 @@
               Rep: rep,
             };
 
+            if(!confirm(`Are you sure you want to delete this ${day} workout?`)) {
+              return;
+            }
+
             fetch('/api/WorkoutController/ResolveWorkout', {
               method: 'POST',
               headers: {
