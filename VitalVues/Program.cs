@@ -12,8 +12,9 @@ using VitalVues.Support;
 using VVData.Data;
 using Microsoft.Extensions.DependencyInjection;
 using VitalVues;
-using Hangfire; // Add Hangfire namespace
+using Hangfire;
 using Services;
+using Stripe;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -44,8 +45,12 @@ builder.Services.AddScoped<IWorkoutService, WorkoutService>();
 builder.Services.AddScoped<IBloodworkService, BloodworkService>();
 builder.Services.AddScoped<IFastingService, FastService>();
 builder.Services.AddScoped<IJournalService, JournalService>();
+builder.Services.AddScoped<IBloodworkComparisonService, BloodworkComparisonService>();
 
-builder.Services.AddScoped<IMailService, MailService>(); // Register the MailService
+builder.Services.AddScoped<IBMIService, BMIService>();
+
+
+builder.Services.AddScoped<IMailService, MailService>();
 builder.Services.AddScoped<IMealService, MealService>(); 
 
 // Configure Hangfire services

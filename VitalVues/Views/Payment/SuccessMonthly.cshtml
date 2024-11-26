@@ -1,0 +1,6 @@
+﻿@model Services.ViewModels.UserInfoViewModel
+
+<h1>Thank You for Subscribing!</h1>
+<p>Welcome, @Model.FirstName @Model.LastName!</p>
+<p>Your subscription is now active until @Model.SubscriptionEndDate</p>
+<a asp-area="" asp-controller="Home" asp-action="Index">Return Home</a>

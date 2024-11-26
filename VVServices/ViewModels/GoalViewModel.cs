@@ -10,6 +10,7 @@ public class GoalViewModel
 {
     public int GoalId { get; set; }
     public string userSecretId { get; set; }
+    public  string title { set; get; }
     public bool resolved { get; set; }
     public DateTime startingGoalDate { get; set; }
     public DateTime endGoalDate { get; set; }

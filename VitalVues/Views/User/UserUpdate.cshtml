@@ -7,6 +7,10 @@
     <div class="col-md-12">
         <div class="row">
             <h2>Welcome back, @Model.FirstName.</h2>
+            @if(Model.SubscriptionStartDate != null)
+            {
+                <h2>Member since: @Model.SubscriptionStartDate</h2>
+            }
 
             <div class="col-md-2">
                 <img id="profImageValue" data-profile-image="@Model.ProfileImage" src="@Model.ProfileImage"
@@ -92,7 +96,7 @@
         </div>
     </div>
     <div class="col-12">
-        <button class="btn btn-primary" type="submit">Submit form</button>
+        <button class="btn btn-primary" type="submit">Update Profile</button>
     </div>
 </form>
 

@@ -157,6 +157,13 @@ public class FastingController : Controller
             return RedirectToAction("Error", "Home");
         }
 
+        var user = _userService.FindUser(userUniqueIdentifier);
+
+        if (user.SubscriptionEndDate == null || user.SubscriptionEndDate <= DateTime.Now.Date)
+        {
+            return RedirectToAction("PaymentRequired", "Home");
+        }
+
         return View();
     }
 }

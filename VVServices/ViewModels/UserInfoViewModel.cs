@@ -38,5 +38,9 @@ public class UserInfoViewModel
     public List<ChatViewModel>? Chats { get; set; }
     public List<WorkoutViewModel>? Workouts { get; set; }
     public List<JournalViewModel>? Journals { get; set; }
+    public bool? IsSubscribed { get; set; }
+    public DateTime? SubscriptionStartDate { get; set; }
+    public DateTime? SubscriptionEndDate { get; set; }
+    public string? StripeCustomerId { get; set; }
 }
 

@@ -33,6 +33,7 @@ public class GoalService : IGoalService
         {
             var goalToAdd = new GoalViewModel
             {
+                title = goal.title,
                 Description = goal.Description,
                 startingGoalDate = goal.startingGoalDate,
                 endGoalDate = goal.endGoalDate,
@@ -55,6 +56,7 @@ public class GoalService : IGoalService
     {
         var newGoal = new Goal
         {
+            title = goalViewModel.title,
             Description = goalViewModel.Description,
             startingGoalDate = goalViewModel.startingGoalDate,
             endGoalDate = goalViewModel.endGoalDate,
@@ -77,6 +79,7 @@ public class GoalService : IGoalService
 
         if (goalToUpdate != null)
         {
+            goalToUpdate.title = goalViewModel.title;
             goalToUpdate.Description = goalViewModel.Description;
             goalToUpdate.startingGoalDate = goalViewModel.startingGoalDate;
             goalToUpdate.endGoalDate = goalViewModel.endGoalDate;

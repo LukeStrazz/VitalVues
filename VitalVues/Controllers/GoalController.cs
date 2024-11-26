@@ -13,9 +13,11 @@ namespace VitalVues.Controllers
         private readonly IGoalService _goalService;
         private readonly IUserService _userService;
         private readonly SendGridEmailService _sendGridEmailService;
+        private readonly ILogger<AccountController> _logger;
 
-        public GoalController(IGoalService goalService, IUserService userService, SendGridEmailService sendGridEmailService)
+        public GoalController(ILogger<AccountController> logger, IGoalService goalService, IUserService userService, SendGridEmailService sendGridEmailService)
         {
+            _logger = logger;
             _goalService = goalService;
             _userService = userService;
             _sendGridEmailService = sendGridEmailService;
@@ -25,12 +27,23 @@ namespace VitalVues.Controllers
         [HttpGet("Goal")]
         public IActionResult Goal()
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("SignIn", "Account");
+            }
 
             var userUniqueIdentifier = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
 
             if (string.IsNullOrEmpty(userUniqueIdentifier))
             {
                 return RedirectToAction("Error", "Home");
+            }
+
+            var user = _userService.FindUser(userUniqueIdentifier);
+
+            if (user.SubscriptionEndDate == null || user.SubscriptionEndDate <= DateTime.Now.Date)
+            {
+                return RedirectToAction("PaymentRequired", "Home");
             }
 
             var goals = _goalService.GetGoals(userUniqueIdentifier).ToList();
@@ -44,70 +57,83 @@ namespace VitalVues.Controllers
             return View(userInfo);
         }
 
-        [HttpPost("CreateGoal")]
+                [HttpPost("CreateGoal")]
         public IActionResult CreateGoal([FromBody] GoalViewModel goalInfo)
         {
+            // Check model validation
             if (!ModelState.IsValid)
             {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                _logger.LogWarning("ModelState errors: " + string.Join(", ", errors));
                 return BadRequest(ModelState);
             }
 
+            // Check if goal description is null
             if (goalInfo.Description == null)
             {
                 return BadRequest("Goal information is null.");
             }
-        
 
-            
-            int createdGoalId = _goalService.CreateGoal(goalInfo);
-
-            var userUniqueIdentifier = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
-
-            if (string.IsNullOrEmpty(userUniqueIdentifier))
+            try
             {
-                return RedirectToAction("Error", "Home");
+                // Create the goal
+                int createdGoalId = _goalService.CreateGoal(goalInfo);
+
+                // Retrieve user info
+                var userUniqueIdentifier = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+                if (string.IsNullOrEmpty(userUniqueIdentifier))
+                {
+                    return RedirectToAction("Error", "Home");
+                }
+
+                var userInfo = _userService.FindUser(userUniqueIdentifier);
+                if (userInfo == null)
+                {
+                    return BadRequest("User not found.");
+                }
+
+                // Calculate time span for goal duration
+                var totalDuration = goalInfo.endGoalDate - goalInfo.startingGoalDate;
+
+                // Calculate halfway point for the goal
+                var halfwayPoint = goalInfo.startingGoalDate.Add(totalDuration / 2);
+
+                // Schedule the halfway reminder email job
+                var halfwayJobId = BackgroundJob.Schedule(() =>
+                    _sendGridEmailService.SendEmail(
+                        userInfo.Email,
+                        "Halfway to Achieving Your Goal!",
+                        $"Youâ€™re halfway through your goal. Keep pushing!\nGoal Description: {goalInfo.Description}",
+                        $"Youâ€™re halfway through your goal. Keep pushing!\nGoal Description: {goalInfo.Description}"
+                    ), halfwayPoint);
+
+                // Schedule the one day left reminder email job
+                var notifyDate = goalInfo.endGoalDate.AddDays(-1);
+                var jobId = BackgroundJob.Schedule(() =>
+                    _sendGridEmailService.SendEmail(
+                        userInfo.Email,
+                        "One Day to Go!",
+                        $"You're almost there! Just one day left to reach your goal. Stay focused!\nGoal Description: {goalInfo.Description}",
+                        $"You're almost there! Just one day left to reach your goal. Stay focused!\nGoal Description: {goalInfo.Description}"
+                    ), notifyDate);
+
+                // Update the goal with the scheduled Hangfire job IDs
+                _goalService.UpdateGoalHangfireJobIds(createdGoalId, halfwayJobId, jobId);
+
+                // Return success response
+                return Ok(new
+                {
+                    message = "Goal created successfully!"
+                });
             }
-
-            // Retrieve user info including email
-            var userInfo = _userService.FindUser(userUniqueIdentifier);
-            if (userInfo == null)
+            catch (Exception ex)
             {
-                return BadRequest("User not found.");
+                // Log the error and return a 500 Internal Server Error
+                _logger.LogError($"Error occurred while creating the goal: {ex.Message}");
+                return StatusCode(500, "Internal server error while processing your request.");
             }
-
-            //Calculations for TimeSpan
-            var totalDuration = goalInfo.endGoalDate - goalInfo.startingGoalDate;
-
-            //Calculations for halfway point
-            var halfwayPoint = goalInfo.startingGoalDate.Add(totalDuration / 2);
-
-            // Schedule the halfway reminder
-            var halfwayJobId = BackgroundJob.Schedule(() =>
-                _sendGridEmailService.SendEmail(userInfo.Email,
-                "Halfway to Achieving Your Goal!",
-                "You’re halfway through your goal. Keep pushing!\nGoal Description: " + goalInfo.Description,
-                "You’re halfway through your goal. Keep pushing!\nGoal Description: " + goalInfo.Description),
-                halfwayPoint);
-
-
-            // Schedule the one day reminder
-            var notifyDate = goalInfo.endGoalDate.AddDays(-1);
-            var jobId = BackgroundJob.Schedule(() =>
-                _sendGridEmailService.SendEmail(userInfo.Email,
-                "One Day to Go!",
-                "You're almost there! Just one day left to reach your goal. Stay focused!\nGoal Description: " + goalInfo.Description,
-                "You're almost there! Just one day left to reach your goal. Stay focused!\nGoal Description: " + goalInfo.Description),
-                notifyDate);
-
-            // Now update the goal with both Hangfire job IDs
-            _goalService.UpdateGoalHangfireJobIds(createdGoalId, halfwayJobId, jobId);
-
-            return Ok(new
-            {
-                message = "Goal created successfully!"
-                // TODO: Redirect to "Goals"
-            });
         }
+
 
         [HttpPost("UpdateGoal")]
         public IActionResult UpdateGoal([FromBody] GoalViewModel goalInfo)
@@ -162,8 +188,8 @@ namespace VitalVues.Controllers
             var halfwayJobId = BackgroundJob.Schedule(() =>
                 _sendGridEmailService.SendEmail(userInfo.Email,
                 "Halfway to Achieving Your Goal!",
-                "You’re halfway through your goal. Keep pushing!\n\nGoal Description: " + goalInfo.Description,
-                "You’re halfway through your goal. Keep pushing!\n\nGoal Description: " + goalInfo.Description),
+                "Youï¿½re halfway through your goal. Keep pushing!\n\nGoal Description: " + goalInfo.Description,
+                "Youï¿½re halfway through your goal. Keep pushing!\n\nGoal Description: " + goalInfo.Description),
                 halfwayPoint);
 
 

@@ -33,6 +33,12 @@ public class UserController : Controller
         }
 
         var user = _userService.FindUser(userUniqueIdentifier);
+
+        if(user.SubscriptionEndDate <= DateTime.Now.Date)
+        {
+            return RedirectToAction("PaymentRequired", "Home");
+        }
+
 		return View(user);
     }
 

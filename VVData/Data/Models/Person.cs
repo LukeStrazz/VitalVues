@@ -19,4 +19,8 @@ public class Person : TrackableEntry
     public List<Goal>? Goals { get; set; }
     public List<Bloodwork>? BloodWorks { get; set; }
     public List<Journal>? Journals { get; set; }
+    public bool? IsSubscribed { get; set; } 
+    public DateTime? SubscriptionStartDate { get; set; }
+    public DateTime? SubscriptionEndDate { get; set; }
+    public string? StripeCustomerId { get; set; }
 }

@@ -15,20 +15,35 @@ namespace VitalVues.Controllers;
 public class MealsController : Controller
 {
     private readonly IMealService _mealService;
+    private readonly IUserService _userService;
 
-    public MealsController(IMealService mealService)
+
+    public MealsController(IMealService mealService, IUserService userService)
     {
         _mealService = mealService;
+        _userService = userService;
     }
 
     [HttpGet("Meals")]
     public IActionResult Meals()
     {
+        if (!User.Identity.IsAuthenticated)
+        {
+            return RedirectToAction("SignIn", "Account");
+        }
+
         var userUniqueIdentifier = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
 
         if (string.IsNullOrEmpty(userUniqueIdentifier))
         {
             return RedirectToAction("Error", "Home");
+        }
+
+        var user = _userService.FindUser(userUniqueIdentifier);
+
+        if (user.SubscriptionEndDate == null || user.SubscriptionEndDate <= DateTime.Now.Date)
+        {
+            return RedirectToAction("PaymentRequired", "Home");
         }
 
         return View(); 
