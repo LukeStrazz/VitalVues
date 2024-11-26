@@ -6,6 +6,7 @@ namespace VVData.Data.Models;
 public class Goal : TrackableEntry
 {
     public string UserID { get; set; }
+     public string title { set; get; }
     public bool resolved { get; set; }
     public double? targetWeight { get; set; }
     public DateTime startingGoalDate { get; set; }
