@@ -15,5 +15,6 @@ namespace Services.Interfaces
         public void CreateJournal(JournalViewModel journalViewModel);
         public void UpdateJournal(Journal journal);
         public void DeleteJournal(int journalId);
+        public JournalDetailsViewModel GetJournalDetails(int journalId, string sid);
     }
 }

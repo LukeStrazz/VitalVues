@@ -57,82 +57,82 @@ namespace VitalVues.Controllers
             return View(userInfo);
         }
 
-        [HttpPost("CreateGoal")]
-public IActionResult CreateGoal([FromBody] GoalViewModel goalInfo)
-{
-    // Check model validation
-    if (!ModelState.IsValid)
-    {
-        var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
-        _logger.LogWarning("ModelState errors: " + string.Join(", ", errors));
-        return BadRequest(ModelState);
-    }
-
-    // Check if goal description is null
-    if (goalInfo.Description == null)
-    {
-        return BadRequest("Goal information is null.");
-    }
-
-    try
-    {
-        // Create the goal
-        int createdGoalId = _goalService.CreateGoal(goalInfo);
-
-        // Retrieve user info
-        var userUniqueIdentifier = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
-        if (string.IsNullOrEmpty(userUniqueIdentifier))
+                [HttpPost("CreateGoal")]
+        public IActionResult CreateGoal([FromBody] GoalViewModel goalInfo)
         {
-            return RedirectToAction("Error", "Home");
+            // Check model validation
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                _logger.LogWarning("ModelState errors: " + string.Join(", ", errors));
+                return BadRequest(ModelState);
+            }
+
+            // Check if goal description is null
+            if (goalInfo.Description == null)
+            {
+                return BadRequest("Goal information is null.");
+            }
+
+            try
+            {
+                // Create the goal
+                int createdGoalId = _goalService.CreateGoal(goalInfo);
+
+                // Retrieve user info
+                var userUniqueIdentifier = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+                if (string.IsNullOrEmpty(userUniqueIdentifier))
+                {
+                    return RedirectToAction("Error", "Home");
+                }
+
+                var userInfo = _userService.FindUser(userUniqueIdentifier);
+                if (userInfo == null)
+                {
+                    return BadRequest("User not found.");
+                }
+
+                // Calculate time span for goal duration
+                var totalDuration = goalInfo.endGoalDate - goalInfo.startingGoalDate;
+
+                // Calculate halfway point for the goal
+                var halfwayPoint = goalInfo.startingGoalDate.Add(totalDuration / 2);
+
+                // Schedule the halfway reminder email job
+                var halfwayJobId = BackgroundJob.Schedule(() =>
+                    _sendGridEmailService.SendEmail(
+                        userInfo.Email,
+                        "Halfway to Achieving Your Goal!",
+                        $"You’re halfway through your goal. Keep pushing!\nGoal Description: {goalInfo.Description}",
+                        $"You’re halfway through your goal. Keep pushing!\nGoal Description: {goalInfo.Description}"
+                    ), halfwayPoint);
+
+                // Schedule the one day left reminder email job
+                var notifyDate = goalInfo.endGoalDate.AddDays(-1);
+                var jobId = BackgroundJob.Schedule(() =>
+                    _sendGridEmailService.SendEmail(
+                        userInfo.Email,
+                        "One Day to Go!",
+                        $"You're almost there! Just one day left to reach your goal. Stay focused!\nGoal Description: {goalInfo.Description}",
+                        $"You're almost there! Just one day left to reach your goal. Stay focused!\nGoal Description: {goalInfo.Description}"
+                    ), notifyDate);
+
+                // Update the goal with the scheduled Hangfire job IDs
+                _goalService.UpdateGoalHangfireJobIds(createdGoalId, halfwayJobId, jobId);
+
+                // Return success response
+                return Ok(new
+                {
+                    message = "Goal created successfully!"
+                });
+            }
+            catch (Exception ex)
+            {
+                // Log the error and return a 500 Internal Server Error
+                _logger.LogError($"Error occurred while creating the goal: {ex.Message}");
+                return StatusCode(500, "Internal server error while processing your request.");
+            }
         }
-
-        var userInfo = _userService.FindUser(userUniqueIdentifier);
-        if (userInfo == null)
-        {
-            return BadRequest("User not found.");
-        }
-
-        // Calculate time span for goal duration
-        var totalDuration = goalInfo.endGoalDate - goalInfo.startingGoalDate;
-
-        // Calculate halfway point for the goal
-        var halfwayPoint = goalInfo.startingGoalDate.Add(totalDuration / 2);
-
-        // Schedule the halfway reminder email job
-        var halfwayJobId = BackgroundJob.Schedule(() =>
-            _sendGridEmailService.SendEmail(
-                userInfo.Email,
-                "Halfway to Achieving Your Goal!",
-                $"You’re halfway through your goal. Keep pushing!\nGoal Description: {goalInfo.Description}",
-                $"You’re halfway through your goal. Keep pushing!\nGoal Description: {goalInfo.Description}"
-            ), halfwayPoint);
-
-        // Schedule the one day left reminder email job
-        var notifyDate = goalInfo.endGoalDate.AddDays(-1);
-        var jobId = BackgroundJob.Schedule(() =>
-            _sendGridEmailService.SendEmail(
-                userInfo.Email,
-                "One Day to Go!",
-                $"You're almost there! Just one day left to reach your goal. Stay focused!\nGoal Description: {goalInfo.Description}",
-                $"You're almost there! Just one day left to reach your goal. Stay focused!\nGoal Description: {goalInfo.Description}"
-            ), notifyDate);
-
-        // Update the goal with the scheduled Hangfire job IDs
-        _goalService.UpdateGoalHangfireJobIds(createdGoalId, halfwayJobId, jobId);
-
-        // Return success response
-        return Ok(new
-        {
-            message = "Goal created successfully!"
-        });
-    }
-    catch (Exception ex)
-    {
-        // Log the error and return a 500 Internal Server Error
-        _logger.LogError($"Error occurred while creating the goal: {ex.Message}");
-        return StatusCode(500, "Internal server error while processing your request.");
-    }
-}
 
 
         [HttpPost("UpdateGoal")]

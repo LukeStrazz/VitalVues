@@ -1,24 +1,30 @@
 @model Services.ViewModels.UserInfoViewModel
+@{
+    ViewData["Title"] = "User Profile";
+}
 
 <head>
     <title>Dropdown Example</title>
     <link rel="stylesheet" href="~/css/journal.css" asp-append-version="true" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </head>
-<body>
 
     <section>
         <input type="hidden" id="userSecretId" value="@Model.Sid" />
-
         <div class="row mb-5">
             <div class="col-sm-10 d-flex flex-column">
 
                 <div>
                     <h1 id="title-journal-h1">JOURNALS</h1>
                     <p>
-                        Hi @Model.FirstName, welcome to the journal page. Here you can create journals by adding desired bloodworks,
-                         workouts, chats, and goals that you have in your account. You will be able to get a PDF of each journal.
-                          This functionality will be implemented in the future!
+                        Welcome 👋 This is your personal journal space where you can document your health and fitness journey.
+                        Create comprehensive journal entries by combining your bloodwork results, workout achievements, chat history, and fitness goals.
+                        Each journal can be easily exported as a PDF for your records by clicking the PDF button when viewing an entry.
                     </p>
                 </div>
 
@@ -110,11 +116,13 @@
                         {
                             foreach (var journal in Model.Journals)
                             {
+                                @if(!journal.Resolved) {
                                 <div class="stack-item mb-3 journal-item" data-journal-id="@journal.JournalId" onclick="viewJournalDetails(@journal.JournalId)">
                                     <h5 id="journal-view-title-h5">@journal.Title</h5>
                                     <input type="hidden" id="" value="">
                                     <small id="journal-view-date-small">@journal.JournalDate.ToString("MM/dd/yyyy")</small>
                                 </div>
+                                }
                             }
                         }
                         else
@@ -143,7 +151,7 @@
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-
+           
             <div class="modal-body">
 
                 <h5>Workouts</h5>
@@ -163,14 +171,13 @@
             </div>                  
             
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" id="generatePdfButton" value="0" class="btn btn-outline-warning"">PDF</button>
+                <button type="button" id="deleteButton" value="0" class="btn btn-outline-danger btn-delete">Delete</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
-</div>
-
-
-
+        </div>
 
         <div class="modal fade" id="createJournalModal" tabindex="-1" aria-labelledby="createJournalModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
@@ -266,7 +273,7 @@
                                                     <li style="padding-left: 15px;">
                                                         <div class="form-check px-3">
                                                             <input class="fo</div>rm-check-input" type="checkbox" value="@g.GoalId" id="goal-@g.GoalId">
-                                                            <label class="form-check-label" for="goal-@g.GoalId">@g.endGoalDate.ToString("MM/dd/yyyy") - @g.targetWeight Ibs</label>
+                                                            <label class="form-check-label" for="goal-@g.GoalId">@g.endGoalDate.ToString("MM/dd/yyyy")  @g.targetWeight Ibs</label>
                                                         </div>
                                                     </li>
                                                 }
@@ -293,7 +300,7 @@
                                                     <li style="padding-left: 15px;">
                                                         <div class="form-check px-3">
                                                             <input class="form-check-input" type="checkbox" value="@c.Id" id="chat-@c.Id">
-                                                            <label class="form-check-label" for="chat-@c.Id">@c.ChatDate</label>
+                                                            <label class="form-check-label" for="chat-@c.Id">@c.ChatTopic @c.ChatDate.ToString("MM/dd/yyyy")</label>
                                                         </div>
                                                     </li>
                                                 }
@@ -318,28 +325,81 @@
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button id="createJournalButton" type="button" class="btn btn-primary">Create Journal</button>
+                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                        <button id="createJournalButton" type="button" class="btn btn-success">Create Journal</button>
                     </div>
 
                 </div>
             </div>
         </div>
+    
+        <div class="modal fade" id="pdfModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content" id="modal-content-pdf">
+            <div class="modal-header">
+                <h4 class="modal-title" id="modal-journalpdf-title" style="text-align: center;">Journal Title</h4>
+                <span class="ms-3" id="modal-journalpdf-email">@Model.Email</span>
+                <span class="ms-3">Date: 28th May</span>
+                <span class="ms-3">@Model.FirstName @Model.LastName</span>
+                <span class="ms-3">@Model.Age</span>
+                <h1>@Model.FirstName</h1>
+                <span class="ms-3">Weight:: Start: 230, End: 200</span>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modal-body-pdf" style="font-size: .25rem; font-family: 'Times New Roman', serif;">
+                <ul id="modal-journalpdf-top-title" style="margin-left: -30px;"></ul>
 
-    </section>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+                <h4 style="font-size: .45rem; color: #dd1e1e; font-family: 'Helvetica Neue', sans-serif; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #e0e0e0; padding-bottom: 3px; margin-top: 10px;">Blood-Tests</h4>
+                <ul id="modal-journalpdf-bloodtests"></ul>
 
-</body>
+                <h4 style="font-size: .45rem; color: #bf04b2; font-family: 'Helvetica Neue', sans-serif; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #e0e0e0; padding-bottom: 3px; margin-top: 10px;">Goals</h4>
+                <ul id="modal-journalpdf-goals"></ul>
+
+                <h4 style="font-size: .45rem; color: #3498db; font-family: 'Helvetica Neue', sans-serif; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #e0e0e0; padding-bottom: 3px; margin-top: 10px;">Workouts</h4>
+                <ul id="modal-journalpdf-workouts"></ul>
+
+                <h4 style="font-size: .45rem; color: #dc7e26; font-family: 'Helvetica Neue', sans-serif; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #e0e0e0; padding-bottom: 3px; margin-top: 10px;">Chats</h4>
+                <ul id="modal-journalpdf-chats"></ul>
+
+                <h4 style="font-size: .45rem; color: #16a085; font-family: 'Helvetica Neue', sans-serif; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #e0e0e0; padding-bottom: 3px; margin-top: 10px;">Summary</h4>
+                <div id="modal-journalpdf-content">
+
+                <p id="modal-journalpdf-summary"></p>
+                            
+                </div>
+
+            </div>
+            <div class="text-end"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+            </div>
+        </div>
+        </div>
+    </section>  
 
 <script>
+    const pdfModal = new bootstrap.Modal(document.getElementById('pdfModal'), {
+        keyboard: false
+    });
+
     const journalModel = new bootstrap.Modal(document.getElementById('createJournalModal'), {
         keyboard: false
     });
 
+    const showJournalModal = new bootstrap.Modal(document.getElementById('showJournalModal'), {
+        keyboard: false
+    });
+
+    function showPdfModal() {
+        showJournalModal.hide();
+        pdfModal.show();
+    }
+
     function showJournalModel() {
         journalModel.show();
     }
-
 
     function getSelectedOptions(dropdownId) {
         const dropdown = document.getElementById(dropdownId);
@@ -347,13 +407,53 @@
         return Array.from(checkboxes).map(cb => cb.value);
     }
 
+    function convertHTMLtoPDF(data) {
+        let pdfjs = document.querySelector('#modal-body-pdf');
+    
+        let opt = {
+            margin: 10,
+            filename: `${data.LastName}-${data.FirstName}-Journal${data.JournalID}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, logging: true, dpi: 192, letterRendering: true },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
 
-    const showJournalModal = new bootstrap.Modal(document.getElementById('showJournalModal'), {
-        keyboard: false
-    });
+        pdfjs.style.fontSize = '0.75rem';  
+        
+        let h4Elements = pdfjs.querySelectorAll('h4');
+        h4Elements.forEach(h4 => {
+            h4.style.fontSize = '1rem';  
+        });
+    
+        html2pdf().set(opt).from(pdfjs).save();
+
+        setTimeout(() => {
+            pdfjs.style.fontSize = '0.25rem';
+            h4Elements.forEach(h4 => {
+                h4.style.fontSize = '0.45rem';
+            });
+        }, 1000);
+    }
+
+ /* function convertHTMLtoPDF(data) {
+        const { jsPDF } = window.jspdf;
+
+        let doc = new jsPDF('p', 'mm', 'a4');
+        let pdfjs = document.querySelector('#modal-body-pdf');
 
 
+        doc.setFontSize(12); 
 
+        doc.html(pdfjs, {
+            callback: function (doc) {
+                doc.save(`${data.lastName}-${data.firstName}-Journal${data.id}.pdf`);
+            },
+            x: 10, 
+            y: 10, 
+            width: 190, 
+            windowWidth: 794 
+        });
+    } */
 
     function viewJournalDetails(journalId) {
 
@@ -365,13 +465,13 @@
             return response.json();
         })
         .then(data => {
-            document.getElementById('modal-journal-content').innerText = data.content;
-            document.getElementById('modal-journal-title').innerText = data.title;
-            document.getElementById('modal-journal-date').innerText = data.journalDate;
-            document.getElementById('modal-journal-workouts').innerHTML = generateWorkoutsHtml(data.workouts);
-            document.getElementById('modal-journal-bloodtests').innerHTML = generateBloodTestsHtml(data.bloodTests);
-            document.getElementById('modal-journal-goals').innerHTML = generateGoalsHtml(data.goals);
-
+            document.getElementById('modal-journal-content').innerText = data.Content;
+            document.getElementById('modal-journal-title').innerText = data.Title;
+            document.getElementById('modal-journal-date').innerText = data.JournalDate;
+            document.getElementById('modal-journal-workouts').innerHTML = generateWorkoutsHtml(data.Workouts);
+            document.getElementById('modal-journal-bloodtests').innerHTML = generateBloodTestsHtml(data.BloodTests);
+            document.getElementById('modal-journal-goals').innerHTML = generateGoalsHtml(data.Goals);
+            document.getElementById('deleteButton').value = journalId;
 
             showJournalModal.show();
         })
@@ -380,26 +480,130 @@
         });
 }
 
+    function generateUserInfo(data) {
+        return `
+            <div style="font-weight: bold; margin-bottom: 5px;">VITAL VUES - ${data.Title}</div>
+            <div>• ${data.FirstName} ${data.LastName}.&nbsp;&nbsp;&nbsp; • ${data.Age} years old • DOB: ${data.Birthday} • Email: ${data.Email}&nbsp;&nbsp;&nbsp; • Start Weight: ${data.StartWeight}, Current Weight: ${data.CurrWeight}</div>
+        `;
+    }
 
-        function generateWorkoutsHtml(workouts) {
-            if (workouts.length === 0) return '<p>No workouts available.</p>';
-            return workouts.map(workout => `<li>${workout.type}: ${workout.date}</li>`).join('');
+    function generateWorkoutsHtml(workouts) {
+        if (workouts.length === 0) return '<p>No workouts available.</p>';
+
+        var ans = [];
+        workouts.forEach(function(w) {
+            if(w.rep !== 0) {
+                ans.push(`<li>${w.Type}: ${w.Day}, Set: ${w.Set}, Rep: ${w.Rep}</li>`);
+            } else {
+                ans.push(`<li>${w.Type}: ${w.Day}, Duration: ${w.Duration} min</li>`);
+            }
+        });
+        return ans.join('');
+    }
+
+    function generateChatsHtmlPdf(chats) {
+        if (chats.length === 0) return '<p>No chats available.</p>';
+
+        var ans = [];
+        chats.forEach(function(c) {
+            ans.push(`<li>Chat Topic: ${c.ChatTopic}, Date: ${new Date(c.ChatDate).toLocaleDateString('en-US')}</li>`);
+        });
+        return ans.join('');
+    }
+
+    function generateWorkoutsHtmlPdf(workouts) {
+        if (workouts.length === 0) return '<p>No workouts available.</p>';
+
+        var ans = [];
+        workouts.forEach(function(w) {
+            if(w.Rep !== 0) {
+                ans.push(`<li>${w.SubType}: ${w.Day}, Set: ${w.Set}, Rep: ${w.Rep}</li>`);
+            } else {
+                ans.push(`<li>${w.SubType}: ${w.Day}, Duration: ${w.Duration} min</li>`);
+            }
+        });
+        return ans.join('');
+    }
+
+    function generateBloodTestsHtml(bloodTests) {
+        if (bloodTests.length === 0) return '<p>No blood tests available.</p>';
+        
+        var ans = [];
+        bloodTests.forEach(function(bt) {
+            ans.push(`<li>Test Date: ${new Date(bt.SubmissionDate).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}</li>`);
+        });
+        return ans.join('');
+    }
+
+    function generateBloodTestsHtmlpdf(bloodTests) {
+        if (bloodTests.length === 0) return '<p>No blood tests available.</p>';
+
+        var ans = [];
+        bloodTests.forEach(function(bt) {
+            const formattedDate = new Date(bt.SubmissionDate).toLocaleDateString('en-US', {
+            month: '2-digit',
+            day: '2-digit',
+            year: 'numeric'
+            });
+            ans.push(`<div><strong>Submission: ${formattedDate}</strong></div>`);
+            bt.Test.forEach(function(t) {
+            console.log(t.Grade);
+            if(t.Grade === 0) {
+                ans.push(`<li>${t.TestName}, ${t.Result} (<strong>LOW</strong>)</li>`);
+            } else if (t.Grade === 2){
+                ans.push(`<li>${t.TestName}: ${t.Result} (<strong>HIGH</strong>)</li>`);
+            }
+            });
+            ans.push(`<div style="margin: 10px 0;"></div>`);
+        
+        });
+        return ans.join('');
         }
 
-        function generateBloodTestsHtml(bloodTests) {
-            if (bloodTests.length === 0) return '<p>No blood tests available.</p>';
-            return bloodTests.map(test => `<li>Test Date: ${test.date}</li>`).join('');
-        }
+    function generateGoalsHtml(goals) {
 
-        function generateGoalsHtml(goals) {
             if (goals.length === 0) return '<p>No goals available.</p>';
-            return goals.map(goal => `<li>Target Weight: ${goal.targetWeight}, End Date: ${goal.endDate}</li>`).join('');
+
+            var ans = [];
+            goals.forEach(function(g) {
+                const formattedDate = new Date(g.endGoalDate).toLocaleDateString('en-US', { 
+                    day: 'numeric', 
+                    month: 'long', 
+                    year: 'numeric' 
+                });
+                
+                if(!g.resolved) {
+                    ans.push(`<li>Target Weight: ${g.targetWeight} Ibs, End Date: ${formattedDate} (active)</li>`);
+                } else {
+                    ans.push(`<li>Target Weight: ${g.targetWeight} Ibs, End Date: ${formattedDate} (inactive)</li>`);
+                }
+            });
+
+            return ans.join('');
         }
 
+    function generateGoalsHtmlPdf(goals) {
 
-</script>
+            if (goals.length === 0) return '<p>No goals available.</p>';
 
-<script>
+            var ans = [];
+            goals.forEach(function(g) {
+                const startDate = new Date(g.startingGoalDate).toLocaleDateString('en-US');
+                const endDate = new Date(g.endGoalDate).toLocaleDateString('en-US');
+                
+                if(!g.resolved) {
+                    ans.push(`<li>Target Weight: ${g.targetWeight} Ibs, (active)</li>`);
+                } else {
+                    ans.push(`<li>Target Weight: ${g.targetWeight} Ibs, (inactive)</li>`);
+                }
+                ans.push(`<li>Start Date: ${startDate}, End Date: ${endDate}</li>`);
+                ans.push(`<li>Description: ${g.Description}</li>`);
+                ans.push(`<div style="margin: 10px 0;"></div>`);
+            });
+
+            return ans.join('\n');
+        }
+        
     document.getElementById("createJournalButton").addEventListener("click", function (event) {
         event.preventDefault();
 
@@ -420,7 +624,7 @@
         const resolved = false;
 
         if (!content) {
-            alert("Description cannot be empty.");
+            alert("Summary cannot be empty.");
             return;
         }
 
@@ -460,4 +664,65 @@
             .then(data => window.location.reload())
             .catch(response => response.then(errorMessage => alert("Error: " + errorMessage)));
     });
+
+    document.getElementById("deleteButton").addEventListener("click", function (event) {
+        event.preventDefault();
+            
+            if (!confirm("Are you sure you want to delete this journal?")) {
+             return; 
+            }
+
+            const journalId = document.getElementById(`deleteButton`).value;
+            
+            fetch('/api/JournalController/DeleteJournal', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ Id: journalId })
+        
+            })
+            .then(response => {
+                if(response.ok){
+                    window.location.reload();
+                }
+                return response.ok ? response.json() : Promise.reject(response.text());
+            })
+            .then(data => alert("Journal has been deleted"))
+            .catch(errorMessage => alert("Error: " + errorMessage));
+        });
+
+    document.getElementById("generatePdfButton").addEventListener("click", function (event) {
+    event.preventDefault();
+        if (!confirm("Are you sure you want to get a pdf of this journal?")) {
+            return; 
+        }
+
+        const journalId = document.getElementById(`deleteButton`).value;
+        
+        fetch(`/api/JournalController/GetJournalDetails?journalId=${journalId}`)
+        .then(response => {
+        if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+        })
+        .then(data => {
+        document.getElementById('modal-journalpdf-chats').innerHTML = generateChatsHtmlPdf(data.Chats);
+        document.getElementById('modal-journalpdf-top-title').innerHTML = generateUserInfo(data);
+        document.getElementById('generatePdfButton').value = journalId;
+        document.getElementById('modal-journalpdf-title').innerText = data.Title;
+        document.getElementById('modal-journalpdf-workouts').innerHTML = generateWorkoutsHtmlPdf(data.Workouts);
+        document.getElementById('modal-journalpdf-goals').innerHTML = generateGoalsHtmlPdf(data.Goals);
+        document.getElementById('modal-journalpdf-bloodtests').innerHTML = generateBloodTestsHtmlpdf(data.BloodTests);
+        document.getElementById('modal-journalpdf-summary').innerText = data.Content;
+
+        convertHTMLtoPDF(data);
+        })
+        .catch(error => {
+            console.error('Error fetching journal details:', error);
+        });
+
+    });
+
 </script>

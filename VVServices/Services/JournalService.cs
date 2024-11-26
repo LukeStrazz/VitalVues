@@ -6,6 +6,7 @@ using Services.Interfaces;
 using VVData.Data;
 using Microsoft.EntityFrameworkCore;
 using Data.Data.Models;
+using Services.Services;
 
 
 namespace Services
@@ -13,10 +14,19 @@ namespace Services
     public class JournalService : IJournalService
     {
         private readonly DatabaseContext _context;
+        private readonly IGoalService _goalService;
+        private readonly IUserService _userService;
+        private readonly IBloodworkService _bloodworkService;
+        private readonly IChatService _chatServis;
 
-        public JournalService(DatabaseContext context)
+
+        public JournalService(DatabaseContext context, IGoalService goalService, IUserService userService, IBloodworkService bloodworkService, IChatService chatServis)
         {
             _context = context;
+            _goalService = goalService;
+            _userService = userService;
+            _bloodworkService = bloodworkService;
+            _chatServis = chatServis;
         }
 
         
@@ -47,6 +57,91 @@ namespace Services
             });
 
             return journalViewModels;
+        }
+
+        public JournalDetailsViewModel GetJournalDetails(int journalId, string sid) {
+
+            var user = _userService.FindUser(sid);
+
+            if (user == null) {
+                return null;
+            }
+
+            var journal = _context.Journals
+                .Include(j => j.Workouts)
+                .Include(j => j.BloodTests)
+                .ThenInclude(bt => bt.Test)
+                .Include(j => j.Goals)
+                .Include(j => j.Chats)
+                .FirstOrDefault(j => j.Id == journalId && j.UserID == user.Sid);
+
+
+            if (journal == null)
+            {
+                return null;
+            }
+
+            var journalDetailsViewModels = new JournalDetailsViewModel 
+            {   
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                Birthday = user.Birthday.ToString("MM,dd,yyyy"),
+                Age = user.Age,
+                StartWeight = user.StartingWeight,
+                CurrWeight = user.CurrentWeight,
+                JournalID = journal.Id,
+                Content = journal.Content,
+                Title = journal.Title,
+                JournalDate = journal.JournalDate.ToString("MM/dd/yyyy"),
+                BloodTests = journal.BloodTests.Select(bt => new BloodTestViewModel
+                {
+                    Id = bt.Id,
+                    SubmissionDate = bt.SubmissionDate,
+                    BloodworkDate = bt.BloodworkDate,
+                    Test = bt.Test.Select(t => new TestViewModel
+                    {
+                        Id = t.Id,
+                        TestName = t.TestName,
+                        Result = t.Result,
+                        Grade = t.Grade
+                    }).ToList()
+            }).ToList(),
+                Workouts = journal.Workouts.Select(w => new WorkoutViewModel 
+                {
+                    WorkoutId = w.Id,
+                    userSecretId = w.UserID,
+                    Type = w.Type,
+                    SubType = w.SubType,
+                    Set = w.Set,
+                    Rep = w.Rep,
+                    Day = w.Day,
+                    resolved = w.resolved,
+                    Duration = w.Duration
+                }).ToList(),
+                    Goals = journal.Goals.Select(g => new GoalViewModel 
+                    {
+                    GoalId = g.Id,
+                    userSecretId = g.UserID,
+                    resolved = g.resolved,
+                    startingGoalDate = g.startingGoalDate,
+                    endGoalDate = g.endGoalDate,
+                    targetWeight = g.targetWeight,
+                    Description = g.Description
+                    }).ToList(),
+                    Chats = journal.Chats.Select(c => new ChatViewModel 
+                    {
+                        Id = c.Id,
+                        UserSID = c.UserSID,
+                        ChatDate = c.ChatDate,
+                        ChatTopic = c.ChatTopic
+                    }).ToList()
+
+        };
+
+            return journalDetailsViewModels;
+
+            
         }
 
         
