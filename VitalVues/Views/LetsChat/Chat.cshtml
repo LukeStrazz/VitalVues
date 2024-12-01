@@ -76,9 +76,9 @@
 
         <div class="chat-container">
             <div id="chatOutput" class="output">
-                <div class="diet-interactions chat-section" style="display:none;">
-                    <button id="generateMealsButton" onclick="generateMeals()">Generate Meals</button>
-                    <button id="generateRecsButton" onclick="generateRecs()">Generate Reccomendations</button>
+                <div class="diet-interactions recs-interactions chat-section" style="display:none;">
+                    <button class="diet-interactions meal-btn" id="generateMealsButton" onclick="generateMeals()">Generate Meals</button>
+                    <button class="recs-interactions rec-btn" id="generateRecsButton" onclick="generateRecs()">Generate Reccomendations</button>
                     <div id="generatedMeals" class="generated-meals-list"></div>
                     <div>
                         @if (Model.Allergies != null)
@@ -131,6 +131,7 @@
         <a class="bloodwork-chat">Red: Bloodwork Chat</a>
         <a class="diet-chat">Blue: Diet Chat</a>
         <a class="workout-chat">Purple: Workout Chat</a>
+        <a class="rec-chat">Green: Workout Chat</a>
     </div>
     @if (Model.Chats != null)
     {
@@ -159,6 +160,15 @@
                 {
                     <div class="chat-title">
                         <a style="color: #c901c9;" class="load-chat workout-chat" data-chat-id="@chat.Id">
+                            @chat.ChatDate, @chat.ChatTopic
+                        </a>
+                    </div>
+                }
+
+                if (chat.ChatTopic == "recommendation")
+                {
+                    <div class="chat-title">
+                        <a style="color: #2ecc71;" class="load-chat recommendation-chat" data-chat-id="@chat.Id">
                             @chat.ChatDate, @chat.ChatTopic
                         </a>
                     </div>

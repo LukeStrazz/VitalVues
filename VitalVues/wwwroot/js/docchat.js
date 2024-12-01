@@ -9,7 +9,6 @@ function generateRecs() {
     const sendButton = document.getElementById('sendButton');
     const buttonText = document.getElementById('buttonText');
     let allergies = '';
-    let bloodwork = '';
 
     document.querySelectorAll('.diet-interactions div').forEach(allergyDiv => {
         if (allergyDiv.textContent) {
@@ -17,7 +16,7 @@ function generateRecs() {
         }
     });
 
-    const prompt = `I need doctor and suppliment suggestions considering these allergies: ${allergies}. And my recent bloodwork: ${bloodwork}`;
+    const prompt = `I need doctor and suppliment suggestions considering these allergies and my most recent blood work test with results: ${allergies}. DO NOT TALK ABOUT MY BLOODWORK AND TESTS INDIVIDUALLY`;
 
 
     inputField.value = '';
@@ -40,7 +39,7 @@ function generateRecs() {
         },
         body: JSON.stringify({ messages: messages })
     })
-        .then(response => response.text())
+        .then(response => response.json())
         .then(data => {
             try {
                 messages.push({ role: 'system', content: data.message });
@@ -61,11 +60,14 @@ function generateRecs() {
 
                 resetUI();
                 document.getElementById('chatOutput').appendChild(responseContainer);
-                generateMealsButton.style.display = 'none';
 
+
+                generateMealsButton.disabled = false;
             } catch (synchronousError) {
                 displayErrorMessage(`Error: <strong>${synchronousError.message}</strong>`);
                 resetUI();
+
+                generateMealsButton.disabled = false;
             }
         })
         .catch(error => {

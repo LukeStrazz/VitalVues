@@ -36,16 +36,21 @@ document.querySelectorAll('.chat-holder-buttons button').forEach(button => {
                 const scrollContainer = document.querySelector(".previous-bloodworks");
                 scrollContainer.scrollLeft = 0;
                 break;
-            case buttonType.contains('fa-hourglass-half'):
-                newDiv.innerHTML = `<h2>Fasting Chat</h2><p></p>`;
-                currentChatType = 'fasting';
+            case buttonType.contains('fa-comment-medical'):
+                newDiv.innerHTML = `<h2>Recommendation Chat</h2><p></p>`;
+                document.querySelector('.recs-interactions').style.display = 'flex';
+                document.querySelector('.meal-btn').style.display = 'none';
+                document.querySelector('.rec-btn').style.display = 'block';
+                currentChatType = 'recommendation';
                 break;
             case buttonType.contains('fa-spoon'):
                 newDiv.innerHTML = `<h2>Diet Chat</h2><p></p>`;
                 document.querySelector('.diet-interactions').style.display = 'flex';
+                document.querySelector('.rec-btn').style.display = 'none';
+                document.querySelector('.meal-btn').style.display = 'block';
                 currentChatType = 'diet';
                 break;
-            case buttonType.contains('fa-asterisk'):
+            case buttonType.contains('fa-dumbbell'):
                 newDiv.innerHTML = `<h2>Workout Chat</h2><p></p>`;
                 document.querySelector('.workout-interactions').style.display = 'flex';
                 currentChatType = 'workout';

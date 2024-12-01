@@ -183,12 +183,18 @@ span{
     color: #ffbdff !important;
 }
 
-#generateMelasButton {
-    z-index: 1000;
+.rec-chat {
+    color: #2ecc71 !important;
 }
 
 #generateRecsButton {
     z-index: 1000;
+    z-index: 1000;
+    position: absolute;
+    bottom: -1%;
+    left: 23%;
+    width: 53%;
+    height: 10%;
 }
 
 button:nth-of-type(odd) {
