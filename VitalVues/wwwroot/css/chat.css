@@ -180,33 +180,43 @@ span{
 }
 
 .workout-chat {
-    color: #c901c9 !important;
+    color: #ffbdff !important;
 }
 
-#generateMelasButton{
+.rec-chat {
+    color: #2ecc71 !important;
+}
+
+#generateRecsButton {
     z-index: 1000;
+    z-index: 1000;
+    position: absolute;
+    bottom: -1%;
+    left: 23%;
+    width: 53%;
+    height: 10%;
 }
 
 button:nth-of-type(odd) {
     margin-right: 2px;
 }
 
-    button:nth-child(1) {
-        margin-bottom: 2px;
-        background: #1abc9c;
-    }
+button:nth-child(1) {
+    margin-bottom: 2px;
+    background: #ff7c7c;
+}
 
     button:nth-child(2) {
-        background: #838383; /*#2ecc71;*/
+        background: #2ecc71;
     }
 
     button:nth-child(3) {
         background: #3498db;
     }
 
-    button:nth-child(4) {
-        background: #e1f168; /* #9b59b6; */
-    }
+button:nth-child(4) {
+    background: #ffbdff;
+}
 
 .active {
     transform: scale(1);
