@@ -63,7 +63,7 @@ public class FastingController : Controller
             // Schedule the 10-minute warning email if fasting duration is more than 10 minutes
             if (fastingDuration.TotalMinutes > 10)
             {
-                var notificationTime = model.end.AddMinutes(-10).AddHours(-4);
+                var notificationTime = model.end.AddMinutes(-10).AddHours(-5);
      
                 // Schedule the Hangfire job for the 10-minute warning
                 var jobIdWarning = BackgroundJob.Schedule(() => _sendGridEmailService.SendEmail(
@@ -78,8 +78,8 @@ public class FastingController : Controller
             }
 
             // Schedule the Hangfire job to send an email when the fasting timer ends
-            var endTime = model.end.AddHours(-4);
-            var formattedStartTime = model.start.AddHours(-4).ToString("f");
+            var endTime = model.end.AddHours(-5);
+            var formattedStartTime = model.start.AddHours(-5).ToString("f");
             var formattedEndTime = endTime.ToString("f");
 
             var jobIdEnd = BackgroundJob.Schedule(() => _sendGridEmailService.SendEmail(

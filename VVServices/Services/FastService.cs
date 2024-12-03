@@ -23,8 +23,8 @@ namespace Services.Services
             var newFast = new Fast
             {
                 userID = fastingViewModel.userID,
-                start = fastingViewModel.start.AddHours(-4),
-                end = fastingViewModel.end.AddHours(-4)
+                start = fastingViewModel.start.AddHours(-5),
+                end = fastingViewModel.end.AddHours(-5)
             };
 
             _context.Fasts.Add(newFast);
