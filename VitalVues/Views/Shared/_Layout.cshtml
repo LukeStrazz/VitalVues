@@ -15,95 +15,75 @@
     <header>
         @if (User.Identity.IsAuthenticated)
         {
-            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-                <div class="container-fluid">
-                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img class="logo-nav" src="~/images/VVpictures/VVCircularLogo.png" /></a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                            aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                        <ul class="navbar-nav flex-grow-1">
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="User" asp-action="UserUpdate">Profile</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Goal" asp-action="Goal">Goals</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Workout" asp-action="Workout">Workouts</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="SubmitBloodwork" asp-action="SubmitBloodwork">Submit Bloodwork</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Fasting" asp-action="Fasting">Fasting Timer</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="LetsChat" asp-action="Chat">Chat</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Journals" asp-action="Journal">Journals</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Meals" asp-action="Meals">Meals</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="About" asp-action="Contact">Customer Support</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="BloodworkComparison" asp-action="Comparison">Bloodwork Comparison</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Payment" asp-action="Payment">Payment</a>
-                            </li>
+            <div class="d-flex">
+                <!-- Vertical Sidebar -->
+                <nav class="sidebar">
+                    <a class="sidebar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                        <img class="logo-nav" src="~/images/VVpictures/VV Circular Logo 400.png" />
+                    </a>
 
+                    <!-- Line under the logo -->
+                    <hr class="sidebar-separator" />
 
-                        </ul>
-                        <ul class="nav navbar-nav navbar-right">
-                            <li><a asp-controller="User" asp-action="UserUpdate">Hello @User.Identity.Name!</a></li>
-                            <li class="nav-item"><a id="qsLogoutBtn" asp-controller="Account" asp-action="Logout">Logout</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
-        }
-        else
-        {
-            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-                <div class="container-fluid">
-                    <a class="navbar-brand" asp-area="" asp-controller="Account" asp-action="SignIn"><img class="logo-nav" src="~/images/VVpictures/VVCircularLogo.png" /></a>
-                </div>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="About" asp-action="Index">About Us</a>
+                    <ul class="sidebar-nav">
+                        <!-- General Section -->
+                        <li><a asp-area="" asp-controller="Home" asp-action="Index"><i class="fas fa-home"></i> Home</a></li>
+                        <li><a asp-area="" asp-controller="User" asp-action="UserUpdate"><i class="fas fa-user"></i> Profile</a></li>
+
+                        <!-- Bloodwork and Chat Section -->
+                        <hr class="sidebar-separator" />
+                        <li><a asp-area="" asp-controller="SubmitBloodwork" asp-action="SubmitBloodwork"><i class="fas fa-vial"></i> Submit Bloodwork</a></li>
+                        <li><a asp-controller="BloodworkComparison" asp-action="Comparison"><i class="fas fa-chart-bar"></i> Bloodwork Comparison</a></li>
+                        <li><a asp-area="" asp-controller="LetsChat" asp-action="Chat"><i class="fas fa-comments"></i> Chat</a></li>
+
+                        <!-- Activities Section -->
+                        <hr class="sidebar-separator" />
+                        <li><a asp-area="" asp-controller="Workout" asp-action="Workout"><i class="fas fa-dumbbell"></i> Workouts</a></li>
+                        <li><a asp-controller="Meals" asp-action="Meals"><i class="fas fa-utensils"></i> Meals</a></li>
+                        <li><a asp-area="" asp-controller="Journals" asp-action="Journal"><i class="fas fa-book"></i> Journals</a></li>
+                        <li><a asp-area="" asp-controller="Fasting" asp-action="Fasting"><i class="fas fa-stopwatch"></i> Fasting Timer</a></li>
+
+                        <!-- Support and Logout Section -->
+                        <hr class="sidebar-separator" />
+                        <li><a asp-area="" asp-controller="About" asp-action="Contact"><i class="fas fa-envelope"></i> Customer Support</a></li>
+                        <li><a asp-controller="Payment" asp-action="Payment"><i class="fas fa-credit-card"></i> Payment</a></li>
+                        <li class="logout">
+                            <a id="qsLogoutBtn" asp-controller="Account" asp-action="Logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
                         </li>
                     </ul>
+                </nav>
+
+                <!-- Main Content -->
+                <div class="container flex-grow-1">
+                    <main role="main" class="pb-3">
+                        @RenderBody()
+                    </main>
                 </div>
-                <ul class="nav navbar-nav navbar-right">
-                    <li><a id="qsLoginBtn" asp-controller="Account" asp-action="Login">Login</a></li>
-                </ul>
-            </nav>
+            </div>
+
         }
     </header>
+
+
+
+   
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="footer text-muted">
         <div class="container">
             &copy; 2024 - VitalVues
         </div>
     </footer>
+
+   
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
