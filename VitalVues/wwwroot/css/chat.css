@@ -7,12 +7,12 @@ body {
     user-select: none;
 }
 
-span{
+span {
     font-size: 2rem;
     color: white;
 }
 
-#content{
+#content {
     transform: translate(25%, 100%);
 }
 
@@ -22,19 +22,19 @@ span{
     bottom: -1%;
     left: 23%;
     width: 53%;
-    height: 10%;
+    height: 13%;
     background: #1a88bc;
 }
 
 #generateWorkoutsButton {
     z-index: 1000;
     position: absolute;
-    bottom: -1%;
-    left: 23%;
-    width: 80px;
-    height: 10%;
+    bottom: -4%;
+    left: 76%;
+    width: 90px;
+    height: 13%;
     margin-left: -100px;
-    background: #1a88bc;
+    background: #af51af;
     border-radius: 10%;
     margin-bottom: 10px;
 }
@@ -49,37 +49,48 @@ span{
     align-items: center;
     width: 50%;
     text-align: center;
+    strong{
+            font-weight: 700;
+          }
+}
+
+.loaded-workout {
+    width: 50% !important;
+    text-align: center !important;
+    strong{
+                font-weight: 700;
+            }
 }
 
 .workout-suggestion {
     border: 2px solid black;
-    background: #1a88bc;
+    background-color: #af51af;
+    color: white;
     border-radius: 12px;
-    width: 180px;
-    width: 225px;
-
-}
-
-.add-meal-button {
-    border-radius: 5px;
-    align-self: center;
-
-}
-
-.workout-suggestion {
-    border: 2px solid black;
-    background: #1a88bc;
-    border-radius: 12px;
-    width: 180px;
-    width: 225px;
-
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 250%;
+    text-align: center;
+    strong{
+              font-weight: 700;
+          }
 }
 
 .add-meal-button {
     border: 2px solid white;
     border-radius: 12px;
+    align-self: center;
     width: 50%;
     background-color: #3498db;
+}
+
+.add-workout-button {
+    border: 2px solid white;
+    border-radius: 12px;
+    align-self: center;
+    width: 50%;
+    background-color: #af51af;
 }
 
 
@@ -89,6 +100,14 @@ span{
     width: 50%;
     background-color: white;
     color: #3498db;
+}
+
+.add-workout-button:hover {
+    border: 2px solid #af51af;
+    border-radius: 12px;
+    width: 50%;
+    background-color: white;
+    color: #af51af;
 }
 
 .previous-chats {
@@ -150,7 +169,9 @@ span{
     transition: transform 0.8s;
     box-shadow: 0px 0px 10px #999;
     z-index: 1;
-    button{
+    button
+
+{
     display: inline-block;
     width: 150px;
     height: 150px;
@@ -160,10 +181,11 @@ span{
     text-align: center;
     /*   text-shadow: 2px 2px 4px #666;  */
     color: #fff;
-    }
 }
 
-.legend{
+}
+
+.legend {
     margin-top: 5rem;
     margin-left: 10px;
     display: flex;
@@ -180,7 +202,7 @@ span{
 }
 
 .workout-chat {
-    color: #ffbdff !important;
+    color: #af51af !important;
 }
 
 .rec-chat {
@@ -194,8 +216,16 @@ span{
     bottom: -1%;
     left: 23%;
     width: 53%;
-    height: 10%;
+    height: 13%;
+    border-radius: 12px;
+    border: 2px solid white;
 }
+
+    #generateRecsButton:hover {
+        background-color: white;
+        color: #2ecc71;
+        border: 2px solid #2ecc71;
+    }
 
 button:nth-of-type(odd) {
     margin-right: 2px;
@@ -206,16 +236,16 @@ button:nth-child(1) {
     background: #ff7c7c;
 }
 
-    button:nth-child(2) {
-        background: #2ecc71;
-    }
+button:nth-child(2) {
+    background: #2ecc71;
+}
 
-    button:nth-child(3) {
-        background: #3498db;
-    }
+button:nth-child(3) {
+    background: #3498db;
+}
 
 button:nth-child(4) {
-    background: #ffbdff;
+    background: #af51af;
 }
 
 .active {
@@ -269,10 +299,12 @@ header {
     border-radius: 10px;
     max-width: 70%;
 }
-#saveChatButton{
+
+#saveChatButton {
     position: absolute;
     z-index: 100000;
 }
+
 .message button {
     padding: 5px 10px;
     margin-top: 5px;
@@ -283,9 +315,9 @@ header {
     border-radius: 5px;
 }
 
-        .message button:hover {
-            background-color: #45a049;
-        }
+    .message button:hover {
+        background-color: #45a049;
+    }
 
 .user-message {
     border: 2px solid white;
@@ -308,31 +340,31 @@ header {
     width: 50vw;
 }
 
-    .input-form textarea {
-        flex-grow: 1;
-        border: 1px solid;
-        border-radius: 5px;
-        padding: 10px;
-        margin-right: 10px;
-        background-color: #333;
-        resize: none; /* Prevents manual resizing */
-        overflow-x: hidden; /* Hide horizontal overflow */
-        overflow-y: auto; /* Automatically add vertical scrollbar when needed */
-        line-height: 1.5; /* Improves readability */
-        min-height: 50px; /* Minimum height */
-        max-height: 150px; /* Maximum height before scrolling */
-        white-space: pre-wrap; /* Ensures that text wraps and whitespace is preserved */
-        word-wrap: break-word; /* Breaks long words if necessary to fit within the width */
-    }
+.input-form textarea {
+    flex-grow: 1;
+    border: 1px solid;
+    border-radius: 5px;
+    padding: 10px;
+    margin-right: 10px;
+    background-color: #333;
+    resize: none; /* Prevents manual resizing */
+    overflow-x: hidden; /* Hide horizontal overflow */
+    overflow-y: auto; /* Automatically add vertical scrollbar when needed */
+    line-height: 1.5; /* Improves readability */
+    min-height: 50px; /* Minimum height */
+    max-height: 150px; /* Maximum height before scrolling */
+    white-space: pre-wrap; /* Ensures that text wraps and whitespace is preserved */
+    word-wrap: break-word; /* Breaks long words if necessary to fit within the width */
+}
 
 
-    .input-form button {
-        padding: 10px 20px;
-        border-radius: 5px;
-        border: none;
-        color: #333;
-        cursor: pointer;
-    }
+.input-form button {
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    color: #333;
+    cursor: pointer;
+}
 
 
 .output::-webkit-scrollbar {
@@ -363,7 +395,7 @@ header {
     scrollbar-color: #333 #222;
 }
 
-#buttonText{
+#buttonText {
     font-size: 1rem;
 }
 /*Blood work*/
@@ -380,19 +412,22 @@ header {
     border-radius: 7px;
     font-size: 15px;
     text-align: center;
-    h4, h5{
-        font-size: 15px;
-    }
-    .bloodwork-item{
-        border: 2px solid black;
-        border-radius: 12px;
-        padding: 1rem;
-        background-color: #652e2e;
-    }
+    h4, h5
 
-    .talk-bloodwork-btn{
-        border: 2px solid #ffffff;
-        border-radius: 5px;
-        background-color: red;
-    }
+{
+    font-size: 15px;
+}
+
+.bloodwork-item {
+    border: 2px solid black;
+    border-radius: 12px;
+    padding: 1rem;
+    background-color: #652e2e;
+}
+
+.talk-bloodwork-btn {
+    border: 2px solid #ffffff;
+    border-radius: 5px;
+    background-color: red;
+}
 }

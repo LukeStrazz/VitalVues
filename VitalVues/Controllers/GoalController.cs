@@ -57,7 +57,7 @@ namespace VitalVues.Controllers
             return View(userInfo);
         }
 
-                [HttpPost("CreateGoal")]
+        [HttpPost("CreateGoal")]
         public IActionResult CreateGoal([FromBody] GoalViewModel goalInfo)
         {
             // Check model validation

@@ -31,7 +31,10 @@ document.querySelectorAll('.chat-holder-buttons button').forEach(button => {
             case buttonType.contains('fa-heart'):
                 newDiv.innerHTML = `<h2>Bloodwork Chat</h2><p></p>`;
                 document.querySelector('.previous-bloodworks').style.display = 'flex';
+                document.querySelector('#generateWorkoutsButton').style.display = 'none';
+                document.querySelector('#generateRecsButton').style.display = 'none';
                 currentChatType = 'bloodwork';
+                document.getElementById('currentChatId').value = 0;
 
                 const scrollContainer = document.querySelector(".previous-bloodworks");
                 scrollContainer.scrollLeft = 0;
@@ -40,20 +43,30 @@ document.querySelectorAll('.chat-holder-buttons button').forEach(button => {
                 newDiv.innerHTML = `<h2>Recommendation Chat</h2><p></p>`;
                 document.querySelector('.recs-interactions').style.display = 'flex';
                 document.querySelector('.meal-btn').style.display = 'none';
+                document.querySelector('#generateWorkoutsButton').style.display = 'none';
                 document.querySelector('.rec-btn').style.display = 'block';
+                document.querySelector('.previous-bloodworks').style.display = 'none';
                 currentChatType = 'recommendation';
+                document.getElementById('currentChatId').value = 0;
                 break;
             case buttonType.contains('fa-spoon'):
                 newDiv.innerHTML = `<h2>Diet Chat</h2><p></p>`;
                 document.querySelector('.diet-interactions').style.display = 'flex';
                 document.querySelector('.rec-btn').style.display = 'none';
+                document.querySelector('#generateWorkoutsButton').style.display = 'none';
                 document.querySelector('.meal-btn').style.display = 'block';
+                document.querySelector('#generateRecsButton').style.display = 'none';
+                document.querySelector('.previous-bloodworks').style.display = 'none';
                 currentChatType = 'diet';
+                document.getElementById('currentChatId').value = 0;
                 break;
             case buttonType.contains('fa-dumbbell'):
                 newDiv.innerHTML = `<h2>Workout Chat</h2><p></p>`;
                 document.querySelector('.workout-interactions').style.display = 'flex';
+                document.querySelector('#generateRecsButton').style.display = 'none';
+                document.querySelector(".previous-bloodworks").style.display = 'none';
                 currentChatType = 'workout';
+                document.getElementById('currentChatId').value = 0;
                 break;
             default:
                 newDiv.innerHTML = `<h2>Error</h2><p>Unhandled</p>`;

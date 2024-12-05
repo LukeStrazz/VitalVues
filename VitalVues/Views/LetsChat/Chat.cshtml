@@ -115,7 +115,7 @@
             </div>
            
             <form id="promptForm" class="input-form">
-                <textarea id="promptInput" placeholder="Ask 'TODO: Type of {question}' a Question..." required></textarea>
+                <textarea id="promptInput" placeholder="Ask a Question or Specify Request..." required></textarea>
                 <button type="submit" id="sendButton" class="btn btn-primary">
                     <span class="spinner-border spinner-border-sm" aria-hidden="true" style="display: none;" id="spinner"></span>
                     <span id="buttonText">Send</span>
@@ -315,6 +315,12 @@
     }
 
     document.querySelectorAll('.load-chat').forEach(link => {
+
+        document.querySelector('.rec-btn').style.display = 'none';
+        document.querySelector('#generateWorkoutsButton').style.display = 'none';
+        document.querySelector('.meal-btn').style.display = 'block';
+        document.querySelector('#generateRecsButton').style.display = 'none';
+        document.querySelector('.previous-bloodworks').style.display = 'none';
         link.addEventListener('click', function () {
             const chatId = this.getAttribute('data-chat-id');
             let chatOptionButton = document.getElementById('Button');
@@ -322,7 +328,6 @@
             chatOptionButton.style.position = 'absolute';
             chatOptionButton.style.top = '15%';
             chatOptionButton.style.left = '10%';
-
 
             fetch(`/api/LetsChat/${chatId}`)
                 .then(response => response.json())
@@ -334,31 +339,146 @@
                     messages = [];
 
                     document.getElementById('currentChatId').value = chat.Id;
-                    // Loop through and display the messages
-                    chat.Messages.forEach(message => {
-                        const messageDiv = document.createElement('div');
-                        messageDiv.className = message.role === 'system' ? 'message bot-message' : 'message user-message';
-                        messageDiv.innerHTML = message.content;
-                        messages.push({ role: message.role, content: message.content });
-                        const converter = new showdown.Converter();
-                        const htmlResponse = converter.makeHtml(message.content);
 
-                        const responseContainer = document.createElement('div');
-                        responseContainer.className = 'message bot-message';
-                        responseContainer.innerHTML = `<div class="response-content">${htmlResponse}</div>`;
+                    const isWorkout = chat.ChatTopic.toLowerCase() === 'workout';
+                    const isMeal = chat.ChatTopic.toLowerCase() === 'diet';
+                   
+                    if (isWorkout) {
+                        chat.Messages.forEach(message => {
+                            let content = message.content.trim().replace(/<\/?strong>/g, '').replace(/<br>/g, '').replace(/\n/g, '').replace(/\s+/g, ' ');
 
-                        resetUI();
-                        document.getElementById('chatOutput').appendChild(responseContainer);
-                    });
+                            if (content.length > 0) {
+                                const workoutDiv = document.createElement('div');
+                                workoutDiv.className = 'workout-suggestion loaded-workout';
+
+                                const workoutDetails = [...content.matchAll(/(Type|SubType|Set|Rep|Day):\s*(.*?)(?=\s*(Type|SubType|Set|Rep|Day|$))/g)];
+
+                                if (workoutDetails && workoutDetails.length > 0) {
+                                    const workout = {};
+
+                                    workoutDetails.forEach(match => {
+                                        const key = match[1].trim();
+                                        const value = match[2].trim(); 
+                                        workout[key] = value; 
+                                    });
+
+                                    const workoutContent = `
+                        <strong>Type:</strong> ${workout['Type'] || ''} <br>
+                        <strong>SubType:</strong> ${workout['SubType'] || ''} <br>
+                        <strong>Set:</strong> ${workout['Set'] || ''} <br>
+                        <strong>Rep:</strong> ${workout['Rep'] || ''} <br>
+                        <strong>Day:</strong> ${workout['Day'] || ''} <br>
+                    `;
+                                    workoutDiv.innerHTML = workoutContent;
+
+                                    const addButton = document.createElement('button');
+                                    addButton.textContent = 'Add to workouts';
+                                    addButton.className = 'add-workout-button';
+                                    addButton.onclick = function () {
+                                        addToWorkout(workout);
+                                    };
+
+                                    workoutDiv.appendChild(addButton);
+
+                                    const chatMessages = document.getElementById('chatOutput');
+                                    if (chatMessages) {
+                                        chatMessages.appendChild(workoutDiv); 
+                                    } else {
+                                        console.error('Element with ID "generatedWorkouts" not found.');
+                                    }
+
+                                    messages.push({ role: 'system', content: workoutContent });
+
+                                    resetUI();
+                                } else {
+                                    console.error('No valid workout details found in message:', content, 'Regex output:', workoutDetails);
+                                }
+                            }
+                        });
+                    }
+
+
+                    else if (isMeal) {
+                        chat.Messages.forEach(message => {
+                            let content = message.content.trim().replace(/<\/?strong>/g, '').replace(/<br>/g, '').replace(/\n/g, '').replace(/\s+/g, ' ');
+
+                            if (content.length > 0) {
+                                const mealDiv = document.createElement('div');
+                                mealDiv.className = 'meal-suggestion';
+
+                                const mealDetails = [...content.matchAll(/(Meal Name|Day of Week|Meal Type|Description|Ingredients|Prep Time):\s*(.*?)(?=\s*(Meal Name|Day of Week|Meal Type|Description|Ingredients|Prep Time|$))/g)];
+
+                                if (mealDetails && mealDetails.length > 0) {
+                                    const meal = {};
+
+                                    mealDetails.forEach(match => {
+                                        const key = match[1].trim(); 
+                                        const value = match[2].trim();
+                                        meal[key] = value; 
+                                    });
+
+                                    const mealContent = `
+                        <strong>Meal Name:</strong> ${meal['Meal Name'] || ''} <br>
+                        <strong>Day of Week:</strong> ${meal['Day of Week'] || ''} <br>
+                        <strong>Meal Type:</strong> ${meal['Meal Type'] || ''} <br>
+                        <strong>Description:</strong> ${meal['Description'] || ''} <br>
+                        <strong>Ingredients:</strong> ${meal['Ingredients'] || ''} <br>
+                        <strong>Prep Time:</strong> ${meal['Prep Time'] || ''} mins <br>
+                    `;
+                                    mealDiv.innerHTML = mealContent;
+
+                                    const addButton = document.createElement('button');
+                                    addButton.textContent = 'Add to meals';
+                                    addButton.className = 'add-meal-button';
+                                    addButton.onclick = function () {
+                                        addToMealsTable(meal); 
+                                    };
+
+                                    mealDiv.appendChild(addButton);
+
+                                    const chatOutput = document.getElementById('chatOutput');
+                                    chatOutput.appendChild(mealDiv);
+
+                                    messages.push({ role: 'system', content: mealContent });
+
+                                    resetUI();
+                                } else {
+                                    console.error('No valid meal details found in message:', content, 'Regex output:', mealDetails);
+                                }
+                            }
+                        });
+                    }
+                    else {
+                        chat.Messages.forEach(message => {
+                            if (!(message.content.trim().startsWith('L') || message.content.trim().startsWith('I need'))) {
+                                const messageDiv = document.createElement('div');
+                                messageDiv.className = message.role === 'system' ? 'message bot-message' : 'message user-message';
+                                messageDiv.innerHTML = message.content;
+                                messages.push({ role: message.role, content: message.content });
+
+                                const converter = new showdown.Converter();
+                                const htmlResponse = converter.makeHtml(message.content);
+
+                                const responseContainer = document.createElement('div');
+                                responseContainer.className = 'message bot-message';
+                                responseContainer.innerHTML = `<div class="response-content">${htmlResponse}</div>`;
+
+                                resetUI();
+                                chatOutput.appendChild(responseContainer);
+                            }
+
+                        });
+                    }
+
                     let contentDiv = document.getElementById('content');
-
                     contentDiv.innerHTML = '';
 
                     let newDiv = document.createElement('div');
-
                     contentDiv.appendChild(newDiv);
+
                     const userChatForm = document.getElementById('promptForm');
                     userChatForm.style.display = 'flex';
+
                     const outputForm = document.getElementById('chatOutput');
                     outputForm.style.overflow = 'scroll';
                 })
