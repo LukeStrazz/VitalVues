@@ -4,7 +4,6 @@
 
 header, footer, .navbar {
     z-index: 1000;
-    background-color: #343a40 !important;
 }
 
 footer {
@@ -12,7 +11,7 @@ footer {
     color: white;
     text-align: center;
     padding: 0.5rem 0; /* Adjust padding to make the footer smaller */
-    position: fixed;
+    position: absolute;
     bottom: 0;
     width: 100%; /* Ensures the footer spans the full width */
     z-index: 10;

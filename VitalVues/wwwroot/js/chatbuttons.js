@@ -209,8 +209,8 @@ $('#Button').click(function () {
     $(this).toggleClass('fa-times');
     const chatbtn = document.getElementById('Button');
 
-    chatbtn.style.top = '15%';
-    chatbtn.style.left = '10%';
+    chatbtn.style.top = '20%';
+    chatbtn.style.left = '20%';
 });
 
 $(document).ready(function () {
