@@ -81,7 +81,7 @@ public class AccountController : Controller
                     FirstName = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.GivenName)?.Value ?? "",
                     LastName = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Surname)?.Value ?? "",
                     Username = User.Identity.Name,
-                    Email = "user@example.com",
+                    Email = User.Identity.Name,
                     ProfileImage = User.Claims.FirstOrDefault(c => c.Type == "picture")?.Value,
                     Age = 0,
                     Birthday = DateTime.MinValue,
@@ -103,7 +103,7 @@ public class AccountController : Controller
                 _userService.UpdateUser(person);
             }
 
-            return LocalRedirect(returnUrl);
+            return RedirectToAction("UserUpdate", "User");
         }
         catch (Exception ex)
         {
