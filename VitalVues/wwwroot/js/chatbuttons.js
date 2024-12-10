@@ -64,6 +64,8 @@ document.querySelectorAll('.chat-holder-buttons button').forEach(button => {
                 newDiv.innerHTML = `<h2>Workout Chat</h2><p></p>`;
                 document.querySelector('.workout-interactions').style.display = 'flex';
                 document.querySelector('#generateRecsButton').style.display = 'none';
+                document.querySelector('#generateWorkoutsButton').style.display = 'flex';
+
                 document.querySelector(".previous-bloodworks").style.display = 'none';
                 currentChatType = 'workout';
                 document.getElementById('currentChatId').value = 0;

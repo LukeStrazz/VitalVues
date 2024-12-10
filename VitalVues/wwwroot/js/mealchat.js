@@ -16,7 +16,7 @@ function generateMeals() {
         }
     });
 
-    const prompt = `I need meal suggestions considering these allergies: ${allergies}. Please suggest meals in this format:
+    const prompt = `I need meal suggestions considering these allergies if any: If no allergies listed here assume none.${allergies} . Please suggest meals in this format:
     {
         "MealName": "",
         "DayOfWeek": "",
